@@ -34,6 +34,7 @@ import type {
   ClassDailyReportTraineeProgress,
   ClassDailyReportDrillTime,
   ClassLoggedHours,
+  ClassDocument,
   Profile,
   DrillType,
   TrainerRole,
@@ -123,6 +124,37 @@ async function doReq<T>(path: string, init: RequestInit = {}): Promise<T> {
     }
   }
 
+  if (!res.ok) {
+    const jsonMessage = typeof body === 'object' && body !== null
+      ? (body as { error?: string }).error
+      : null
+    const textMessage = typeof body === 'string' ? body : null
+    throw new Error(jsonMessage ?? textMessage ?? `Request failed: ${res.status}`)
+  }
+  return body as T
+}
+
+async function uploadReq<T>(path: string, file: File, description?: string): Promise<T> {
+  const auth = await authHeaders()
+  const res = await fetch(`${API_BASE}/api${path}`, {
+    method: 'POST',
+    headers: {
+      ...auth,
+      'Content-Type': file.type || 'application/octet-stream',
+      'X-File-Name': encodeURIComponent(file.name),
+      ...(description ? { 'X-Description': encodeURIComponent(description) } : {}),
+    },
+    body: file,
+  })
+  const text = await res.text()
+  let body: unknown = null
+  if (text) {
+    try {
+      body = JSON.parse(text) as unknown
+    } catch {
+      body = text
+    }
+  }
   if (!res.ok) {
     const jsonMessage = typeof body === 'object' && body !== null
       ? (body as { error?: string }).error
@@ -573,6 +605,16 @@ export const api = {
       req<{ affected: number }>('/classes/batch', { method: 'PATCH', body: JSON.stringify({ ids, action }) }),
   },
 
+  classDocuments: {
+    list: (classId: string) => req<ClassDocument[]>(`/classes/${classId}/documents`),
+    upload: (classId: string, file: File, description?: string) =>
+      uploadReq<ClassDocument>(`/classes/${classId}/documents`, file, description),
+    downloadUrl: (classId: string, documentId: string) =>
+      req<{ url: string }>(`/classes/${classId}/documents/${documentId}/download`),
+    delete: (classId: string, documentId: string) =>
+      req<void>(`/classes/${classId}/documents/${documentId}`, { method: 'DELETE' }),
+  },
+
   drills: {
     list: (classId: string) => req<ClassDrill[]>(`/classes/${classId}/drills`),
     create: (
@@ -839,6 +881,13 @@ export const api = {
       req<ReportWithNested>(`/me/my-classes/${classId}/reports/${reportId}`),
     classSchedule: (classId: string) => req<ClassScheduleSlot[]>(`/me/my-classes/${classId}/schedule`),
     classHours: (classId: string) => req<TrainerClassHoursResponse>(`/me/my-classes/${classId}/hours`),
+    classDocuments: (classId: string) => req<ClassDocument[]>(`/me/my-classes/${classId}/documents`),
+    uploadClassDocument: (classId: string, file: File, description?: string) =>
+      uploadReq<ClassDocument>(`/me/my-classes/${classId}/documents`, file, description),
+    classDocumentDownloadUrl: (classId: string, documentId: string) =>
+      req<{ url: string }>(`/me/my-classes/${classId}/documents/${documentId}/download`),
+    deleteClassDocument: (classId: string, documentId: string) =>
+      req<void>(`/me/my-classes/${classId}/documents/${documentId}`, { method: 'DELETE' }),
     studentProgress: (classId: string, enrollmentId: string) =>
       req<TrainerStudentProgressResponse>(`/me/my-classes/${classId}/students/${enrollmentId}/progress`),
 
@@ -910,6 +959,9 @@ export const api = {
     // Student self-service
     studentClassDetail: (classId: string) => req<StudentClassDetailResponse>(`/me/my-class/${classId}`),
     studentClassReports: (classId: string) => req<StudentReportView[]>(`/me/my-class/${classId}/reports`),
+    studentClassDocuments: (classId: string) => req<ClassDocument[]>(`/me/my-class/${classId}/documents`),
+    studentClassDocumentDownloadUrl: (classId: string, documentId: string) =>
+      req<{ url: string }>(`/me/my-class/${classId}/documents/${documentId}/download`),
     signInAttendance: (classId: string, reportId: string) =>
       req<{ signed_in: true; late: boolean }>(`/me/my-class/${classId}/reports/${reportId}/sign-in`, { method: 'POST' }),
     updateMyProgress: (classId: string, reportId: string, body: {

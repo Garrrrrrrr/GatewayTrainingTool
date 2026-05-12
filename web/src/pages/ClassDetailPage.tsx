@@ -12,6 +12,7 @@ import { ClassTrainersSection } from './ClassDetail/ClassTrainersSection'
 import { ClassStudentsSection } from './ClassDetail/ClassStudentsSection'
 import { ClassReportsSection } from './ClassDetail/ClassReportsSection'
 import { ClassPayrollSection } from './ClassDetail/ClassPayrollSection'
+import { ClassDocumentsSection } from '../components/ClassDocumentsSection'
 
 interface ClassDetailPageProps {
   className: string
@@ -25,6 +26,7 @@ type ClassDetailTab =
   | 'trainers'
   | 'students'
   | 'dailyReports'
+  | 'documents'
   | 'payroll'
 
 export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPageProps) {
@@ -75,6 +77,7 @@ export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPa
     { id: 'trainers',      label: 'Trainers' },
     { id: 'students',      label: 'Students' },
     { id: 'dailyReports',  label: 'Daily reports' },
+    { id: 'documents',     label: 'Documents' },
     { id: 'payroll',       label: 'Payroll' },
   ]
 
@@ -141,6 +144,7 @@ export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPa
           <div className={activeTab === 'trainers'      ? '' : 'hidden'}><ClassTrainersSection classId={classData.id} className={classData.name} /></div>
           <div className={activeTab === 'students'      ? '' : 'hidden'}><ClassStudentsSection classId={classData.id} className={classData.name} archived={classData.archived} /></div>
           <div className={activeTab === 'dailyReports'  ? '' : 'hidden'}><ClassReportsSection classId={classData.id} className={classData.name} mode="reports" defaultGameType={classData.game_type} classStartDate={classData.start_date} deepLinkedReportId={deepLinkedReportId} /></div>
+          <div className={activeTab === 'documents'     ? '' : 'hidden'}><ClassDocumentsSection classId={classData.id} access="coordinator" canUpload canDelete archived={classData.archived} /></div>
           <div className={activeTab === 'payroll'       ? '' : 'hidden'}><ClassPayrollSection classId={classData.id} className={classData.name} /></div>
         </div>
       </ClassDetailProvider>

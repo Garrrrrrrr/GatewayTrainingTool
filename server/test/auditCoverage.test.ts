@@ -9,6 +9,7 @@ const routeFiles = [
   'drills.ts',
   'schedule.ts',
   'enrollments.ts',
+  'classDocuments.ts',
 ]
 
 test('coordinator mutation routes include audit logging', () => {

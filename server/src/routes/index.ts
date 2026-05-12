@@ -45,6 +45,7 @@ import { auditRouter } from './audit'
 import { feedbackRouter } from './feedback'
 import { legacyImportsRouter } from './legacyImports'
 import { systemHealthRouter } from './systemHealth'
+import { classDocumentsRouter } from './classDocuments'
 
 export const router = Router()
 
@@ -75,3 +76,4 @@ router.use(auditRouter)
 router.use(feedbackRouter)
 router.use(legacyImportsRouter)
 router.use(systemHealthRouter)
+router.use(classDocumentsRouter)

@@ -4,6 +4,7 @@ import { api } from '../lib/apiClient'
 import { SkeletonCard, SkeletonTable } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
 import { StudentReportInput } from '../components/StudentReportInput'
+import { ClassDocumentsSection } from '../components/ClassDocumentsSection'
 import type { StudentClassDetailResponse, StudentReportView } from '../types'
 
 export function StudentClassDetailPage() {
@@ -100,6 +101,8 @@ export function StudentClassDetailPage() {
           </div>
         </section>
       )}
+
+      <ClassDocumentsSection classId={classId!} access="student" />
 
       {/* Today's session — writable */}
       <section>

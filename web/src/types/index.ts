@@ -239,6 +239,19 @@ export interface ClassLoggedHours {
   created_at: string
 }
 
+/** A document or photo attached to a class. Binary content lives in private storage. */
+export interface ClassDocument {
+  id: string
+  class_id: string
+  storage_path: string
+  original_filename: string
+  content_type: string
+  size_bytes: number
+  description: string | null
+  uploaded_by: string | null
+  created_at: string
+}
+
 /** Student progress response from GET /students/progress?email=... */
 export interface StudentProgressResponse {
   student_name: string

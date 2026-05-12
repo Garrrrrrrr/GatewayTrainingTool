@@ -7,8 +7,9 @@ import { TrainerScheduleSection } from './TrainerClassDetail/TrainerScheduleSect
 import { TrainerDrillsSection } from './TrainerClassDetail/TrainerDrillsSection'
 import { TrainerReportsSection } from './TrainerClassDetail/TrainerReportsSection'
 import { TrainerHoursSection } from './TrainerClassDetail/TrainerHoursSection'
+import { ClassDocumentsSection } from '../components/ClassDocumentsSection'
 
-type Tab = 'overview' | 'students' | 'schedule' | 'drills' | 'reports' | 'hours'
+type Tab = 'overview' | 'students' | 'schedule' | 'drills' | 'reports' | 'documents' | 'hours'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'overview', label: 'Overview' },
@@ -16,6 +17,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'schedule', label: 'Schedule' },
   { key: 'drills', label: 'Drills' },
   { key: 'reports', label: 'Reports' },
+  { key: 'documents', label: 'Documents' },
   { key: 'hours', label: 'Hours' },
 ]
 
@@ -88,6 +90,7 @@ function ClassDetailInner() {
       {tab === 'schedule' && <TrainerScheduleSection />}
       {tab === 'drills' && <TrainerDrillsSection />}
       {tab === 'reports' && <TrainerReportsSection />}
+      {tab === 'documents' && <ClassDocumentsSection classId={classInfo.id} access="trainer" canUpload canDelete archived={classInfo.archived} />}
       {tab === 'hours' && <TrainerHoursSection />}
     </div>
   )

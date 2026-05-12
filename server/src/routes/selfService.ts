@@ -18,11 +18,23 @@
  *   PATCH /me/my-class/:classId/reports/:reportId/my-progress — Student self-input (grades + drill times)
  */
 
-import { Router, type Request, type Response, type NextFunction } from 'express'
+import express, { Router, type Request, type Response, type NextFunction } from 'express'
 import { supabase } from '../lib/supabase'
 import { logAudit } from '../lib/audit'
 import { autoFailNotComingBack } from '../lib/autoFail'
 import { writeLimiter } from '../middleware/rateLimiter'
+import {
+  CLASS_DOCUMENT_MAX_BYTES,
+  createClassDocument,
+  deleteClassDocument,
+  findClassDocument,
+  listClassDocuments,
+  normalizeContentType,
+  safeDescription,
+  safeUploadFileName,
+  signedDocumentUrl,
+  validateUploadRequest,
+} from '../lib/classDocuments'
 import {
   drillBodySchema,
   drillUpdateBodySchema,
@@ -38,6 +50,11 @@ import {
 } from '../lib/validation'
 
 export const selfServiceRouter = Router()
+
+const rawDocumentUpload = express.raw({
+  type: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'],
+  limit: CLASS_DOCUMENT_MAX_BYTES,
+})
 
 /**
  * Validates that the given email belongs to a trainer assigned to the given class.
@@ -719,6 +736,140 @@ selfServiceRouter.get('/me/my-classes/:classId/students/:enrollmentId/progress',
       progress: progressResult.data ?? [],
       drill_times: drillTimesResult.data ?? [],
     })
+  } catch (err) {
+    if ((err as Error & { status?: number }).status === 403) {
+      res.status(403).json({ error: (err as Error).message })
+      return
+    }
+    next(err)
+  }
+})
+
+// ─── Trainer Class Documents ────────────────────────────────────────────────
+
+selfServiceRouter.get('/me/my-classes/:classId/documents', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.userEmail) {
+      res.status(401).json({ error: 'No email associated with this account' })
+      return
+    }
+    const classId = req.params.classId as string
+    await validateTrainerAccess(req.userEmail, classId)
+    res.json(await listClassDocuments(classId))
+  } catch (err) {
+    if ((err as Error & { status?: number }).status === 403) {
+      res.status(403).json({ error: (err as Error).message })
+      return
+    }
+    next(err)
+  }
+})
+
+selfServiceRouter.post('/me/my-classes/:classId/documents', writeLimiter, rawDocumentUpload, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.userEmail) {
+      res.status(401).json({ error: 'No email associated with this account' })
+      return
+    }
+    const classId = req.params.classId as string
+    await validateTrainerAccess(req.userEmail, classId)
+
+    const { data: cls } = await supabase.from('classes').select('archived').eq('id', classId).single()
+    if (cls?.archived) {
+      res.status(400).json({ error: 'Cannot add documents to archived classes' })
+      return
+    }
+
+    const file = validateUploadRequest(req, res)
+    if (!file) return
+    const fileName = safeUploadFileName(req.get('x-file-name'))
+    const contentType = normalizeContentType(req.get('content-type'))
+    const description = safeDescription(req.get('x-description'))
+
+    const document = await createClassDocument({
+      classId,
+      userId: req.userId!,
+      fileName,
+      contentType,
+      description,
+      file,
+    })
+
+    await logAudit({
+      userId: req.userId!,
+      action: 'CREATE',
+      tableName: 'class_documents',
+      recordId: document.id,
+      after: document as Record<string, unknown>,
+      metadata: { class_id: classId, file_name: fileName, uploaded_by: 'trainer' },
+      ipAddress: req.ip,
+    })
+
+    res.status(201).json(document)
+  } catch (err) {
+    if ((err as Error & { status?: number }).status === 403) {
+      res.status(403).json({ error: (err as Error).message })
+      return
+    }
+    next(err)
+  }
+})
+
+selfServiceRouter.get('/me/my-classes/:classId/documents/:documentId/download', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.userEmail) {
+      res.status(401).json({ error: 'No email associated with this account' })
+      return
+    }
+    const classId = req.params.classId as string
+    await validateTrainerAccess(req.userEmail, classId)
+    const document = await findClassDocument(classId, req.params.documentId as string)
+    if (!document) {
+      res.status(404).json({ error: 'Document not found' })
+      return
+    }
+    res.json({ url: await signedDocumentUrl(document) })
+  } catch (err) {
+    if ((err as Error & { status?: number }).status === 403) {
+      res.status(403).json({ error: (err as Error).message })
+      return
+    }
+    next(err)
+  }
+})
+
+selfServiceRouter.delete('/me/my-classes/:classId/documents/:documentId', writeLimiter, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.userEmail) {
+      res.status(401).json({ error: 'No email associated with this account' })
+      return
+    }
+    const classId = req.params.classId as string
+    await validateTrainerAccess(req.userEmail, classId)
+
+    const { data: cls } = await supabase.from('classes').select('archived').eq('id', classId).single()
+    if (cls?.archived) {
+      res.status(400).json({ error: 'Cannot modify archived classes' })
+      return
+    }
+
+    const document = await findClassDocument(classId, req.params.documentId as string)
+    if (!document) {
+      res.status(404).json({ error: 'Document not found' })
+      return
+    }
+
+    await logAudit({
+      userId: req.userId!,
+      action: 'DELETE',
+      tableName: 'class_documents',
+      recordId: document.id,
+      before: document as Record<string, unknown>,
+      metadata: { class_id: classId, file_name: document.original_filename, deleted_by: 'trainer' },
+      ipAddress: req.ip,
+    })
+    await deleteClassDocument(document)
+    res.status(204).send()
   } catch (err) {
     if ((err as Error & { status?: number }).status === 403) {
       res.status(403).json({ error: (err as Error).message })
@@ -1807,6 +1958,38 @@ async function validateStudentAccess(email: string, classId: string) {
   if (error || !data) return null
   return data
 }
+
+selfServiceRouter.get('/me/my-class/:classId/documents', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const enrollment = await validateStudentAccess(req.userEmail!, req.params.classId as string)
+    if (!enrollment) {
+      res.status(403).json({ error: 'You are not enrolled in this class.' })
+      return
+    }
+    res.json(await listClassDocuments(req.params.classId as string))
+  } catch (err) {
+    next(err)
+  }
+})
+
+selfServiceRouter.get('/me/my-class/:classId/documents/:documentId/download', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const classId = req.params.classId as string
+    const enrollment = await validateStudentAccess(req.userEmail!, classId)
+    if (!enrollment) {
+      res.status(403).json({ error: 'You are not enrolled in this class.' })
+      return
+    }
+    const document = await findClassDocument(classId, req.params.documentId as string)
+    if (!document) {
+      res.status(404).json({ error: 'Document not found' })
+      return
+    }
+    res.json({ url: await signedDocumentUrl(document) })
+  } catch (err) {
+    next(err)
+  }
+})
 
 /**
  * GET /me/my-class/:classId

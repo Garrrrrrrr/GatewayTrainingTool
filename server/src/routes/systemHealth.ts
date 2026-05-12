@@ -64,6 +64,7 @@ systemHealthRouter.get('/system-health', async (_req: Request, res: Response, ne
       tableCheck('Feedback inbox migration', 'app_feedback', 'id, status, reviewed_by, updated_at'),
       tableCheck('Legacy import batch migration', 'legacy_import_batches', 'id, import_id, status, created_report_ids'),
       tableCheck('Audit log table', 'audit_logs', 'id, table_name, action'),
+      tableCheck('Class documents migration', 'class_documents', 'id, class_id, storage_path, original_filename'),
     ]))
 
     const overall: HealthStatus = checks.some(check => check.status === 'error')

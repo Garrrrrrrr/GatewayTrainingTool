@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  dateSchema,
   enrollmentBodySchema,
   hoursBodySchema,
   reportBodySchema,
@@ -54,4 +55,9 @@ test('report validation rejects invalid ratings and date formats', () => {
       gk_rating: 'PASS',
     }],
   }).success, false)
+})
+
+test('date validation accepts ISO dates only', () => {
+  assert.equal(dateSchema.safeParse('2026-05-12').success, true)
+  assert.equal(dateSchema.safeParse('05/12/2026').success, false)
 })

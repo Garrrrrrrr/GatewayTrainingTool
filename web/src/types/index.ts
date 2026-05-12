@@ -307,6 +307,44 @@ export interface TrainerDashboardResponse {
   }>
 }
 
+/** Response from GET /me/today — trainer work queue for one date. */
+export interface TrainerTodayResponse {
+  date: string
+  generated_at: string
+  slots: Array<{
+    id: string
+    class_id: string
+    class_name: string
+    site: string
+    province: string
+    game_type: string | null
+    archived: boolean
+    slot_date: string
+    start_time: string
+    end_time: string
+    group_label: string | null
+    notes: string | null
+    trainer_id: string | null
+    assigned_to_me: boolean
+    report: {
+      id: string
+      report_date: string
+      group_label: string | null
+      session_label: string | null
+      game: string | null
+      created_at: string
+    } | null
+    copy_source_report: {
+      id: string
+      report_date: string
+      group_label: string | null
+      session_label: string | null
+      game: string | null
+      created_at: string
+    } | null
+  }>
+}
+
 /** Response from GET /me/trainee-progress — extends StudentProgressResponse with schedule slots. */
 export interface TraineeDashboardResponse {
   student_name: string | null

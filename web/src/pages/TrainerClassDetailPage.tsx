@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import { TrainerClassDetailProvider, useTrainerClassDetail } from '../contexts/TrainerClassDetailContext'
 import { TrainerOverviewSection } from './TrainerClassDetail/TrainerOverviewSection'
 import { TrainerStudentsSection } from './TrainerClassDetail/TrainerStudentsSection'
@@ -19,9 +19,22 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'hours', label: 'Hours' },
 ]
 
+function isTab(value: string | null): value is Tab {
+  return TABS.some(tab => tab.key === value)
+}
+
 function ClassDetailInner() {
-  const [tab, setTab] = useState<Tab>('overview')
+  const [searchParams] = useSearchParams()
+  const [tab, setTab] = useState<Tab>(() => {
+    const requestedTab = searchParams.get('tab')
+    return isTab(requestedTab) ? requestedTab : 'overview'
+  })
   const { classInfo, loading } = useTrainerClassDetail()
+
+  useEffect(() => {
+    const requestedTab = searchParams.get('tab')
+    if (isTab(requestedTab)) setTab(requestedTab)
+  }, [searchParams])
 
   if (loading) {
     return <div className="text-slate-400 dark:text-slate-500 text-sm py-10 text-center">Loading class…</div>

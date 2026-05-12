@@ -8,6 +8,7 @@
  * Routes:
  *   GET /me/my-classes         — Classes this trainer is assigned to, with richer metadata
  *   GET /me/trainer-dashboard  — Backwards-compat alias for /me/my-classes
+ *   GET /me/today              — Today's trainer schedule/report work queue
  *   GET /me/trainee-progress   — Progress and drill times for this trainee across all classes
  *   GET /me/role-request       — Current user's most recent role request (if any)
  *   POST /me/feedback          — Submit product feedback from Settings
@@ -29,6 +30,7 @@ import {
   feedbackBodySchema,
   hoursBodySchema,
   hoursBulkBodySchema,
+  dateSchema,
   reportBodySchema,
   scheduleBodySchema,
   studentMyProgressBodySchema,
@@ -172,6 +174,159 @@ selfServiceRouter.get('/me/my-classes', myClassesHandler)
 
 // Backwards compatibility alias
 selfServiceRouter.get('/me/trainer-dashboard', myClassesHandler)
+
+type TrainerTodayReport = {
+  id: string
+  class_id: string
+  report_date: string
+  group_label: string | null
+  session_label: string | null
+  game: string | null
+  created_at: string
+}
+
+function groupKey(value: string | null | undefined): string {
+  return value?.trim() || ''
+}
+
+function reportSummary(report: TrainerTodayReport) {
+  return {
+    id: report.id,
+    report_date: report.report_date,
+    group_label: report.group_label,
+    session_label: report.session_label,
+    game: report.game,
+    created_at: report.created_at,
+  }
+}
+
+/**
+ * GET /me/today
+ * Auth: any authenticated trainer
+ *
+ * Returns today's schedule slots in classes assigned to the trainer, plus
+ * report state and the most recent prior report for quick copy-as-draft.
+ */
+selfServiceRouter.get('/me/today', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const email = req.userEmail
+    if (!email) {
+      res.status(401).json({ error: 'No email associated with this account' })
+      return
+    }
+
+    const requestedDate = typeof req.query.date === 'string'
+      ? req.query.date
+      : new Date().toISOString().slice(0, 10)
+    const parsedDate = dateSchema.safeParse(requestedDate)
+    if (!parsedDate.success) {
+      res.status(400).json({ error: 'Invalid date. Expected YYYY-MM-DD.' })
+      return
+    }
+    const targetDate = parsedDate.data
+
+    const { data: trainerRows, error: trainerError } = await supabase
+      .from('class_trainers')
+      .select('id, class_id')
+      .eq('trainer_email', email)
+    if (trainerError) throw trainerError
+    if (!trainerRows || trainerRows.length === 0) {
+      res.json({ date: targetDate, generated_at: new Date().toISOString(), slots: [] })
+      return
+    }
+
+    const trainerIds = trainerRows.map((row: { id: string }) => row.id)
+    const classIds = [...new Set(trainerRows.map((row: { class_id: string }) => row.class_id))]
+
+    const [classesResult, scheduleResult, reportsResult] = await Promise.all([
+      supabase
+        .from('classes')
+        .select('id, name, site, province, game_type, archived')
+        .in('id', classIds),
+      supabase
+        .from('class_schedule_slots')
+        .select('id, class_id, slot_date, start_time, end_time, group_label, notes, trainer_id')
+        .in('class_id', classIds)
+        .eq('slot_date', targetDate)
+        .order('start_time', { ascending: true }),
+      supabase
+        .from('class_daily_reports')
+        .select('id, class_id, report_date, group_label, session_label, game, created_at')
+        .in('class_id', classIds)
+        .lte('report_date', targetDate)
+        .order('report_date', { ascending: false })
+        .order('created_at', { ascending: false }),
+    ])
+
+    if (classesResult.error) throw classesResult.error
+    if (scheduleResult.error) throw scheduleResult.error
+    if (reportsResult.error) throw reportsResult.error
+
+    const classMap = new Map<string, {
+      id: string
+      name: string
+      site: string
+      province: string
+      game_type: string | null
+      archived: boolean
+    }>()
+    for (const cls of classesResult.data ?? []) classMap.set(cls.id, cls)
+
+    const reports = (reportsResult.data ?? []) as TrainerTodayReport[]
+    const slots = (scheduleResult.data ?? [])
+      .filter((slot: { trainer_id: string | null }) => slot.trainer_id === null || trainerIds.includes(slot.trainer_id))
+      .map((slot: {
+        id: string
+        class_id: string
+        slot_date: string
+        start_time: string
+        end_time: string
+        group_label: string | null
+        notes: string | null
+        trainer_id: string | null
+      }) => {
+        const cls = classMap.get(slot.class_id)
+        const slotGroup = groupKey(slot.group_label)
+        const exactReport = reports.find(report =>
+          report.class_id === slot.class_id &&
+          report.report_date === targetDate &&
+          groupKey(report.group_label) === slotGroup,
+        ) ?? null
+        const copySource = reports.find(report =>
+          report.class_id === slot.class_id &&
+          report.report_date < targetDate &&
+          groupKey(report.group_label) === slotGroup,
+        ) ?? null
+
+        return {
+          id: slot.id,
+          class_id: slot.class_id,
+          class_name: cls?.name ?? 'Unknown',
+          site: cls?.site ?? '',
+          province: cls?.province ?? '',
+          game_type: cls?.game_type ?? null,
+          archived: cls?.archived ?? false,
+          slot_date: slot.slot_date,
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+          group_label: slot.group_label,
+          notes: slot.notes,
+          trainer_id: slot.trainer_id,
+          assigned_to_me: slot.trainer_id === null || trainerIds.includes(slot.trainer_id),
+          report: exactReport ? reportSummary(exactReport) : null,
+          copy_source_report: copySource ? reportSummary(copySource) : null,
+        }
+      })
+
+    res.json({
+      date: targetDate,
+      generated_at: new Date().toISOString(),
+      slots,
+    })
+  } catch (err) {
+    next(err)
+  }
+})
 
 /**
  * GET /me/trainee-progress

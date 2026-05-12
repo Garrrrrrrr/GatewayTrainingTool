@@ -44,6 +44,7 @@ interface ReportEditFormProps {
   canDelete: boolean
   onDelete?: () => void
   canEditCoordinatorNotes: boolean
+  showDrillTimer?: boolean
 }
 
 const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
@@ -145,9 +146,19 @@ function formatAutosaveTime(savedAt: string): string {
   })
 }
 
+function formatElapsedTime(ms: number): string {
+  const totalTenths = Math.max(0, Math.floor(ms / 100))
+  const totalSeconds = Math.floor(totalTenths / 10)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  const tenths = totalTenths % 10
+  if (minutes > 0) return `${minutes}:${String(seconds).padStart(2, '0')}.${tenths}`
+  return `${seconds}.${tenths}s`
+}
+
 export function ReportEditForm({
   report, trainers, enrollments, drills, hours, defaultGame = '', initialValues, autosaveKey,
-  onSave, onCancel, canDelete, onDelete, canEditCoordinatorNotes,
+  onSave, onCancel, canDelete, onDelete, canEditCoordinatorNotes, showDrillTimer = false,
 }: ReportEditFormProps) {
   // Header fields — stored as strings; converted to numbers on save
   const [reportDate, setReportDate] = useState('')
@@ -173,6 +184,11 @@ export function ReportEditForm({
   const [saving, setSaving] = useState(false)
   const [autosaveDraft, setAutosaveDraft] = useState<ReportAutosaveSnapshot | null>(null)
   const [autosaveReady, setAutosaveReady] = useState(false)
+  const [timerEnrollmentId, setTimerEnrollmentId] = useState('')
+  const [timerDrillId, setTimerDrillId] = useState('')
+  const [timerStartedAt, setTimerStartedAt] = useState<number | null>(null)
+  const [timerElapsedMs, setTimerElapsedMs] = useState(0)
+  const [timerScore, setTimerScore] = useState('')
   const dragIndexRef = useRef<number | null>(null)
 
   function applyBodyToForm(body: Partial<ReportBody>) {
@@ -259,6 +275,24 @@ export function ReportEditForm({
     setProgressRows(prev => buildProgressRows(enrollments, prev, report?.id ?? 'new'))
   }, [enrollments, report?.id])
 
+  useEffect(() => {
+    const timerEnrollmentExists = enrollments.some(enrollment => enrollment.id === timerEnrollmentId)
+    if ((!timerEnrollmentId || !timerEnrollmentExists) && enrollments[0]) setTimerEnrollmentId(enrollments[0].id)
+    const timerDrillExists = drills.some(drill => drill.active && drill.id === timerDrillId)
+    if (!timerDrillId || !timerDrillExists) {
+      const firstActiveDrill = drills.find(drill => drill.active)
+      if (firstActiveDrill) setTimerDrillId(firstActiveDrill.id)
+    }
+  }, [drills, enrollments, timerDrillId, timerEnrollmentId])
+
+  useEffect(() => {
+    if (timerStartedAt === null) return undefined
+    const interval = window.setInterval(() => {
+      setTimerElapsedMs(Date.now() - timerStartedAt)
+    }, 100)
+    return () => window.clearInterval(interval)
+  }, [timerStartedAt])
+
   /** Sums hours in the `hours` prop up to and including `date`. */
   function computedTotalsForDate(date: string) {
     if (!date) return { hoursToDate: 0, paid: 0, live: 0 }
@@ -319,6 +353,58 @@ export function ReportEditForm({
     }
   }
 
+  function upsertDrillTime(enrollmentId: string, drill: ClassDrill, value: number) {
+    setDrillTimeRows(prev => {
+      const existing = prev.find(row => row.enrollment_id === enrollmentId && row.drill_id === drill.id)
+      const patch = {
+        time_seconds: drill.type === 'drill' ? value : existing?.time_seconds ?? null,
+        score: drill.type === 'test' ? value : existing?.score ?? null,
+      }
+      if (existing) {
+        return prev.map(row => row.enrollment_id === enrollmentId && row.drill_id === drill.id ? { ...row, ...patch } : row)
+      }
+      return [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          report_id: report?.id ?? 'new',
+          enrollment_id: enrollmentId,
+          drill_id: drill.id,
+          ...patch,
+          created_at: new Date().toISOString(),
+        },
+      ]
+    })
+  }
+
+  function startTimer() {
+    setTimerStartedAt(Date.now() - timerElapsedMs)
+  }
+
+  function stopTimer() {
+    if (timerStartedAt !== null) setTimerElapsedMs(Date.now() - timerStartedAt)
+    setTimerStartedAt(null)
+  }
+
+  function resetTimer() {
+    setTimerStartedAt(null)
+    setTimerElapsedMs(0)
+  }
+
+  function applyTimerResult() {
+    const selectedDrill = drills.find(drill => drill.id === timerDrillId)
+    if (!timerEnrollmentId || !selectedDrill || selectedDrill.type !== 'drill') return
+    const seconds = Math.round((timerElapsedMs / 1000) * 10) / 10
+    upsertDrillTime(timerEnrollmentId, selectedDrill, seconds)
+  }
+
+  function applyScoreResult() {
+    const selectedDrill = drills.find(drill => drill.id === timerDrillId)
+    const score = Number(timerScore)
+    if (!timerEnrollmentId || !selectedDrill || selectedDrill.type !== 'test' || timerScore.trim() === '' || Number.isNaN(score)) return
+    upsertDrillTime(timerEnrollmentId, selectedDrill, score)
+  }
+
   function restoreAutosaveDraft() {
     if (!autosaveDraft) return
     applyBodyToForm(autosaveDraft.body)
@@ -376,6 +462,10 @@ export function ReportEditForm({
       setSaving(false)
     }
   }
+
+  const activeDrills = drills.filter(drill => drill.active)
+  const selectedTimerDrill = activeDrills.find(drill => drill.id === timerDrillId) ?? null
+  const timerRunning = timerStartedAt !== null
 
   return (
     <div className="mb-4 bg-slate-100 dark:bg-gw-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-4 text-xs">
@@ -657,14 +747,72 @@ export function ReportEditForm({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <p className="text-[11px] font-semibold text-slate-400 hidden md:block">Drill &amp; test times</p>
-            {drills.filter(d => d.active).length > 0 && enrollments.length > 0 && (
-              <button type="button" onClick={() => { const activeDrills = drills.filter(d => d.active); setDrillTimeRows(prev => { const rows: ClassDailyReportDrillTime[] = []; for (const enr of enrollments) { for (const drill of activeDrills) { const existing = prev.find(r => r.enrollment_id === enr.id && r.drill_id === drill.id); rows.push(existing ?? { id: crypto.randomUUID(), report_id: report?.id ?? 'new', enrollment_id: enr.id, drill_id: drill.id, time_seconds: null, score: null, created_at: new Date().toISOString() }) } } return rows }) }} className="rounded-md bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300 hover:bg-white/10 transition-colors">
+            {activeDrills.length > 0 && enrollments.length > 0 && (
+              <button type="button" onClick={() => { setDrillTimeRows(prev => { const rows: ClassDailyReportDrillTime[] = []; for (const enr of enrollments) { for (const drill of activeDrills) { const existing = prev.find(r => r.enrollment_id === enr.id && r.drill_id === drill.id); rows.push(existing ?? { id: crypto.randomUUID(), report_id: report?.id ?? 'new', enrollment_id: enr.id, drill_id: drill.id, time_seconds: null, score: null, created_at: new Date().toISOString() }) } } return rows }) }} className="rounded-md bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300 hover:bg-white/10 transition-colors">
                 Load drills for trainees
               </button>
             )}
           </div>
 
-          {drills.filter(d => d.active).length === 0 ? (
+          {showDrillTimer && activeDrills.length > 0 && enrollments.length > 0 && (
+            <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface p-3">
+              <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-3 items-end">
+                <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400">Trainee
+                  <select value={timerEnrollmentId} onChange={e => setTimerEnrollmentId(e.target.value)} className={fieldClass}>
+                    {enrollments.map(enrollment => (
+                      <option key={enrollment.id} value={enrollment.id}>{enrollment.student_name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400">Drill or test
+                  <select value={timerDrillId} onChange={e => { setTimerDrillId(e.target.value); setTimerScore(''); resetTimer() }} className={fieldClass}>
+                    {activeDrills.map(drill => (
+                      <option key={drill.id} value={drill.id}>
+                        {drill.name} ({drill.type})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="min-w-[220px]">
+                  {selectedTimerDrill?.type === 'test' ? (
+                    <div className="flex items-end gap-2">
+                      <label className="block flex-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">Score
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={timerScore}
+                          onChange={e => setTimerScore(e.target.value)}
+                          className={fieldClass}
+                          placeholder={selectedTimerDrill.target_score != null ? `Target ${selectedTimerDrill.target_score}` : 'Score'}
+                        />
+                      </label>
+                      <button type="button" onClick={applyScoreResult} className="h-8 rounded-md bg-gw-blue px-3 text-[11px] font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                        Apply
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <div className="min-w-[78px] rounded-md border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-gw-elevated px-2 py-1 text-center text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {formatElapsedTime(timerElapsedMs)}
+                      </div>
+                      <button type="button" onClick={timerRunning ? stopTimer : startTimer} className="h-8 rounded-md bg-gw-blue px-3 text-[11px] font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                        {timerRunning ? 'Stop' : 'Start'}
+                      </button>
+                      <button type="button" onClick={resetTimer} className="h-8 rounded-md border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/[0.06] px-3 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
+                        Reset
+                      </button>
+                      <button type="button" onClick={applyTimerResult} disabled={timerElapsedMs === 0} className="h-8 rounded-md border border-gw-blue/30 bg-gw-blue/10 px-3 text-[11px] font-semibold text-gw-blue hover:bg-gw-blue/15 disabled:opacity-40 transition-colors">
+                        Apply
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeDrills.length === 0 ? (
             <p className="text-[11px] text-slate-500">No active drills or tests defined. Add them in the Drills &amp; tests tab.</p>
           ) : drillTimeRows.length === 0 ? (
             <p className="text-[11px] text-slate-500">Click &quot;Load drills for trainees&quot; to populate the grid.</p>
@@ -674,7 +822,7 @@ export function ReportEditForm({
                 <thead>
                   <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
                     <th className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500 sticky left-0 bg-white dark:bg-gw-surface">Trainee</th>
-                    {drills.filter(d => d.active).map(drill => (
+                    {activeDrills.map(drill => (
                       <th key={drill.id} className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500">
                         <div>{drill.name}</div>
                         <div className="font-normal text-[10px] text-slate-500">{drill.type === 'drill' ? `Time (s)${drill.par_time_seconds ? ` · par ${drill.par_time_seconds}` : ''}` : `Score${drill.target_score ? ` · target ${drill.target_score}` : ''}`}</div>
@@ -686,7 +834,7 @@ export function ReportEditForm({
                   {enrollments.map(enr => (
                     <tr key={enr.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-gw-elevated transition-colors">
                       <td className="px-2 py-1 text-slate-800 dark:text-slate-200 whitespace-nowrap sticky left-0 bg-white dark:bg-gw-surface">{enr.student_name}</td>
-                      {drills.filter(d => d.active).map(drill => {
+                      {activeDrills.map(drill => {
                         const row = drillTimeRows.find(r => r.enrollment_id === enr.id && r.drill_id === drill.id)
                         if (!row) return <td key={drill.id} className="px-2 py-1 text-slate-500">—</td>
                         const value = drill.type === 'drill' ? row.time_seconds : row.score

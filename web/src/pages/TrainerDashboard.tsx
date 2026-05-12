@@ -12,14 +12,46 @@
  *   - Clickable cards for each assigned class
  */
 
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { api } from '../lib/apiClient'
+import { localIsoDate } from '../lib/reportDrafts'
 import { useTrainer } from '../contexts/TrainerContext'
 import { SkeletonCard } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
-import type { TrainerMyClassesResponse, UpcomingSlot } from '../types'
+import type { TrainerMyClassesResponse, TrainerTodayResponse, UpcomingSlot } from '../types'
+
+type TodaySlot = TrainerTodayResponse['slots'][0]
+
+function reportActionPath(
+  slot: TodaySlot,
+  action: 'create' | 'edit' | 'copy',
+): string {
+  const params = new URLSearchParams({ tab: 'reports' })
+  if (action === 'edit' && slot.report) params.set('editReportId', slot.report.id)
+  if (action === 'copy' && slot.copy_source_report) params.set('copyReportId', slot.copy_source_report.id)
+  if (action !== 'edit') params.set('newReportDate', slot.slot_date)
+  if (slot.group_label) params.set('groupLabel', slot.group_label)
+  if (slot.start_time) params.set('startTime', slot.start_time)
+  if (slot.end_time) params.set('endTime', slot.end_time)
+  return `/my-classes/${slot.class_id}?${params.toString()}`
+}
 
 export function TrainerDashboard({ email }: { email: string }) {
   const { trainerName, trainerEmail, classes, loading } = useTrainer()
+  const [todayDate] = useState(() => localIsoDate())
+  const [todayWorkQueue, setTodayWorkQueue] = useState<TrainerTodayResponse | null>(null)
+  const [todayLoading, setTodayLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setTodayLoading(true)
+    api.selfService.trainerToday(todayDate)
+      .then(result => { if (!cancelled) setTodayWorkQueue(result) })
+      .catch(err => console.error('trainer today fetch error:', (err as Error).message))
+      .finally(() => { if (!cancelled) setTodayLoading(false) })
+    return () => { cancelled = true }
+  }, [todayDate])
 
   if (loading) {
     return (
@@ -78,6 +110,8 @@ export function TrainerDashboard({ email }: { email: string }) {
           </div>
         ))}
       </div>
+
+      <TodaySection date={todayWorkQueue?.date ?? todayDate} loading={todayLoading} slots={todayWorkQueue?.slots ?? []} />
 
       {/* Consolidated upcoming sessions */}
       {upcomingSessions.length > 0 && (
@@ -148,6 +182,82 @@ export function TrainerDashboard({ email }: { email: string }) {
         )}
       </section>
     </div>
+  )
+}
+
+function TodaySection({ date, loading, slots }: { date: string; loading: boolean; slots: TodaySlot[] }) {
+  return (
+    <section>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Today</h3>
+        <span className="text-xs text-slate-400 dark:text-slate-500">{date}</span>
+      </div>
+      {loading ? (
+        <SkeletonCard lines={3} />
+      ) : slots.length === 0 ? (
+        <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
+          No assigned sessions today.
+        </div>
+      ) : (
+        <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface divide-y divide-slate-100 dark:divide-white/[0.04]">
+          {slots.map(slot => (
+            <div key={slot.id} className="flex flex-col gap-3 px-4 py-3 lg:flex-row lg:items-center">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{slot.class_name}</p>
+                  {slot.group_label && (
+                    <span className="rounded bg-slate-100 dark:bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                      Group {slot.group_label}
+                    </span>
+                  )}
+                  {slot.report ? (
+                    <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-500 dark:text-emerald-400">Report ready</span>
+                  ) : (
+                    <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-500 dark:text-amber-400">Report needed</span>
+                  )}
+                  {slot.archived && (
+                    <span className="rounded bg-slate-100 dark:bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-medium text-slate-400 dark:text-slate-500">Archived</span>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  {slot.start_time}–{slot.end_time}
+                  {slot.game_type ? ` · ${slot.game_type}` : ''}
+                  {slot.notes ? ` · ${slot.notes}` : ''}
+                </p>
+                {!slot.report && slot.copy_source_report && (
+                  <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+                    Previous report: {slot.copy_source_report.report_date}
+                    {slot.copy_source_report.session_label ? ` · ${slot.copy_source_report.session_label}` : ''}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2 lg:justify-end">
+                {slot.archived ? (
+                  <Link to={`/my-classes/${slot.class_id}`} className="rounded-md border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
+                    View class
+                  </Link>
+                ) : slot.report ? (
+                  <Link to={reportActionPath(slot, 'edit')} className="rounded-md bg-gw-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                    Edit report
+                  </Link>
+                ) : (
+                  <>
+                    {slot.copy_source_report && (
+                      <Link to={reportActionPath(slot, 'copy')} className="rounded-md border border-gw-teal/30 bg-gw-teal/10 px-3 py-1.5 text-xs font-semibold text-gw-teal hover:bg-gw-teal/15 transition-colors">
+                        Copy previous
+                      </Link>
+                    )}
+                    <Link to={reportActionPath(slot, 'create')} className="rounded-md bg-gw-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                      Create report
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   )
 }
 

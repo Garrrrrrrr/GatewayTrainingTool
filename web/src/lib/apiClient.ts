@@ -44,6 +44,7 @@ import type {
   PayrollRow,
   StudentProgressResponse,
   TrainerDashboardResponse,
+  TrainerTodayResponse,
   TraineeDashboardResponse,
   TrainerMyClassesResponse,
   TrainerClassDetailResponse,
@@ -822,6 +823,8 @@ export const api = {
 
   selfService: {
     trainerDashboard: () => req<TrainerDashboardResponse>('/me/trainer-dashboard'),
+    trainerToday: (date?: string) =>
+      req<TrainerTodayResponse>(`/me/today${date ? `?date=${encodeURIComponent(date)}` : ''}`),
     traineeDashboard: () => req<TraineeDashboardResponse>('/me/trainee-progress'),
     submitFeedback: (body: FeedbackSubmissionBody) =>
       req<{ id: string; created_at: string }>('/me/feedback', { method: 'POST', body: JSON.stringify(body) }),

@@ -4,11 +4,11 @@
  * Produces a self-contained HTML string that represents a daily training report.
  * The output is:
  *   - Rendered inside an <iframe> in the ReportPreviewModal for in-browser preview
- *   - Downloadable as an .html file via a Blob URL
+ *   - Used as the source markup for the client-side PDF download
  *   - Printable using the browser's native print dialog (window.print())
  *
- * There is no server-side PDF rendering — the browser's "Print to PDF" feature
- * is used instead, which keeps dependencies minimal and avoids Puppeteer/headless Chrome.
+ * There is no server-side PDF rendering — preview, print, and PDF download all
+ * happen in the browser, which avoids Puppeteer/headless Chrome.
  *
  * The HTML includes inline <style> with @media print rules so the output
  * looks clean when printed or saved to PDF.
@@ -104,42 +104,50 @@ export function generateReportHtml({ report, className, trainers, enrollments, d
   <meta charset="UTF-8" />
   <title>Daily Report – ${esc(className)} – ${esc(report.report_date)}</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #1e293b; background: #fff; padding: 32px 40px; }
-    h1 { font-size: 18px; font-weight: 700; color: #081C30; }
-    h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #134270; margin-bottom: 6px; margin-top: 20px; border-bottom: 1.5px solid #134270; padding-bottom: 3px; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #081C30; padding-bottom: 12px; margin-bottom: 16px; }
-    .header-left .subtitle { font-size: 12px; color: #475569; margin-top: 2px; }
-    .header-right { text-align: right; font-size: 11px; color: #64748b; }
-    .meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 4px; }
-    .meta-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; }
-    .meta-item .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 2px; }
-    .meta-item .value { font-size: 12px; font-weight: 600; color: #0f172a; }
-    .trainers { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 6px 10px; margin-bottom: 4px; }
-    .trainers .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: #3b82f6; font-weight: 600; }
-    .trainers .value { font-size: 11px; color: #1e3a5f; margin-top: 2px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
-    thead tr { background: #134270; color: #fff; }
-    thead th { padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    tbody tr:nth-child(even) { background: #f8fafc; }
-    tbody td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
-    td.center { text-align: center; }
-    td.empty { text-align: center; color: #94a3b8; padding: 12px; font-style: italic; }
-    footer { margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 9px; color: #94a3b8; display: flex; justify-content: space-between; }
-    .page-break { page-break-before: always; margin-top: 32px; }
-    .drill-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #081C30; padding-bottom: 8px; margin-bottom: 16px; }
-    .drill-header h1 { font-size: 16px; }
-    .drill-header .subtitle { font-size: 11px; color: #475569; margin-top: 2px; }
-    .par-met { background: #dcfce7; }
-    .par-missed { background: #fef9c3; }
+    .report-export-root, .report-export-root *::before, .report-export-root *::after, .report-export-root * { box-sizing: border-box; margin: 0; padding: 0; }
+    .report-export-root { width: 8.5in; min-height: 11in; margin: 0 auto; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #1e293b; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .report-document { width: 100%; min-height: 11in; padding: 32px 40px; background: #fff; overflow: visible; }
+    .report-document h1 { font-size: 18px; font-weight: 700; color: #081C30; }
+    .report-document h2 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #134270; margin-bottom: 6px; margin-top: 20px; border-bottom: 1.5px solid #134270; padding-bottom: 3px; }
+    .report-document .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #081C30; padding-bottom: 12px; margin-bottom: 16px; }
+    .report-document .header-left .subtitle { font-size: 12px; color: #475569; margin-top: 2px; }
+    .report-document .header-right { text-align: right; font-size: 11px; color: #64748b; }
+    .report-document .meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 4px; }
+    .report-document .meta-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; }
+    .report-document .meta-item .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 2px; }
+    .report-document .meta-item .value { font-size: 12px; font-weight: 600; color: #0f172a; }
+    .report-document .trainers { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 6px 10px; margin-bottom: 4px; }
+    .report-document .trainers .label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: #3b82f6; font-weight: 600; }
+    .report-document .trainers .value { font-size: 11px; color: #1e3a5f; margin-top: 2px; }
+    .report-document table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 4px; }
+    .report-document thead tr { background: #134270; color: #fff; }
+    .report-document thead th { padding: 6px 8px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; overflow-wrap: anywhere; }
+    .report-document tbody tr:nth-child(even) { background: #f8fafc; }
+    .report-document tbody td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; vertical-align: top; overflow-wrap: anywhere; }
+    .report-document td.center { text-align: center; }
+    .report-document td.empty { text-align: center; color: #94a3b8; padding: 12px; font-style: italic; }
+    .report-document footer { margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 9px; color: #94a3b8; display: flex; justify-content: space-between; }
+    .report-document .page-break { break-before: page; page-break-before: always; margin-top: 32px; }
+    .report-document .drill-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #081C30; padding-bottom: 8px; margin-bottom: 16px; }
+    .report-document .drill-header h1 { font-size: 16px; }
+    .report-document .drill-header .subtitle { font-size: 11px; color: #475569; margin-top: 2px; }
+    .report-document .par-met { background: #dcfce7; }
+    .report-document .par-missed { background: #fef9c3; }
+    @media screen and (max-width: 860px) {
+      .report-export-root { margin: 0; }
+    }
     @media print {
-      body { padding: 16px 20px; }
+      body { background: #fff !important; padding: 0 !important; }
+      .report-export-root { width: auto; min-height: 0; margin: 0; }
+      .report-document { width: auto; min-height: 0; margin: 0; padding: 16px 20px; }
       @page { margin: 12mm 14mm; }
-      .page-break { page-break-before: always; margin-top: 0; }
+      .report-document .page-break { page-break-before: always; margin-top: 0; }
     }
   </style>
 </head>
-<body>
+<body style="margin:0;background:#e2e8f0;padding:24px 0;">
+  <div class="report-export-root">
+  <main class="report-document">
   <div class="header">
     <div class="header-left">
       <h1>${esc(className)} — Daily Report</h1>
@@ -208,7 +216,7 @@ ${report.drill_times.length > 0 ? (() => {
   // Get unique student IDs from drill_times
   const studentIds = [...new Set(report.drill_times.map(dt => dt.enrollment_id))]
   const drillColHeaders = activeDrills.map(d =>
-    `<th style="min-width:70px">${esc(d.name)}<br/><span style="font-weight:400;font-size:9px;color:#94a3b8">${d.type === 'drill' ? `Time (s)${d.par_time_seconds ? ' · par ' + d.par_time_seconds : ''}` : `Score${d.target_score ? ' · target ' + d.target_score : ''}`}</span></th>`
+    `<th>${esc(d.name)}<br/><span style="font-weight:400;font-size:9px;color:#94a3b8">${d.type === 'drill' ? `Time (s)${d.par_time_seconds ? ' · par ' + d.par_time_seconds : ''}` : `Score${d.target_score ? ' · target ' + d.target_score : ''}`}</span></th>`
   ).join('')
 
   const drillBodyRows = studentIds.map(enrollmentId => {
@@ -263,6 +271,8 @@ ${report.drill_times.length > 0 ? (() => {
     </footer>
   </div>`
 })() : ''}
+  </main>
+  </div>
 </body>
 </html>`
 }

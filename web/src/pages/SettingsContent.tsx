@@ -11,6 +11,7 @@ import { PROVINCES, type Profile } from '../types'
 
 const inputClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/60 focus:ring-2 focus:ring-gw-blue/20 dark:focus:border-gw-blue/40 dark:focus:ring-gw-blue/15'
 const fieldLabel = 'text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider'
+const profileCache = new Map<string, Profile>()
 
 /** Formats phone input as (XXX) XXX-XXXX */
 function formatPhone(raw: string): string {
@@ -24,8 +25,9 @@ export function SettingsContent() {
   const { email, role, signOut } = useAuth()
   const { toast } = useToast()
   const { theme, toggleTheme } = useTheme()
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const initialProfile = profileCache.get(email) ?? null
+  const [profile, setProfile] = useState<Profile | null>(initialProfile)
+  const [loading, setLoading] = useState(!initialProfile)
   const [editing, setEditing] = useState(false)
   const [editFirstName, setEditFirstName] = useState('')
   const [editLastName, setEditLastName] = useState('')
@@ -37,11 +39,21 @@ export function SettingsContent() {
   const [sendingFeedback, setSendingFeedback] = useState(false)
 
   useEffect(() => {
+    const cached = profileCache.get(email)
+    if (cached) {
+      setProfile(cached)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
     api.profiles.me()
-      .then(setProfile)
+      .then(result => {
+        profileCache.set(email, result)
+        setProfile(result)
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [])
+  }, [email])
 
   function startEditing() {
     if (!profile) return
@@ -67,6 +79,7 @@ export function SettingsContent() {
         phone: editPhone.replace(/\D/g, '').length >= 10 ? editPhone : editPhone.trim() || undefined,
         province: editProvince || undefined,
       })
+      profileCache.set(email, updated)
       setProfile(updated)
       setEditing(false)
       toast('Profile updated', 'success')

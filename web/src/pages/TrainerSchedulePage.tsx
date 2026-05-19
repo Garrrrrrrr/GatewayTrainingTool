@@ -7,16 +7,24 @@ import { Pagination } from '../components/Pagination'
 import type { ClassScheduleSlot } from '../types'
 
 type ScheduleRow = ClassScheduleSlot & { classes: { id: string; name: string; site: string; province: string; game_type: string | null; archived: boolean } }
+type TrainerScheduleSnapshot = { slots: ScheduleRow[]; total: number }
+const trainerScheduleCache = new Map<string, TrainerScheduleSnapshot>()
+
+function trainerScheduleCacheKey(classId: string, from: string, to: string, group: string, page: number): string {
+  return `${classId}:${from}:${to}:${group}:${page}`
+}
 
 export function TrainerSchedulePage() {
   const { classes } = useTrainer()
-  const [slots, setSlots] = useState<ScheduleRow[]>([])
-  const [total, setTotal] = useState(0)
+  const today = new Date().toISOString().slice(0, 10)
+  const initialCached = trainerScheduleCache.get(trainerScheduleCacheKey('', today, '', '', 0))
+  const [slots, setSlots] = useState<ScheduleRow[]>(() => initialCached?.slots ?? [])
+  const [total, setTotal] = useState(() => initialCached?.total ?? 0)
   const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => !initialCached)
 
   const [filterClass, setFilterClass] = useState('')
-  const [filterFrom, setFilterFrom] = useState(new Date().toISOString().slice(0, 10))
+  const [filterFrom, setFilterFrom] = useState(today)
   const [filterTo, setFilterTo] = useState('')
   const [filterGroup, setFilterGroup] = useState('')
 
@@ -24,7 +32,16 @@ export function TrainerSchedulePage() {
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
+    const key = trainerScheduleCacheKey(filterClass, filterFrom, filterTo, filterGroup, page)
+    const cached = trainerScheduleCache.get(key)
+    if (cached) {
+      setSlots(cached.slots)
+      setTotal(cached.total)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     api.selfService.allSchedule({
       class_id: filterClass || undefined,
       date_from: filterFrom || undefined,
@@ -35,7 +52,9 @@ export function TrainerSchedulePage() {
     })
       .then(res => {
         if (cancelled) return
-        setSlots(res.data as ScheduleRow[])
+        const nextSlots = res.data as ScheduleRow[]
+        trainerScheduleCache.set(key, { slots: nextSlots, total: res.total })
+        setSlots(nextSlots)
         setTotal(res.total)
       })
       .catch(err => console.error(err))
@@ -45,7 +64,7 @@ export function TrainerSchedulePage() {
 
   function reset() {
     setFilterClass('')
-    setFilterFrom(new Date().toISOString().slice(0, 10))
+    setFilterFrom(today)
     setFilterTo('')
     setFilterGroup('')
     setPage(0)
@@ -69,7 +88,7 @@ export function TrainerSchedulePage() {
         <input type="date" value={filterFrom} onChange={e => { setFilterFrom(e.target.value); setPage(0) }} className={inputClass} title="From date" />
         <input type="date" value={filterTo} onChange={e => { setFilterTo(e.target.value); setPage(0) }} className={inputClass} title="To date" />
         <input type="text" value={filterGroup} onChange={e => { setFilterGroup(e.target.value); setPage(0) }} className={inputClass} placeholder="Group label…" />
-        {(filterClass || filterTo || filterGroup || filterFrom !== new Date().toISOString().slice(0, 10)) && (
+        {(filterClass || filterTo || filterGroup || filterFrom !== today) && (
           <button type="button" onClick={reset} className="h-8 px-3 rounded text-xs text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/10 hover:text-slate-800 dark:hover:text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-white/20 transition-colors">Reset</button>
         )}
       </div>

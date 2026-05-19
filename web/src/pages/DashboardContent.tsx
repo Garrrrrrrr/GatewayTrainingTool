@@ -46,55 +46,112 @@ const ACTIVITY_ICONS: Record<string, string> = {
 }
 
 const MAX_CLASSES_SHOWN = 5
+type HoursSummary = { total_hours: number; trainer_count: number }
+type EnrollmentSummary = { enrolled: number; failed: number; dropped: number }
+type AttendanceRate = { rate: number | null }
+type UnreportedSession = { class_id: string; class_name: string }
+type ActivityItem = { type: string; description: string; timestamp: string; link_to: string }
+type DashboardSnapshot = {
+  upcomingSessions: ScheduleRow[]
+  recentReportsTotal: number
+  hoursSummary: HoursSummary | null
+  enrollmentSummary: EnrollmentSummary | null
+  attendanceRate: AttendanceRate | null
+  unreportedSessions: UnreportedSession[]
+  activityItems: ActivityItem[]
+}
+const dashboardCache = new Map<string, DashboardSnapshot>()
 
 export function DashboardContent() {
   const { active, loading: classesLoading, refresh: refreshClasses } = useClasses()
   const navigate = useNavigate()
   useDocumentTitle('Dashboard')
 
-  const [upcomingSessions, setUpcomingSessions] = useState<ScheduleRow[]>([])
-  const [sessionsLoading, setSessionsLoading] = useState(true)
-  const [recentReportsTotal, setRecentReportsTotal] = useState(0)
-  const [reportsLoading, setReportsLoading] = useState(true)
-  const [createOpen, setCreateOpen] = useState(false)
-
-  // New dashboard data
-  const [hoursSummary, setHoursSummary] = useState<{ total_hours: number; trainer_count: number } | null>(null)
-  const [enrollmentSummary, setEnrollmentSummary] = useState<{ enrolled: number; failed: number; dropped: number } | null>(null)
-  const [attendanceRate, setAttendanceRate] = useState<{ rate: number | null } | null>(null)
-  const [unreportedSessions, setUnreportedSessions] = useState<{ class_id: string; class_name: string }[]>([])
-  const [activityItems, setActivityItems] = useState<{ type: string; description: string; timestamp: string; link_to: string }[]>([])
-  const [activityLoading, setActivityLoading] = useState(true)
-
   const today = toISODate(new Date())
   const fiveDaysOut = toISODate(new Date(Date.now() + 5 * 86400000))
   const tomorrow = toISODate(new Date(Date.now() + 86400000))
+  const initialDashboard = dashboardCache.get(today)
+
+  const [upcomingSessions, setUpcomingSessions] = useState<ScheduleRow[]>(() => initialDashboard?.upcomingSessions ?? [])
+  const [sessionsLoading, setSessionsLoading] = useState(() => !initialDashboard)
+  const [recentReportsTotal, setRecentReportsTotal] = useState(() => initialDashboard?.recentReportsTotal ?? 0)
+  const [reportsLoading, setReportsLoading] = useState(() => !initialDashboard)
+  const [createOpen, setCreateOpen] = useState(false)
+
+  // New dashboard data
+  const [hoursSummary, setHoursSummary] = useState<HoursSummary | null>(() => initialDashboard?.hoursSummary ?? null)
+  const [enrollmentSummary, setEnrollmentSummary] = useState<EnrollmentSummary | null>(() => initialDashboard?.enrollmentSummary ?? null)
+  const [attendanceRate, setAttendanceRate] = useState<AttendanceRate | null>(() => initialDashboard?.attendanceRate ?? null)
+  const [unreportedSessions, setUnreportedSessions] = useState<UnreportedSession[]>(() => initialDashboard?.unreportedSessions ?? [])
+  const [activityItems, setActivityItems] = useState<ActivityItem[]>(() => initialDashboard?.activityItems ?? [])
+  const [activityLoading, setActivityLoading] = useState(() => !initialDashboard)
 
   useEffect(() => {
+    let cancelled = false
+    const cached = dashboardCache.get(today)
+    if (cached) {
+      setUpcomingSessions(cached.upcomingSessions)
+      setRecentReportsTotal(cached.recentReportsTotal)
+      setHoursSummary(cached.hoursSummary)
+      setEnrollmentSummary(cached.enrollmentSummary)
+      setAttendanceRate(cached.attendanceRate)
+      setUnreportedSessions(cached.unreportedSessions)
+      setActivityItems(cached.activityItems)
+      setSessionsLoading(false)
+      setReportsLoading(false)
+      setActivityLoading(false)
+    } else {
+      setSessionsLoading(true)
+      setReportsLoading(true)
+      setActivityLoading(true)
+    }
+
     const sevenDaysAgo = toISODate(new Date(Date.now() - 7 * 86400000))
 
-    api.schedule.listAll({ date_from: today, date_to: fiveDaysOut, limit: 200 })
-      .then(res => setUpcomingSessions(res.data))
-      .catch(() => setUpcomingSessions([]))
-      .finally(() => setSessionsLoading(false))
+    Promise.all([
+      api.schedule.listAll({ date_from: today, date_to: fiveDaysOut, limit: 200 }).then(res => res.data).catch(() => []),
+      api.reports.listAll({ date_from: sevenDaysAgo, limit: 1 }).then(res => res.total).catch(() => 0),
+      api.dashboard.hoursSummary().catch(() => null),
+      api.dashboard.enrollmentSummary().catch(() => null),
+      api.dashboard.attendanceRate().catch(() => null),
+      api.dashboard.unreportedSessions().then(res => res.classes).catch(() => []),
+      api.dashboard.activity(10).then(res => res.items).catch(() => []),
+    ]).then(([
+      nextUpcomingSessions,
+      nextRecentReportsTotal,
+      nextHoursSummary,
+      nextEnrollmentSummary,
+      nextAttendanceRate,
+      nextUnreportedSessions,
+      nextActivityItems,
+    ]) => {
+      if (cancelled) return
+      const snapshot: DashboardSnapshot = {
+        upcomingSessions: nextUpcomingSessions,
+        recentReportsTotal: nextRecentReportsTotal,
+        hoursSummary: nextHoursSummary,
+        enrollmentSummary: nextEnrollmentSummary,
+        attendanceRate: nextAttendanceRate,
+        unreportedSessions: nextUnreportedSessions,
+        activityItems: nextActivityItems,
+      }
+      dashboardCache.set(today, snapshot)
+      setUpcomingSessions(snapshot.upcomingSessions)
+      setRecentReportsTotal(snapshot.recentReportsTotal)
+      setHoursSummary(snapshot.hoursSummary)
+      setEnrollmentSummary(snapshot.enrollmentSummary)
+      setAttendanceRate(snapshot.attendanceRate)
+      setUnreportedSessions(snapshot.unreportedSessions)
+      setActivityItems(snapshot.activityItems)
+    }).finally(() => {
+      if (cancelled) return
+      setSessionsLoading(false)
+      setReportsLoading(false)
+      setActivityLoading(false)
+    })
 
-    api.reports.listAll({ date_from: sevenDaysAgo, limit: 1 })
-      .then(res => setRecentReportsTotal(res.total))
-      .catch(() => setRecentReportsTotal(0))
-      .finally(() => setReportsLoading(false))
-
-    api.dashboard.hoursSummary().then(setHoursSummary).catch(() => {})
-    api.dashboard.enrollmentSummary().then(setEnrollmentSummary).catch(() => {})
-    api.dashboard.attendanceRate().then(setAttendanceRate).catch(() => {})
-    api.dashboard.unreportedSessions()
-      .then(res => setUnreportedSessions(res.classes))
-      .catch(() => {})
-    api.dashboard.activity(10)
-      .then(res => setActivityItems(res.items))
-      .catch(() => {})
-      .finally(() => setActivityLoading(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    return () => { cancelled = true }
+  }, [today, fiveDaysOut])
 
   const provinceCounts = active.reduce<Record<string, number>>((acc, c) => {
     acc[c.province] = (acc[c.province] || 0) + 1

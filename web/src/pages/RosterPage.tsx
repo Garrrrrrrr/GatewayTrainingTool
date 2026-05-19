@@ -14,18 +14,34 @@ interface RosterPageProps {
 }
 
 const PAGE_SIZE = 25
+type RosterSnapshot = { rows: RosterRow[]; total: number }
+const rosterCache = new Map<string, RosterSnapshot>()
+
+function rosterCacheKey(role: RosterPageProps['role'], q: string, p: number): string {
+  return `${role}:${q}:${p}`
+}
 
 export function RosterPage({ role, title, subtitle }: RosterPageProps) {
   const navigate = useNavigate()
-  const [rows, setRows] = useState<RosterRow[]>([])
-  const [total, setTotal] = useState(0)
+  const initialCached = rosterCache.get(rosterCacheKey(role, '', 0))
+  const [rows, setRows] = useState<RosterRow[]>(() => initialCached?.rows ?? [])
+  const [total, setTotal] = useState(() => initialCached?.total ?? 0)
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => !initialCached)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchRows = useCallback(async (q: string, p: number) => {
-    setLoading(true)
+    const key = rosterCacheKey(role, q, p)
+    const cached = rosterCache.get(key)
+    if (cached) {
+      setRows(cached.rows)
+      setTotal(cached.total)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     try {
       const res = await api.profiles.searchPaginated({
         role,
@@ -33,7 +49,9 @@ export function RosterPage({ role, title, subtitle }: RosterPageProps) {
         page: p,
         limit: PAGE_SIZE,
       })
-      setRows(res.data as RosterRow[])
+      const nextRows = res.data as RosterRow[]
+      rosterCache.set(key, { rows: nextRows, total: res.total })
+      setRows(nextRows)
       setTotal(res.total)
     } catch (err) {
       console.error('fetchRows error:', (err as Error).message)

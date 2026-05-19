@@ -29,24 +29,36 @@ type ClassDetailTab =
   | 'documents'
   | 'payroll'
 
+const classByNameCache = new Map<string, Class>()
+
 export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPageProps) {
-  const [classData, setClassData] = useState<Class | null>(null)
-  const [loading, setLoading] = useState(true)
+  const initialClassData = classByNameCache.get(className) ?? null
+  const [classData, setClassData] = useState<Class | null>(initialClassData)
+  const [loading, setLoading] = useState(!initialClassData)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<ClassDetailTab>(deepLinkedReportId ? 'dailyReports' : 'overview')
   const [editOpen, setEditOpen] = useState(false)
 
   useEffect(() => {
     async function loadClass() {
-      setLoading(true)
+      const cached = classByNameCache.get(className)
+      if (cached) {
+        setClassData(cached)
+        setLoading(false)
+      } else {
+        setLoading(true)
+      }
       setError(null)
       try {
         const data = await api.classes.getByName(className)
+        classByNameCache.set(className, data)
         setClassData(data)
       } catch (err) {
         console.error('loadClass error:', (err as Error).message)
-        setError('Unable to load class.')
-        setClassData(null)
+        if (!cached) {
+          setError('Unable to load class.')
+          setClassData(null)
+        }
       } finally {
         setLoading(false)
       }
@@ -154,6 +166,8 @@ export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPa
           classData={classData}
           onClose={() => setEditOpen(false)}
           onSuccess={(updated) => {
+            classByNameCache.delete(className)
+            classByNameCache.set(updated.name, updated)
             setClassData(updated)
             setEditOpen(false)
           }}

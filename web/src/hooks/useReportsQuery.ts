@@ -32,13 +32,45 @@ const DEFAULT_FILTERS: ReportsFilters = {
 const DEFAULT_SORT: ReportsSort = { column: 'report_date', direction: 'desc' }
 const PAGE_SIZE = 50
 
+type ReportsQuerySnapshot = { reports: ReportRow[]; total: number }
+const reportsQueryCache = new Map<string, ReportsQuerySnapshot>()
+
+function buildReportParams(
+  f: ReportsFilters,
+  s: ReportsSort,
+  p: number,
+  search: string,
+): ReportListParams {
+  const params: ReportListParams = {
+    sort_by: s.column,
+    sort_dir: s.direction,
+    page: p,
+    limit: PAGE_SIZE,
+    archived: f.archived,
+  }
+  if (f.province) params.province = f.province
+  if (f.site) params.site = f.site
+  if (f.class_id) params.class_id = f.class_id
+  if (f.game_type) params.game_type = f.game_type
+  if (f.date_from) params.date_from = f.date_from
+  if (f.date_to) params.date_to = f.date_to
+  if (search) params.search = search
+  return params
+}
+
+function reportsCacheKey(params: ReportListParams): string {
+  return JSON.stringify(params)
+}
+
 export function useReportsQuery() {
+  const initialParams = buildReportParams(DEFAULT_FILTERS, DEFAULT_SORT, 0, '')
+  const initialCached = reportsQueryCache.get(reportsCacheKey(initialParams))
   const [filters, setFilters] = useState<ReportsFilters>(DEFAULT_FILTERS)
   const [sort, setSort] = useState<ReportsSort>(DEFAULT_SORT)
   const [page, setPage] = useState(0)
-  const [reports, setReports] = useState<ReportRow[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [reports, setReports] = useState<ReportRow[]>(() => initialCached?.reports ?? [])
+  const [total, setTotal] = useState(() => initialCached?.total ?? 0)
+  const [loading, setLoading] = useState(() => !initialCached)
   const [refreshKey, setRefreshKey] = useState(0)
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -62,30 +94,29 @@ export function useReportsQuery() {
     p: number,
     search: string,
   ) => {
-    setLoading(true)
-    try {
-      const params: ReportListParams = {
-        sort_by: s.column,
-        sort_dir: s.direction,
-        page: p,
-        limit: PAGE_SIZE,
-        archived: f.archived,
-      }
-      if (f.province) params.province = f.province
-      if (f.site) params.site = f.site
-      if (f.class_id) params.class_id = f.class_id
-      if (f.game_type) params.game_type = f.game_type
-      if (f.date_from) params.date_from = f.date_from
-      if (f.date_to) params.date_to = f.date_to
-      if (search) params.search = search
+    const params = buildReportParams(f, s, p, search)
+    const key = reportsCacheKey(params)
+    const cached = reportsQueryCache.get(key)
 
+    if (cached) {
+      setReports(cached.reports)
+      setTotal(cached.total)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
+    try {
       const result = await api.reports.listAll(params)
+      reportsQueryCache.set(key, { reports: result.data, total: result.total })
       setReports(result.data)
       setTotal(result.total)
     } catch (err) {
       console.error('useReportsQuery fetch error:', (err as Error).message)
-      setReports([])
-      setTotal(0)
+      if (!cached) {
+        setReports([])
+        setTotal(0)
+      }
     } finally {
       setLoading(false)
     }
@@ -96,7 +127,11 @@ export function useReportsQuery() {
     fetchReports(filters, sort, page, debouncedSearch)
   }, [filters, sort, page, debouncedSearch, fetchReports, refreshKey])
 
-  const refetch = useCallback(() => setRefreshKey(k => k + 1), [])
+  const refetch = useCallback(() => {
+    reportsQueryCache.clear()
+    api.cache.clear('/reports')
+    setRefreshKey(k => k + 1)
+  }, [])
 
   const updateFilter = useCallback(<K extends keyof ReportsFilters>(key: K, value: ReportsFilters[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }))

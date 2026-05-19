@@ -78,6 +78,77 @@ async function authHeaders(): Promise<HeadersInit> {
 // in-flight, subsequent callers share the same Promise instead of firing again.
 const inFlight = new Map<string, Promise<unknown>>()
 
+const GET_CACHE_FRESH_MS = 5 * 60 * 1000
+const GET_CACHE_STALE_MS = 30 * 60 * 1000
+
+type CachedResponse = {
+  data: unknown
+  fetchedAt: number
+}
+
+const responseCache = new Map<string, CachedResponse>()
+let cacheEpoch = 0
+
+function isCacheableGet(path: string): boolean {
+  return !path.startsWith('/search') &&
+    !path.startsWith('/audit') &&
+    !path.startsWith('/system-health') &&
+    !path.includes('/download')
+}
+
+function readCachedResponse<T>(path: string): { data: T; stale: boolean } | null {
+  const entry = responseCache.get(path)
+  if (!entry) return null
+
+  const age = Date.now() - entry.fetchedAt
+  if (age > GET_CACHE_STALE_MS) {
+    responseCache.delete(path)
+    return null
+  }
+
+  return { data: entry.data as T, stale: age > GET_CACHE_FRESH_MS }
+}
+
+function writeCachedResponse<T>(path: string, data: T) {
+  responseCache.set(path, { data, fetchedAt: Date.now() })
+}
+
+function refreshCachedResponse<T>(path: string, init: RequestInit) {
+  if (inFlight.has(path)) return
+
+  const requestEpoch = cacheEpoch
+  const promise = doReq<T>(path, init)
+    .then(result => {
+      if (requestEpoch === cacheEpoch) writeCachedResponse(path, result)
+      return result
+    })
+
+  inFlight.set(path, promise)
+  promise
+    .catch(err => console.error('Background refresh failed:', (err as Error).message))
+    .finally(() => inFlight.delete(path))
+}
+
+export function clearApiCache(prefix?: string) {
+  cacheEpoch += 1
+  if (!prefix) {
+    responseCache.clear()
+    inFlight.clear()
+    return
+  }
+
+  for (const key of responseCache.keys()) {
+    if (key.startsWith(prefix)) responseCache.delete(key)
+  }
+  for (const key of inFlight.keys()) {
+    if (key.startsWith(prefix)) inFlight.delete(key)
+  }
+}
+
+export function peekApiCache<T>(path: string): T | null {
+  return readCachedResponse<T>(path)?.data ?? null
+}
+
 /**
  * Generic fetch wrapper used by all API methods.
  * - Prepends API_BASE + "/api" to the path.
@@ -85,18 +156,43 @@ const inFlight = new Map<string, Promise<unknown>>()
  * - Returns `undefined` (typed as T) for 204 No Content responses (e.g. DELETE).
  * - Throws an Error with the server's `error` field message if the response is not ok.
  * - Deduplicates concurrent GET requests to the same path.
+ * - Reuses recent GET responses across route visits and refreshes stale entries
+ *   in the background.
  */
 async function req<T>(path: string, init: RequestInit = {}): Promise<T> {
   const method = (init.method ?? 'GET').toUpperCase()
   if (method === 'GET') {
-    const cached = inFlight.get(path)
-    if (cached) return cached as Promise<T>
-    const promise = doReq<T>(path, init)
+    if (!isCacheableGet(path)) {
+      const uncached = inFlight.get(path)
+      if (uncached) return uncached as Promise<T>
+      const promise = doReq<T>(path, init)
+      inFlight.set(path, promise)
+      promise.finally(() => inFlight.delete(path))
+      return promise
+    }
+
+    const cached = readCachedResponse<T>(path)
+    if (cached) {
+      if (cached.stale) refreshCachedResponse<T>(path, init)
+      return cached.data
+    }
+
+    const pending = inFlight.get(path)
+    if (pending) return pending as Promise<T>
+
+    const requestEpoch = cacheEpoch
+    const promise = doReq<T>(path, init).then(result => {
+      if (requestEpoch === cacheEpoch) writeCachedResponse(path, result)
+      return result
+    })
     inFlight.set(path, promise)
     promise.finally(() => inFlight.delete(path))
     return promise
   }
-  return doReq<T>(path, init)
+
+  const result = await doReq<T>(path, init)
+  clearApiCache()
+  return result
 }
 
 async function doReq<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -162,6 +258,7 @@ async function uploadReq<T>(path: string, file: File, description?: string): Pro
     const textMessage = typeof body === 'string' ? body : null
     throw new Error(jsonMessage ?? textMessage ?? `Request failed: ${res.status}`)
   }
+  clearApiCache()
   return body as T
 }
 
@@ -575,6 +672,11 @@ function paramsQs(params?: object): string {
  * try/catch or .catch() for error handling.
  */
 export const api = {
+  cache: {
+    clear: clearApiCache,
+    peek: peekApiCache,
+  },
+
   classes: {
     /** Fetch all classes. Pass `{ archived: false }` (default) or `{ archived: true }`. */
     list: (params?: { archived?: boolean }) => {

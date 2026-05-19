@@ -34,13 +34,46 @@ const DEFAULT_FILTERS: ScheduleFilters = {
 const DEFAULT_SORT: ScheduleSort = { column: 'slot_date', direction: 'asc' }
 const PAGE_SIZE = 50
 
+type ScheduleQuerySnapshot = { slots: ScheduleRow[]; total: number }
+const scheduleQueryCache = new Map<string, ScheduleQuerySnapshot>()
+
+function buildScheduleParams(
+  f: ScheduleFilters,
+  s: ScheduleSort,
+  p: number,
+  search: string,
+): ScheduleListParams {
+  const params: ScheduleListParams = {
+    sort_by: s.column,
+    sort_dir: s.direction,
+    page: p,
+    limit: PAGE_SIZE,
+    archived: f.archived,
+  }
+  if (f.province) params.province = f.province
+  if (f.site) params.site = f.site
+  if (f.class_id) params.class_id = f.class_id
+  if (f.game_type) params.game_type = f.game_type
+  if (f.date_from) params.date_from = f.date_from
+  if (f.date_to) params.date_to = f.date_to
+  if (f.group_label) params.group_label = f.group_label
+  if (search) params.search = search
+  return params
+}
+
+function scheduleCacheKey(params: ScheduleListParams): string {
+  return JSON.stringify(params)
+}
+
 export function useScheduleQuery() {
+  const initialParams = buildScheduleParams(DEFAULT_FILTERS, DEFAULT_SORT, 0, '')
+  const initialCached = scheduleQueryCache.get(scheduleCacheKey(initialParams))
   const [filters, setFilters] = useState<ScheduleFilters>(DEFAULT_FILTERS)
   const [sort, setSort] = useState<ScheduleSort>(DEFAULT_SORT)
   const [page, setPage] = useState(0)
-  const [slots, setSlots] = useState<ScheduleRow[]>([])
-  const [total, setTotal] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [slots, setSlots] = useState<ScheduleRow[]>(() => initialCached?.slots ?? [])
+  const [total, setTotal] = useState(() => initialCached?.total ?? 0)
+  const [loading, setLoading] = useState(() => !initialCached)
 
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -61,31 +94,29 @@ export function useScheduleQuery() {
     p: number,
     search: string,
   ) => {
-    setLoading(true)
-    try {
-      const params: ScheduleListParams = {
-        sort_by: s.column,
-        sort_dir: s.direction,
-        page: p,
-        limit: PAGE_SIZE,
-        archived: f.archived,
-      }
-      if (f.province) params.province = f.province
-      if (f.site) params.site = f.site
-      if (f.class_id) params.class_id = f.class_id
-      if (f.game_type) params.game_type = f.game_type
-      if (f.date_from) params.date_from = f.date_from
-      if (f.date_to) params.date_to = f.date_to
-      if (f.group_label) params.group_label = f.group_label
-      if (search) params.search = search
+    const params = buildScheduleParams(f, s, p, search)
+    const key = scheduleCacheKey(params)
+    const cached = scheduleQueryCache.get(key)
 
+    if (cached) {
+      setSlots(cached.slots)
+      setTotal(cached.total)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
+    try {
       const result = await api.schedule.listAll(params)
+      scheduleQueryCache.set(key, { slots: result.data, total: result.total })
       setSlots(result.data)
       setTotal(result.total)
     } catch (err) {
       console.error('useScheduleQuery fetch error:', (err as Error).message)
-      setSlots([])
-      setTotal(0)
+      if (!cached) {
+        setSlots([])
+        setTotal(0)
+      }
     } finally {
       setLoading(false)
     }

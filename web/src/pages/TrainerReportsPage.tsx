@@ -8,13 +8,20 @@ import type { ClassDailyReport } from '../types'
 import type { ReportRowClass } from '../lib/apiClient'
 
 type ReportRow = ClassDailyReport & { classes: ReportRowClass }
+type TrainerReportsSnapshot = { reports: ReportRow[]; total: number }
+const trainerReportsCache = new Map<string, TrainerReportsSnapshot>()
+
+function trainerReportsCacheKey(classId: string, from: string, to: string, page: number): string {
+  return `${classId}:${from}:${to}:${page}`
+}
 
 export function TrainerReportsPage() {
   const { classes } = useTrainer()
-  const [reports, setReports] = useState<ReportRow[]>([])
-  const [total, setTotal] = useState(0)
+  const initialCached = trainerReportsCache.get(trainerReportsCacheKey('', '', '', 0))
+  const [reports, setReports] = useState<ReportRow[]>(() => initialCached?.reports ?? [])
+  const [total, setTotal] = useState(() => initialCached?.total ?? 0)
   const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => !initialCached)
 
   const [filterClass, setFilterClass] = useState('')
   const [filterFrom, setFilterFrom] = useState('')
@@ -24,7 +31,16 @@ export function TrainerReportsPage() {
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
+    const key = trainerReportsCacheKey(filterClass, filterFrom, filterTo, page)
+    const cached = trainerReportsCache.get(key)
+    if (cached) {
+      setReports(cached.reports)
+      setTotal(cached.total)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     api.selfService.allReports({
       class_id: filterClass || undefined,
       date_from: filterFrom || undefined,
@@ -34,7 +50,9 @@ export function TrainerReportsPage() {
     })
       .then(res => {
         if (cancelled) return
-        setReports(res.data as ReportRow[])
+        const nextReports = res.data as ReportRow[]
+        trainerReportsCache.set(key, { reports: nextReports, total: res.total })
+        setReports(nextReports)
         setTotal(res.total)
       })
       .catch(err => console.error(err))

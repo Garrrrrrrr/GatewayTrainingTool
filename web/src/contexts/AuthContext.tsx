@@ -20,6 +20,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { clearApiCache } from '../lib/apiClient'
 import type { UserRole } from '../types'
 
 /** The shape of data exposed by AuthContext to all consumers. */
@@ -85,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Subscribe to future auth state changes (sign-in, sign-out, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      clearApiCache()
       setSession(session)
       if (session) fetchRole(session.user.id)
       else {
@@ -99,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /** Signs the user out via Supabase; the auth listener above will clear session/role. */
   const signOut = useCallback(() => {
+    clearApiCache()
     supabase.auth.signOut()
   }, [])
 

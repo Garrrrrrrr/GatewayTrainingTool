@@ -7,14 +7,25 @@ import { Pagination } from '../components/Pagination'
 import type { TrainerMyHoursResponse } from '../types'
 
 type HoursRow = TrainerMyHoursResponse['data'][0]
+type TrainerHoursSnapshot = {
+  rows: HoursRow[]
+  total: number
+  summary: TrainerMyHoursResponse['summary']
+}
+const trainerHoursCache = new Map<string, TrainerHoursSnapshot>()
+
+function trainerHoursCacheKey(classId: string, from: string, to: string, page: number): string {
+  return `${classId}:${from}:${to}:${page}`
+}
 
 export function TrainerHoursPage() {
   const { classes } = useTrainer()
-  const [rows, setRows] = useState<HoursRow[]>([])
-  const [total, setTotal] = useState(0)
-  const [summary, setSummary] = useState({ total_hours: 0, paid_hours: 0, unpaid_hours: 0 })
+  const initialCached = trainerHoursCache.get(trainerHoursCacheKey('', '', '', 0))
+  const [rows, setRows] = useState<HoursRow[]>(() => initialCached?.rows ?? [])
+  const [total, setTotal] = useState(() => initialCached?.total ?? 0)
+  const [summary, setSummary] = useState(() => initialCached?.summary ?? { total_hours: 0, paid_hours: 0, unpaid_hours: 0 })
   const [page, setPage] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => !initialCached)
 
   const [filterClass, setFilterClass] = useState('')
   const [filterFrom, setFilterFrom] = useState('')
@@ -24,7 +35,17 @@ export function TrainerHoursPage() {
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
+    const key = trainerHoursCacheKey(filterClass, filterFrom, filterTo, page)
+    const cached = trainerHoursCache.get(key)
+    if (cached) {
+      setRows(cached.rows)
+      setTotal(cached.total)
+      setSummary(cached.summary)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     api.selfService.allHours({
       class_id: filterClass || undefined,
       date_from: filterFrom || undefined,
@@ -34,6 +55,11 @@ export function TrainerHoursPage() {
     })
       .then(res => {
         if (cancelled) return
+        trainerHoursCache.set(key, {
+          rows: res.data,
+          total: res.total,
+          summary: res.summary,
+        })
         setRows(res.data)
         setTotal(res.total)
         setSummary(res.summary)

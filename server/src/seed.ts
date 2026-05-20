@@ -10,20 +10,17 @@
  *
  * Usage:
  *   npx tsx server/src/seed.ts
+ *   npx tsx server/src/seed.ts --reset
  *
  * The script uses the Supabase service role client (bypasses RLS).
- * It creates profiles directly in the `profiles` table — these users won't have
- * auth accounts, so you can't log in as them. They exist for data population only.
+ * It creates or reuses Supabase Auth users, then upserts matching profiles.
+ * Seed users share SEED_USER_PASSWORD, defaulting to Gateway123!.
  *
- * To log in as a coordinator, create a real account via the app's auth flow,
- * then set their role to 'coordinator' in the profiles table.
- *
- * The script is idempotent-ish: it checks for existing classes by name and skips
- * if they already exist. Run it multiple times safely.
+ * The script is idempotent-ish by default: it checks for existing classes by name
+ * and skips if they already exist. Run it with --reset to delete app data first.
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { randomUUID } from 'node:crypto'
 import 'dotenv/config'
 
 const url = process.env.SUPABASE_URL!
@@ -34,12 +31,10 @@ if (!url || !key) {
 }
 
 const supabase = createClient(url, key, { auth: { persistSession: false } })
+const shouldReset = process.argv.includes('--reset')
+const seedUserPassword = process.env.SEED_USER_PASSWORD ?? 'Gateway123!'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-
-function uuid() {
-  return randomUUID()
-}
 
 function randomDate(start: Date, end: Date): string {
   const d = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))
@@ -52,13 +47,25 @@ function randomItem<T>(arr: T[]): T {
 
 // ─── Seed data ──────────────────────────────────────────────────────────────
 
-const trainerProfiles = [
-  { id: uuid(), email: 'sarah.chen@gateway.ca', full_name: 'Sarah Chen', role: 'trainer', province: 'BC' },
-  { id: uuid(), email: 'mike.johnson@gateway.ca', full_name: 'Mike Johnson', role: 'trainer', province: 'BC' },
-  { id: uuid(), email: 'lisa.wong@gateway.ca', full_name: 'Lisa Wong', role: 'trainer', province: 'AB' },
-  { id: uuid(), email: 'james.patel@gateway.ca', full_name: 'James Patel', role: 'trainer', province: 'AB' },
-  { id: uuid(), email: 'maria.garcia@gateway.ca', full_name: 'Maria Garcia', role: 'trainer', province: 'ON' },
-  { id: uuid(), email: 'david.kim@gateway.ca', full_name: 'David Kim', role: 'trainer', province: 'ON' },
+type SeedProfile = {
+  id?: string
+  email: string
+  full_name: string
+  role: 'coordinator' | 'trainer' | 'trainee'
+  province: 'BC' | 'AB' | 'ON' | null
+}
+
+const coordinatorProfiles: SeedProfile[] = [
+  { email: 'coordinator@gateway.ca', full_name: 'Casey Coordinator', role: 'coordinator', province: 'BC' },
+]
+
+const trainerProfiles: SeedProfile[] = [
+  { email: 'sarah.chen@gateway.ca', full_name: 'Sarah Chen', role: 'trainer', province: 'BC' },
+  { email: 'mike.johnson@gateway.ca', full_name: 'Mike Johnson', role: 'trainer', province: 'BC' },
+  { email: 'lisa.wong@gateway.ca', full_name: 'Lisa Wong', role: 'trainer', province: 'AB' },
+  { email: 'james.patel@gateway.ca', full_name: 'James Patel', role: 'trainer', province: 'AB' },
+  { email: 'maria.garcia@gateway.ca', full_name: 'Maria Garcia', role: 'trainer', province: 'ON' },
+  { email: 'david.kim@gateway.ca', full_name: 'David Kim', role: 'trainer', province: 'ON' },
 ]
 
 const studentNames = [
@@ -67,6 +74,13 @@ const studentNames = [
   'Avery Hughes', 'Drew Patterson', 'Skyler Reed', 'Peyton Clarke',
   'Sam Nguyen', 'Ash Kowalski', 'River Simmons', 'Blake Harrison',
 ]
+
+const studentProfiles: SeedProfile[] = studentNames.map((name, index) => ({
+  email: name.toLowerCase().replace(/ /g, '.') + '@example.com',
+  full_name: name,
+  role: 'trainee',
+  province: (['BC', 'AB', 'ON'] as const)[index % 3],
+}))
 
 const classes = [
   {
@@ -105,6 +119,15 @@ const classes = [
     end_date: '2026-05-08',
     description: 'Roulette dealer training — April session',
   },
+  {
+    name: 'BJ MAY 01',
+    site: 'Grand Villa',
+    province: 'BC' as const,
+    game_type: 'Blackjack',
+    start_date: '2026-05-18',
+    end_date: '2026-06-26',
+    description: 'Current Blackjack dealer training cohort with upcoming scheduled sessions',
+  },
 ]
 
 const drillTemplates: Record<string, { name: string; type: 'drill' | 'test'; par_time_seconds: number | null; target_score: number | null }[]> = {
@@ -142,28 +165,119 @@ const timelineTemplates = [
 
 // ─── Main seed function ─────────────────────────────────────────────────────
 
+async function findAuthUserByEmail(email: string) {
+  let page = 1
+  const perPage = 1000
+
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage })
+    if (error) {
+      throw new Error(`Failed to list auth users: ${error.message}`)
+    }
+
+    const user = data.users.find(u => u.email?.toLowerCase() === email.toLowerCase())
+    if (user) return user
+    if (data.users.length < perPage) return null
+    page++
+  }
+}
+
+async function ensureAuthUser(profile: SeedProfile) {
+  const existing = await findAuthUserByEmail(profile.email)
+  if (existing) return existing.id
+
+  const { data, error } = await supabase.auth.admin.createUser({
+    email: profile.email,
+    password: seedUserPassword,
+    email_confirm: true,
+    user_metadata: { full_name: profile.full_name },
+  })
+
+  if (error || !data.user) {
+    throw new Error(`Failed to create auth user ${profile.email}: ${error?.message ?? 'no user returned'}`)
+  }
+
+  return data.user.id
+}
+
+async function ensureProfile(profile: SeedProfile) {
+  const authUserId = await ensureAuthUser(profile)
+  const [firstName, ...lastNameParts] = profile.full_name.split(' ')
+  profile.id = authUserId
+
+  const { error } = await supabase
+    .from('profiles')
+    .upsert({
+      id: authUserId,
+      email: profile.email,
+      full_name: profile.full_name,
+      first_name: firstName,
+      last_name: lastNameParts.join(' ') || null,
+      role: profile.role,
+      province: profile.province,
+      role_selected: true,
+    }, { onConflict: 'id' })
+
+  if (error) {
+    throw new Error(`Failed to upsert profile ${profile.email}: ${error.message}`)
+  }
+
+  console.log(`  Seeded profile: ${profile.full_name} (${profile.email}, ${profile.role})`)
+}
+
+async function clearTable(table: string, deleteColumn = 'id') {
+  const { count, error } = await supabase
+    .from(table)
+    .delete({ count: 'exact' })
+    .not(deleteColumn, 'is', null)
+
+  if (error) {
+    throw new Error(`Failed to clear ${table}: ${error.message}`)
+  }
+
+  console.log(`  Cleared ${table}${typeof count === 'number' ? ` (${count} rows)` : ''}`)
+}
+
+async function resetDatabase() {
+  console.log('Resetting database...\n')
+
+  const tables: Array<{ name: string; deleteColumn?: string }> = [
+    { name: 'class_daily_report_drill_times' },
+    { name: 'class_daily_report_trainee_progress' },
+    { name: 'class_daily_report_timeline_items' },
+    { name: 'class_daily_report_trainers', deleteColumn: 'report_id' },
+    { name: 'class_logged_hours' },
+    { name: 'class_schedule_slots' },
+    { name: 'class_documents' },
+    { name: 'legacy_import_batches' },
+    { name: 'class_daily_reports' },
+    { name: 'class_drills' },
+    { name: 'class_trainers' },
+    { name: 'class_enrollments' },
+    { name: 'classes' },
+    { name: 'app_feedback' },
+    { name: 'audit_logs' },
+    { name: 'role_requests' },
+    { name: 'profiles' },
+  ]
+
+  for (const table of tables) {
+    await clearTable(table.name, table.deleteColumn)
+  }
+
+  console.log('\nDatabase reset complete.\n')
+}
+
 async function seed() {
+  if (shouldReset) {
+    await resetDatabase()
+  }
+
   console.log('Starting seed...\n')
 
-  // 1. Upsert trainer profiles (skip if email already exists)
-  for (const p of trainerProfiles) {
-    const { data: existing } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', p.email)
-      .limit(1)
-    if (existing && existing.length > 0) {
-      // Update the id to match what's in the DB so FK references work
-      p.id = existing[0].id
-      console.log(`  Profile exists: ${p.full_name} (${p.email})`)
-    } else {
-      const { error } = await supabase.from('profiles').insert(p)
-      if (error) {
-        console.error(`  Failed to create profile ${p.email}:`, error.message)
-      } else {
-        console.log(`  Created profile: ${p.full_name} (${p.email})`)
-      }
-    }
+  // 1. Upsert auth-backed profiles for login and self-service flows.
+  for (const p of [...coordinatorProfiles, ...trainerProfiles, ...studentProfiles]) {
+    await ensureProfile(p)
   }
 
   // 2. Create classes

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Gateway Training Tool Project Guide</title>
+  <style>
+    @page { margin: 0.75in; }
+    body {
+      font-family: Aptos, Calibri, Arial, sans-serif;
+      color: #1f2937;
+      line-height: 1.45;
+      font-size: 11pt;
+      margin: 0;
+      background: #ffffff;
+    }
+    .cover {
+      border-bottom: 4px solid #0f766e;
+      padding: 0 0 22px 0;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      color: #0f766e;
+      font-size: 10pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      color: #111827;
+      font-size: 30pt;
+      line-height: 1.08;
+      margin: 0 0 12px 0;
+    }
+    .subtitle {
+      color: #4b5563;
+      font-size: 14pt;
+      margin: 0 0 18px 0;
+    }
+    .meta {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #f9fafb;
+      margin-top: 20px;
+    }
+    .meta p { margin: 3px 0; }
+    h2 {
+      color: #0f172a;
+      font-size: 18pt;
+      margin: 26px 0 8px 0;
+      border-bottom: 1px solid #d1d5db;
+      padding-bottom: 4px;
+    }
+    h3 {
+      color: #111827;
+      font-size: 13.5pt;
+      margin: 18px 0 6px 0;
+    }
+    p { margin: 7px 0; }
+    ul, ol { margin-top: 6px; margin-bottom: 10px; }
+    li { margin: 4px 0; }
+    .callout {
+      border-left: 4px solid #0f766e;
+      background: #ecfdf5;
+      padding: 10px 12px;
+      margin: 12px 0;
+    }
+    .screenshot {
+      border: 2px dashed #9ca3af;
+      background: #f3f4f6;
+      color: #374151;
+      padding: 18px;
+      margin: 12px 0 18px 0;
+      text-align: center;
+      font-style: italic;
+      border-radius: 8px;
+    }
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .role-card {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px;
+      background: #ffffff;
+    }
+    .role-card h3 { margin-top: 0; color: #0f766e; }
+    .toc {
+      background: #f8fafc;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 18px 0;
+    }
+    .toc p {
+      margin: 3px 0;
+      color: #374151;
+    }
+    .feature-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px 0;
+    }
+    .feature-table th,
+    .feature-table td {
+      border: 1px solid #d1d5db;
+      padding: 8px;
+      vertical-align: top;
+    }
+    .feature-table th {
+      background: #f3f4f6;
+      color: #111827;
+      text-align: left;
+    }
+    .page-break { page-break-before: always; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div class="eyebrow">Project Guide</div>
+    <h1>Gateway Training Tool</h1>
+    <p class="subtitle">Beginner-friendly guide to the web application, its features, and how it supports training coordination.</p>
+    <div class="meta">
+      <p><strong>Audience:</strong> Training coordinators, trainers, students/trainees, and leadership reviewers</p>
+      <p><strong>Project type:</strong> Internal training management web application</p>
+      <p><strong>Status:</strong> Working web application prototype / internal platform</p>
+    </div>
+  </section>
+
+  <div class="toc">
+    <p><strong>Contents</strong></p>
+    <p>1. Overview</p>
+    <p>2. What The Web App Does</p>
+    <p>3. User Roles</p>
+    <p>4. Main Features</p>
+    <p>5. How To Use The Web App</p>
+    <p>6. Suggested Demo Workflow</p>
+    <p>7. Future Improvements</p>
+    <p>8. Summary</p>
+  </div>
+
+  <h2>1. Overview</h2>
+  <p>Gateway Training Tool is a web-based internal training management application designed for Gateway Casinos training teams. It brings class setup, trainee rosters, schedules, daily reports, trainer hours, audit history, and role-specific dashboards into one organized system.</p>
+  <p>The goal is to reduce scattered paperwork and manual tracking while giving training coordinators a clearer view of what is happening across active classes. Instead of managing training information across separate spreadsheets, emails, handwritten notes, and shared folders, the web app provides a central place to track the daily training workflow.</p>
+
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the login page or main coordinator dashboard here.</div>
+
+  <div class="callout">
+    <strong>Plain-language purpose:</strong> The app helps training teams see what is scheduled, who is assigned, what has been reported, who needs follow-up, and what changed over time.
+  </div>
+
+  <h2>2. What The Web App Does</h2>
+  <p>The application supports the daily work of training coordination. It is organized around common tasks that training teams already perform, but brings those tasks into one shared system.</p>
+  <ul>
+    <li>Create and manage training classes.</li>
+    <li>Assign trainers and track enrolled students.</li>
+    <li>View class schedules and upcoming sessions.</li>
+    <li>Record, search, and preview daily training reports.</li>
+    <li>Track trainee progress, attendance, homework, drills, and tests.</li>
+    <li>Review trainer hours.</li>
+    <li>Audit important changes to records.</li>
+    <li>Give each user role a focused view of the information they need.</li>
+  </ul>
+
+  <h2>3. User Roles</h2>
+  <div class="role-grid">
+    <div class="role-card">
+      <h3>Coordinator</h3>
+      <p>Manages the overall training operation. Coordinators can access dashboards, classes, students, trainers, reports, schedules, audit history, system health, and settings.</p>
+    </div>
+    <div class="role-card">
+      <h3>Trainer</h3>
+      <p>Works with assigned classes. Trainers can view their dashboard, my classes, reports, schedule, hours, and settings.</p>
+    </div>
+    <div class="role-card">
+      <h3>Student/Trainee</h3>
+      <p>Uses a simplified self-service view. Students can see their classes, upcoming sessions, progress ratings, drill results, test results, and settings.</p>
+    </div>
+  </div>
+
+  <h2>4. Main Features</h2>
+
+  <table class="feature-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>What It Does</th>
+        <th>Primary Users</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dashboard</td>
+        <td>Summarizes active work, upcoming sessions, reports, activity, progress, and role-specific priorities.</td>
+        <td>Coordinators, trainers, students</td>
+      </tr>
+      <tr>
+        <td>Classes</td>
+        <td>Lets coordinators view, filter, sort, archive, and manage active or archived classes.</td>
+        <td>Coordinators</td>
+      </tr>
+      <tr>
+        <td>Class Detail</td>
+        <td>Shows one class in detail, including trainers, enrollments, schedule, reports, drills, tests, and related records.</td>
+        <td>Coordinators, trainers where assigned</td>
+      </tr>
+      <tr>
+        <td>Students And Trainers</td>
+        <td>Provides roster views for people involved in training.</td>
+        <td>Coordinators</td>
+      </tr>
+      <tr>
+        <td>Reports</td>
+        <td>Centralizes daily reports and supports filtering, searching, sorting, and report previewing.</td>
+        <td>Coordinators, trainers</td>
+      </tr>
+      <tr>
+        <td>Schedule</td>
+        <td>Shows upcoming training sessions with class, group, date, and time information.</td>
+        <td>Coordinators, trainers, students</td>
+      </tr>
+      <tr>
+        <td>Trainer Hours</td>
+        <td>Shows training hours connected to trainer work.</td>
+        <td>Trainers, coordinators</td>
+      </tr>
+      <tr>
+        <td>Audit Log</td>
+        <td>Records important changes so coordinators can see what changed, who changed it, and when.</td>
+        <td>Coordinators</td>
+      </tr>
+      <tr>
+        <td>System Health</td>
+        <td>Provides visibility into whether the app is operating as expected.</td>
+        <td>Coordinators</td>
+      </tr>
+      <tr>
+        <td>Settings</td>
+        <td>Provides role-aware account or application settings.</td>
+        <td>All users</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Dashboard</h3>
+  <p>The dashboard is the starting point after login. It summarizes the most important information for the current user. Coordinators see an operational overview, trainers see their assigned work, and students see their own class and progress information.</p>
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the coordinator dashboard here.</div>
+
+  <h3>Class Management</h3>
+  <p>The Classes area allows coordinators to view active and archived classes. Coordinators can filter classes by province, site, game type, or search term. They can also sort class records and perform actions such as archiving or restoring classes.</p>
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the Classes page with filters visible here.</div>
+
+  <h3>Reports</h3>
+  <p>The Reports section centralizes daily training reports. Coordinators can search and filter reports across active or archived classes. Reports can be reviewed in a preview modal, making it easier to inspect training records without leaving the workflow.</p>
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the Reports page and report preview here.</div>
+
+  <h3>Schedule</h3>
+  <p>The Schedule section provides visibility into training sessions. Coordinators and trainers can use this area to review upcoming sessions and understand when classes are taking place.</p>
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the Schedule page here.</div>
+
+  <h3>Audit Log</h3>
+  <p>The Audit Log records important changes made in the system. Coordinators can filter by table, action type, and date range. This feature supports accountability, troubleshooting, and defensible training records.</p>
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the Audit Log page here.</div>
+
+  <h2>5. How To Use The Web App</h2>
+  <ol>
+    <li><strong>Sign in.</strong> Open the web app and sign in using the provided account method. The system routes users to the correct experience based on their assigned role.</li>
+    <li><strong>Start from the dashboard.</strong> Use the dashboard to understand the current training picture. Coordinators should check active classes, upcoming sessions, missing reports, and recent activity.</li>
+    <li><strong>Open the relevant area.</strong> Use the left-side navigation to move through the app. The available menu items depend on the user's role.</li>
+    <li><strong>Review or update records.</strong> Depending on permissions, users can view, filter, create, update, archive, or review records.</li>
+    <li><strong>Use filters to find information.</strong> Filter reports by class, site, province, date range, or search term. Filter classes by province, site, or game type. Filter audit history by table, action type, or date range.</li>
+    <li><strong>Review reports and progress.</strong> Use reports and student progress views to understand how training is going and where follow-up is needed.</li>
+  </ol>
+
+  <div class="screenshot">Screenshot placeholder: Insert a screenshot of the sign-in page here.</div>
+
+  <h2>6. Suggested Demo Workflow</h2>
+  <p>For presentations or onboarding, this sequence communicates the app clearly:</p>
+  <ol>
+    <li>Sign in as a coordinator.</li>
+    <li>Show the dashboard and explain the daily overview.</li>
+    <li>Open Classes and show filtering.</li>
+    <li>Open one class detail page.</li>
+    <li>Review the class roster, trainers, schedule, and reports.</li>
+    <li>Open Reports and preview a daily report.</li>
+    <li>Show Schedule for upcoming sessions.</li>
+    <li>Briefly show Trainer and Student views to explain role-specific access.</li>
+    <li>End with Audit Log to show accountability.</li>
+  </ol>
+
+  <h2>7. Future Improvements</h2>
+  <ul>
+    <li>Add a graduation checklist that confirms attendance, reports, drills, tests, and required sign-offs.</li>
+    <li>Add configurable drill templates with par times, scoring bands, and pass/fail thresholds.</li>
+    <li>Add notification reminders for missed reports, upcoming sessions, and pending sign-offs.</li>
+    <li>Add stronger dashboard analytics for coordinators, including progress trends and at-risk students.</li>
+    <li>Add mobile-first workflows for trainers using the tool on the floor.</li>
+    <li>Add offline support so trainers can keep working when Wi-Fi is unreliable.</li>
+    <li>Add document upload improvements for scanned reports, PDFs, and supporting training files.</li>
+    <li>Add manager read-only access for leaders who need visibility but should not edit records.</li>
+    <li>Add export options for reports, student records, and compliance documentation.</li>
+    <li>Add Gateway single sign-on if the app is adopted more broadly.</li>
+    <li>Add integration points for HR, LMS, or other training systems.</li>
+  </ul>
+
+  <h2>8. Summary</h2>
+  <p>Gateway Training Tool is intended to make training coordination easier, more visible, and more consistent. It gives coordinators a central operational view while allowing trainers and students to interact with the parts of the training process that apply to them.</p>
+  <p>The strongest value of the app is not just that it stores records. Its value is that it connects records to daily training decisions: what is scheduled, who is assigned, what has been reported, who needs follow-up, and what changed over time.</p>
+</body>
+</html>

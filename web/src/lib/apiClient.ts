@@ -1032,6 +1032,13 @@ export const api = {
       req<void>(`/me/my-classes/${classId}/schedule/${slotId}`, { method: 'DELETE' }),
 
     // Class-scoped writes — enrollments (trainer manual fail/unfail)
+    createEnrollment: (classId: string, body: {
+      student_name: string;
+      student_email: string;
+      status: EnrollmentStatus;
+      group_label?: string | null;
+    }) =>
+      req<ClassEnrollment>(`/me/my-classes/${classId}/enrollments`, { method: 'POST', body: JSON.stringify(body) }),
     updateEnrollmentStatus: (classId: string, enrollmentId: string, body: { status: 'enrolled' | 'failed' }) =>
       req<ClassEnrollment>(`/me/my-classes/${classId}/enrollments/${enrollmentId}`, { method: 'PATCH', body: JSON.stringify(body) }),
 

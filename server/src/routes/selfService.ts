@@ -38,6 +38,7 @@ import {
 import {
   drillBodySchema,
   drillUpdateBodySchema,
+  enrollmentBodySchema,
   enrollmentUpdateBodySchema,
   feedbackBodySchema,
   hoursBodySchema,
@@ -1368,6 +1369,60 @@ selfServiceRouter.delete('/me/my-classes/:classId/hours/:hourId', async (req: Re
 })
 
 // ─── Enrollment Write Endpoints ──────────────────────────────────────────────
+
+selfServiceRouter.post('/me/my-classes/:classId/enrollments', writeLimiter, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.userEmail) { res.status(401).json({ error: 'No email associated with this account' }); return }
+    const body = validateBody(enrollmentBodySchema, req, res)
+    if (!body) return
+    const classId = req.params.classId as string
+    await validateTrainerAccess(req.userEmail, classId)
+
+    const { data: cls } = await supabase.from('classes').select('archived').eq('id', classId).single()
+    if (cls?.archived) { res.status(400).json({ error: 'Cannot modify data for archived classes' }); return }
+
+    const studentEmail = body.student_email.trim().toLowerCase()
+    const { data: existing, error: existingError } = await supabase
+      .from('class_enrollments')
+      .select('id')
+      .eq('class_id', classId)
+      .eq('student_email', studentEmail)
+      .maybeSingle()
+    if (existingError) throw existingError
+    if (existing) {
+      res.status(409).json({ error: 'Student is already enrolled in this class' })
+      return
+    }
+
+    const { data, error } = await supabase
+      .from('class_enrollments')
+      .insert({
+        class_id: classId,
+        student_name: body.student_name,
+        student_email: studentEmail,
+        status: body.status,
+        group_label: body.group_label ?? null,
+      })
+      .select()
+      .single()
+    if (error) throw error
+
+    await logAudit({
+      userId: req.userId!,
+      action: 'CREATE',
+      tableName: 'class_enrollments',
+      recordId: (data as { id: string }).id,
+      after: data as Record<string, unknown>,
+      metadata: { class_id: classId, student_email: studentEmail, status: body.status, created_by: 'trainer' },
+      ipAddress: req.ip,
+    })
+
+    res.status(201).json(data)
+  } catch (err) {
+    if ((err as Error & { status?: number }).status === 403) { res.status(403).json({ error: (err as Error).message }); return }
+    next(err)
+  }
+})
 
 selfServiceRouter.patch('/me/my-classes/:classId/enrollments/:enrollmentId', writeLimiter, async (req: Request, res: Response, next: NextFunction) => {
   try {

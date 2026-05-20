@@ -37,6 +37,9 @@ export function GoogleButton() {
       options: {
         // Supabase will redirect the browser here after the OAuth callback
         redirectTo: buildAuthRedirectUrl('/'),
+        queryParams: {
+          prompt: 'select_account',
+        },
       },
     })
 

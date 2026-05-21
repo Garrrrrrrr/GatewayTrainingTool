@@ -76,8 +76,8 @@ function App() {
 
             {/* Coordinator-only routes */}
             <Route path="classes" element={<CoordinatorRoute><ClassesPage /></CoordinatorRoute>} />
-            <Route path="classes/:className" element={<ClassDetailView />} />
-            <Route path="classes/:className/reports/:reportId" element={<ClassDetailView />} />
+            <Route path="classes/:className" element={<CoordinatorRoute><ClassDetailView /></CoordinatorRoute>} />
+            <Route path="classes/:className/reports/:reportId" element={<CoordinatorRoute><ClassDetailView /></CoordinatorRoute>} />
             <Route path="students/progress/:email" element={<CoordinatorRoute><StudentProgressPage /></CoordinatorRoute>} />
             <Route path="students" element={<CoordinatorRoute><RosterPage role="trainee" title="Students" subtitle="All registered trainees" /></CoordinatorRoute>} />
             <Route path="trainers" element={<CoordinatorRoute><RosterPage role="trainer" title="Trainers" subtitle="All registered trainers" /></CoordinatorRoute>} />

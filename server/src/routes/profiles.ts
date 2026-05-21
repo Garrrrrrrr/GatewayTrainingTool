@@ -618,8 +618,8 @@ const VALID_ROLES = new Set(['coordinator', 'trainer', 'trainee'])
 
 /**
  * GET /profiles?role=<role>&search=<term>&page=<n>&limit=<n>
- * Auth: coordinator only — returns the full user directory for assigning trainers/students.
- * Non-coordinator roles (trainer, trainee) receive 403.
+ * Auth: coordinator for the full directory. Trainers may search trainee
+ * profiles only, for enrolling students into assigned classes.
  * Returns a filtered list of profiles (id, full_name, email only).
  * Both query params are optional and can be combined:
  *   - `?role=trainer` — returns only profiles with the trainer role
@@ -633,15 +633,14 @@ const VALID_ROLES = new Set(['coordinator', 'trainer', 'trainee'])
  */
 profilesRouter.get('/profiles', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Only coordinators need the user directory (assigning trainers, enrolling students).
-    // Trainers and trainees have no legitimate reason to enumerate all users.
-    if (req.userRole !== 'coordinator') {
-      res.status(403).json({ error: 'Coordinator access required' })
-      return
-    }
-
     const { role, search, page: pageStr, limit: limitStr } = req.query as {
       role?: string; search?: string; page?: string; limit?: string
+    }
+
+    const trainerTraineeSearch = req.userRole === 'trainer' && role === 'trainee'
+    if (req.userRole !== 'coordinator' && !trainerTraineeSearch) {
+      res.status(403).json({ error: 'Coordinator access required' })
+      return
     }
 
     // Whitelist the role parameter to prevent unexpected filter injection

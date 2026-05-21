@@ -25,7 +25,7 @@ export function TrainerStudentsSection() {
     setSearchLoading(true)
     setError(null)
     try {
-      const raw = await api.profiles.search({ role: 'trainee', search: term || undefined })
+      const raw = await api.selfService.availableTrainees(classId, term || undefined)
       const existingEmails = new Set(enrollments.map(s => s.student_email.toLowerCase()))
       setSearchResults(raw.filter(p => !existingEmails.has(p.email.toLowerCase())))
     } catch (err) {

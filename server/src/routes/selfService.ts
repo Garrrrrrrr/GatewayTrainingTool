@@ -529,6 +529,54 @@ selfServiceRouter.get('/me/my-classes/:classId', async (req: Request, res: Respo
 })
 
 /**
+ * GET /me/my-classes/:classId/available-trainees?search=<term>
+ * Auth: trainer assigned to class
+ * Returns trainee profiles that are not already enrolled in this class.
+ */
+selfServiceRouter.get('/me/my-classes/:classId/available-trainees', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.userEmail) {
+      res.status(401).json({ error: 'No email associated with this account' })
+      return
+    }
+    const classId = req.params.classId as string
+    await validateTrainerAccess(req.userEmail, classId)
+
+    const search = typeof req.query.search === 'string' ? req.query.search : ''
+    const safeSearch = search.replace(/[(),"'\\]/g, '').slice(0, 100)
+
+    const { data: enrollments, error: enrollError } = await supabase
+      .from('class_enrollments')
+      .select('student_email')
+      .eq('class_id', classId)
+    if (enrollError) throw enrollError
+
+    let query = supabase
+      .from('profiles')
+      .select('id, full_name, email')
+      .eq('role', 'trainee')
+      .order('full_name', { ascending: true })
+      .limit(25)
+
+    if (safeSearch) {
+      query = query.or(`full_name.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`)
+    }
+
+    const { data, error } = await query
+    if (error) throw error
+
+    const existingEmails = new Set((enrollments ?? []).map((row: { student_email: string }) => row.student_email.toLowerCase()))
+    res.json((data ?? []).filter(profile => !existingEmails.has((profile as { email: string }).email.toLowerCase())))
+  } catch (err) {
+    if ((err as Error & { status?: number }).status === 403) {
+      res.status(403).json({ error: (err as Error).message })
+      return
+    }
+    next(err)
+  }
+})
+
+/**
  * GET /me/my-classes/:classId/reports
  * Auth: trainer assigned to class
  * Returns all daily reports for this class, sorted by date desc.

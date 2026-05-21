@@ -981,6 +981,8 @@ export const api = {
     classReports: (classId: string) => req<ClassDailyReport[]>(`/me/my-classes/${classId}/reports`),
     classReportDetail: (classId: string, reportId: string) =>
       req<ReportWithNested>(`/me/my-classes/${classId}/reports/${reportId}`),
+    availableTrainees: (classId: string, search?: string) =>
+      req<Pick<Profile, 'id' | 'full_name' | 'email'>[]>(`/me/my-classes/${classId}/available-trainees${search ? `?search=${encodeURIComponent(search)}` : ''}`),
     classSchedule: (classId: string) => req<ClassScheduleSlot[]>(`/me/my-classes/${classId}/schedule`),
     classHours: (classId: string) => req<TrainerClassHoursResponse>(`/me/my-classes/${classId}/hours`),
     classDocuments: (classId: string) => req<ClassDocument[]>(`/me/my-classes/${classId}/documents`),

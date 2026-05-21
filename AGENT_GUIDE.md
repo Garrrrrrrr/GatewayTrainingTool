@@ -335,7 +335,7 @@ All tables live in Supabase PostgreSQL. Migrations are run in the Supabase SQL e
 ### Important schema notes
 - `class_trainers` is a **snapshot** — stores trainer_name and trainer_email at assignment time, does NOT auto-update if the profile changes.
 - `class_daily_report_timeline_items` has a `position` column for drag-and-drop ordering.
-- `class_daily_report_trainee_progress` rates students on three axes: GK (Game Knowledge), Dex (Dexterity), HOM (Hands-on Mechanics), each using the `DailyRating` scale (EE/ME/AD/NI). It also has an `attendance boolean NOT NULL DEFAULT true` column (added in migration `001_add_attendance_to_progress.sql`).
+- `class_daily_report_trainee_progress` rates students on three axes: GK (Game Knowledge), Dex (Dexterity), HOM (Habits of Mind), each using the `DailyRating` scale (EE/ME/AD/NI). It also has an `attendance boolean NOT NULL DEFAULT true` column (added in migration `001_add_attendance_to_progress.sql`).
 - `class_logged_hours` uses `person_type` to distinguish trainer vs student hours; either `trainer_id` or `enrollment_id` is set, never both.
 - All tables use UUIDs as primary keys.
 - Delete cascades exist at the DB level for nested data.

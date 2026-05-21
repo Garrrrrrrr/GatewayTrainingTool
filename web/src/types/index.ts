@@ -180,7 +180,7 @@ export interface ClassDailyReportTimelineItem {
 
 /**
  * A trainer's assessment of one student for a given daily report.
- * `gk_rating` = Game Knowledge, `dex_rating` = Dexterity, `hom_rating` = Hands on Mechanics.
+ * `gk_rating` = Game Knowledge, `dex_rating` = Dexterity, `hom_rating` = Habits of Mind.
  */
 export interface ClassDailyReportTraineeProgress {
   id: string

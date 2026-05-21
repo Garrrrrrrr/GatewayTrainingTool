@@ -186,7 +186,7 @@ export function StudentReportInput({
           Self-Assessment
           {readOnly && <span className="ml-2 text-[10px] font-normal text-slate-500 normal-case">(read only)</span>}
         </p>
-        {([['Game Knowledge (GK)', gk, setGk], ['Dexterity (DEX)', dex, setDex], ['Hands on Mechanics (HOM)', hom, setHom]] as const).map(([label, value, setter]) => (
+        {([['Game Knowledge (GK)', gk, setGk], ['Dexterity (DEX)', dex, setDex], ['Habits of Mind (HOM)', hom, setHom]] as const).map(([label, value, setter]) => (
           <div key={label} className="flex items-center gap-3">
             <span className="text-sm text-slate-700 dark:text-slate-300 w-44 shrink-0">{label}</span>
             <div className="flex gap-1.5">

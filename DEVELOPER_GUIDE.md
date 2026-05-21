@@ -347,7 +347,7 @@ This is the most complex data model. A daily report captures everything about on
 
 **Trainee progress** (`class_daily_report_trainee_progress`):
 - One row per student per report
-- Three rating axes: GK (Game Knowledge), Dex (Dexterity), HOM (Hands-on Mechanics)
+- Three rating axes: GK (Game Knowledge), Dex (Dexterity), HOM (Habits of Mind)
 - Each rated on a 4-point scale: EE (Exceeds), ME (Meets), AD (Approaching), NI (Needs Improvement)
 - Tracks whether the student is coming back the next day and if homework was completed
 - `attendance boolean NOT NULL DEFAULT true` — whether the student was present for this session (added in migration `001_add_attendance_to_progress.sql`)
@@ -449,7 +449,7 @@ A coordinator fills out a report for each training day. It includes:
 - **Meet-and-greet:** how many were confirmed vs actually showed up
 - **Trainers present:** which trainers were there (checkboxes)
 - **Timeline:** an ordered list of activities — "9:00-10:00 Lecture: Card Values" → "10:00-11:00 Dexterity: Chip Cutting"
-- **Trainee progress:** for each student, a rating on Game Knowledge, Dexterity, and Hands-on Mechanics
+- **Trainee progress:** for each student, a rating on Game Knowledge, Dexterity, and Habits of Mind
 - **Drill & test times:** per-student recordings of drill completion times and test scores, compared against par times/target scores
 - **Override fields:** manual corrections to computed hour totals (for when logged hours don't match reality)
 
@@ -758,7 +758,7 @@ attendance: {
 | **Par time** | The target completion time for a drill (in seconds) |
 | **GK rating** | Game Knowledge — how well the student knows rules and procedures |
 | **Dex rating** | Dexterity — physical skills like chip handling and card dealing |
-| **HOM rating** | Hands-on Mechanics — overall game operation proficiency |
+| **HOM rating** | Habits of Mind |
 | **EE/ME/AD/NI** | Rating scale: Exceeds Expectations / Meets Expectations / Approaching Development / Needs Improvement |
 | **Group label** | Sub-groups within a class (e.g. "A", "B") for splitting students into concurrent training sessions |
 | **Meet-and-greet (MG)** | An initial orientation session; tracked by confirmed vs attended headcount |

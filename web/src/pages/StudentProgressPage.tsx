@@ -46,10 +46,12 @@ export function StudentProgressPage() {
   const [data, setData] = useState<StudentProgressResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [expandedDrills, setExpandedDrills] = useState<Set<string>>(() => new Set())
 
   useEffect(() => {
     if (!email) return
     setLoading(true)
+    setExpandedDrills(new Set())
     api.studentProgress
       .get(decodeURIComponent(email))
       .then(setData)
@@ -91,6 +93,15 @@ export function StudentProgressPage() {
     const key = dt.drill_name
     if (!drillGroups.has(key)) drillGroups.set(key, [])
     drillGroups.get(key)!.push(dt)
+  }
+
+  function toggleDrill(name: string) {
+    setExpandedDrills(prev => {
+      const next = new Set(prev)
+      if (next.has(name)) next.delete(name)
+      else next.add(name)
+      return next
+    })
   }
 
   return (
@@ -230,21 +241,33 @@ export function StudentProgressPage() {
               {[...drillGroups.entries()].map(([drillName, times]) => {
                 const first = times[0]
                 const isDrill = first.drill_type === 'drill'
+                const expanded = expandedDrills.has(drillName)
                 return (
                   <div key={drillName} className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{drillName}</span>
-                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isDrill ? 'bg-blue-500/15 text-blue-400' : 'bg-purple-500/15 text-purple-400'}`}>
-                        {first.drill_type}
-                      </span>
-                      {isDrill && first.par_time_seconds && (
-                        <span className="text-xs text-slate-400 dark:text-slate-500">Par: {first.par_time_seconds}s</span>
-                      )}
-                      {!isDrill && first.target_score && (
-                        <span className="text-xs text-slate-400 dark:text-slate-500">Target: {first.target_score}</span>
-                      )}
-                    </div>
-                    <div className="overflow-x-auto">
+                    <button
+                      type="button"
+                      onClick={() => toggleDrill(drillName)}
+                      className="flex w-full items-center justify-between gap-3 text-left"
+                      aria-expanded={expanded}
+                    >
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{drillName}</span>
+                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isDrill ? 'bg-blue-500/15 text-blue-400' : 'bg-purple-500/15 text-purple-400'}`}>
+                          {first.drill_type}
+                        </span>
+                        <span className="text-xs text-slate-400 dark:text-slate-500">{times.length} result{times.length === 1 ? '' : 's'}</span>
+                        {isDrill && first.par_time_seconds && (
+                          <span className="text-xs text-slate-400 dark:text-slate-500">Par: {first.par_time_seconds}s</span>
+                        )}
+                        {!isDrill && first.target_score && (
+                          <span className="text-xs text-slate-400 dark:text-slate-500">Target: {first.target_score}</span>
+                        )}
+                      </div>
+                      <svg className={`h-4 w-4 flex-shrink-0 text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {expanded && <div className="mt-3 overflow-x-auto">
                       <table className="text-sm">
                         <thead>
                           <tr className="text-xs text-slate-400 dark:text-slate-500">
@@ -280,7 +303,7 @@ export function StudentProgressPage() {
                           })}
                         </tbody>
                       </table>
-                    </div>
+                    </div>}
                   </div>
                 )
               })}

@@ -117,6 +117,28 @@ function profileNameKeys(profile: {
     .filter(Boolean)
 }
 
+type DirectoryRow = { id: string; full_name: string | null; email: string }
+
+function rowMatchesSearch(row: DirectoryRow, search: string): boolean {
+  if (!search) return true
+  const needle = search.toLowerCase()
+  return (row.full_name ?? '').toLowerCase().includes(needle) || row.email.toLowerCase().includes(needle)
+}
+
+function mergeDirectoryRows(profileRows: DirectoryRow[], enrollmentRows: DirectoryRow[]): DirectoryRow[] {
+  const byEmail = new Map<string, DirectoryRow>()
+  for (const row of profileRows) byEmail.set(row.email.toLowerCase(), row)
+  for (const row of enrollmentRows) {
+    const email = row.email.toLowerCase()
+    if (!byEmail.has(email)) byEmail.set(email, row)
+  }
+  return [...byEmail.values()].sort((a, b) => {
+    const aName = a.full_name ?? a.email
+    const bName = b.full_name ?? b.email
+    return aName.localeCompare(bName)
+  })
+}
+
 /**
  * GET /profiles/me
  * Auth: any authenticated user
@@ -652,6 +674,53 @@ profilesRouter.get('/profiles', async (req: Request, res: Response, next: NextFu
     const paginated = pageStr !== undefined
     const page = Math.max(0, parseInt(pageStr ?? '0', 10) || 0)
     const limit = Math.min(200, Math.max(1, parseInt(limitStr ?? '25', 10) || 25))
+    const safeSearch = search ? search.replace(/[(),"'\\]/g, '').slice(0, 100) : ''
+
+    if (role === 'trainee') {
+      let profileQuery = supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('role', 'trainee')
+        .order('full_name', { ascending: true })
+        .limit(5000)
+
+      if (safeSearch) {
+        profileQuery = profileQuery.or(`full_name.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`)
+      }
+
+      let enrollmentQuery = supabase
+        .from('class_enrollments')
+        .select('id, student_name, student_email')
+        .order('student_name', { ascending: true })
+        .limit(5000)
+
+      if (safeSearch) {
+        enrollmentQuery = enrollmentQuery.or(`student_name.ilike.%${safeSearch}%,student_email.ilike.%${safeSearch}%`)
+      }
+
+      const [profileResult, enrollmentResult] = await Promise.all([profileQuery, enrollmentQuery])
+      if (profileResult.error) throw profileResult.error
+      if (enrollmentResult.error) throw enrollmentResult.error
+
+      const profileRows = (profileResult.data ?? []) as DirectoryRow[]
+      const enrollmentRows = (enrollmentResult.data ?? []).map(row => {
+        const typed = row as { id: string; student_name: string; student_email: string }
+        return {
+          id: `enrollment:${typed.id}`,
+          full_name: typed.student_name,
+          email: typed.student_email,
+        }
+      })
+
+      const merged = mergeDirectoryRows(profileRows, enrollmentRows).filter(row => rowMatchesSearch(row, safeSearch))
+      if (paginated) {
+        const from = page * limit
+        res.json({ data: merged.slice(from, from + limit), total: merged.length, page, limit })
+      } else {
+        res.json(search ? merged : merged.slice(0, 25))
+      }
+      return
+    }
 
     // Build the base query with count for pagination
     let query = supabase
@@ -665,7 +734,6 @@ profilesRouter.get('/profiles', async (req: Request, res: Response, next: NextFu
 
     if (search) {
       // Strip characters that could abuse PostgREST's .or() DSL, then cap length
-      const safeSearch = search.replace(/[(),"'\\]/g, '').slice(0, 100)
       query = query.or(`full_name.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`)
     }
 

@@ -567,7 +567,38 @@ selfServiceRouter.get('/me/my-classes/:classId/available-trainees', async (req: 
     if (error) throw error
 
     const existingEmails = new Set((enrollments ?? []).map((row: { student_email: string }) => row.student_email.toLowerCase()))
-    res.json((data ?? []).filter(profile => !existingEmails.has((profile as { email: string }).email.toLowerCase())))
+
+    let enrollmentDirectoryQuery = supabase
+      .from('class_enrollments')
+      .select('id, student_name, student_email')
+      .order('student_name', { ascending: true })
+      .limit(500)
+
+    if (safeSearch) {
+      enrollmentDirectoryQuery = enrollmentDirectoryQuery.or(`student_name.ilike.%${safeSearch}%,student_email.ilike.%${safeSearch}%`)
+    }
+
+    const { data: enrollmentDirectory, error: enrollmentDirectoryError } = await enrollmentDirectoryQuery
+    if (enrollmentDirectoryError) throw enrollmentDirectoryError
+
+    const byEmail = new Map<string, { id: string; full_name: string | null; email: string }>()
+    for (const profile of data ?? []) {
+      const typed = profile as { id: string; full_name: string | null; email: string }
+      byEmail.set(typed.email.toLowerCase(), typed)
+    }
+    for (const enrollment of enrollmentDirectory ?? []) {
+      const typed = enrollment as { id: string; student_name: string; student_email: string }
+      const email = typed.student_email.toLowerCase()
+      if (!byEmail.has(email)) {
+        byEmail.set(email, {
+          id: `enrollment:${typed.id}`,
+          full_name: typed.student_name,
+          email: typed.student_email,
+        })
+      }
+    }
+
+    res.json([...byEmail.values()].filter(profile => !existingEmails.has(profile.email.toLowerCase())).slice(0, 25))
   } catch (err) {
     if ((err as Error & { status?: number }).status === 403) {
       res.status(403).json({ error: (err as Error).message })

@@ -741,7 +741,7 @@ export const api = {
     list: (classId: string) => req<ClassTrainer[]>(`/classes/${classId}/trainers`),
     create: (
       classId: string,
-      body: { trainer_name: string; trainer_email: string; role: TrainerRole },
+      body: { trainer_name: string; trainer_email?: string; role: TrainerRole },
     ) =>
       req<ClassTrainer>(`/classes/${classId}/trainers`, {
         method: 'POST',
@@ -797,6 +797,7 @@ export const api = {
         end_time: string
         notes?: string | null
         trainer_id?: string | null
+        trainer_ids?: string[]
         group_label?: string | null
       },
     ) =>
@@ -807,7 +808,7 @@ export const api = {
     update: (classId: string, id: string, body: Partial<ClassScheduleSlot>) =>
       req<ClassScheduleSlot>(`/classes/${classId}/schedule/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
     delete: (classId: string, id: string) => req<void>(`/classes/${classId}/schedule/${id}`, { method: 'DELETE' }),
-    createBatch: (classId: string, body: { days_of_week: number[]; start_time: string; end_time: string; trainer_id?: string; group_label?: string; date_from: string; date_to: string }) =>
+    createBatch: (classId: string, body: { days_of_week: number[]; start_time: string; end_time: string; trainer_id?: string; trainer_ids?: string[]; group_label?: string; date_from: string; date_to: string }) =>
       req<{ inserted: number }>(`/classes/${classId}/schedule/batch`, { method: 'POST', body: JSON.stringify(body) }),
   },
 

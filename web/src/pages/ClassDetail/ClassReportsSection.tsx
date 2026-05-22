@@ -285,7 +285,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
         class_start_time: scheduleTime(slot.start_time),
         class_end_time: scheduleTime(slot.end_time),
         current_trainees: draftEnrollments.length,
-        trainer_ids: slot.trainer_id ? [slot.trainer_id] : [],
+        trainer_ids: slot.trainer_ids?.length ? slot.trainer_ids : slot.trainer_id ? [slot.trainer_id] : [],
         timeline: [{
           start_time: scheduleTime(slot.start_time),
           end_time: scheduleTime(slot.end_time),
@@ -1059,7 +1059,8 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                 {todaysScheduleSlots.map(slot => {
                   const exists = reportExistsForScheduleSlot(slot)
                   const slotEnrollments = enrollmentsForScheduleSlot(slot)
-                  const trainerName = slot.trainer_id ? trainers.find(t => t.id === slot.trainer_id)?.trainer_name : null
+                  const trainerIds = slot.trainer_ids?.length ? slot.trainer_ids : slot.trainer_id ? [slot.trainer_id] : []
+                  const trainerNames = trainerIds.map(id => trainers.find(t => t.id === id)?.trainer_name).filter(Boolean).join(', ')
                   return (
                     <div key={slot.id} className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                       <div className="flex items-start justify-between gap-3">
@@ -1068,7 +1069,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                             {slot.group_label ? `Group ${slot.group_label}` : 'All groups'} · {scheduleTime(slot.start_time)}-{scheduleTime(slot.end_time)}
                           </p>
                           <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                            {trainerName ?? 'No trainer assigned'} · {slotEnrollments.length} trainee{slotEnrollments.length === 1 ? '' : 's'}
+                            {trainerNames || 'No trainer assigned'} · {slotEnrollments.length} trainee{slotEnrollments.length === 1 ? '' : 's'}
                           </p>
                         </div>
                         <button

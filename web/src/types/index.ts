@@ -92,7 +92,8 @@ export type EnrollmentStatus = 'enrolled' | 'dropped' | 'failed'
 
 /**
  * A single time block in a class's schedule.
- * `trainer_id` references `class_trainers.id` (not a user profile).
+ * `trainer_ids` references one or more `class_trainers.id` values.
+ * `trainer_id` is kept as the first trainer for backward-compatible screens.
  * `group_label` (e.g. "A", "B") divides students into concurrent training groups.
  */
 export interface ClassScheduleSlot {
@@ -103,6 +104,7 @@ export interface ClassScheduleSlot {
   end_time: string
   notes: string | null
   trainer_id: string | null
+  trainer_ids?: string[] | null
   group_label: string | null
   created_at: string
 }

@@ -676,11 +676,11 @@ profilesRouter.get('/profiles', async (req: Request, res: Response, next: NextFu
     const limit = Math.min(200, Math.max(1, parseInt(limitStr ?? '25', 10) || 25))
     const safeSearch = search ? search.replace(/[(),"'\\]/g, '').slice(0, 100) : ''
 
-    if (role === 'trainee') {
+    if (role === 'trainee' || role === 'trainer') {
       let profileQuery = supabase
         .from('profiles')
         .select('id, full_name, email')
-        .eq('role', 'trainee')
+        .eq('role', role)
         .order('full_name', { ascending: true })
         .limit(5000)
 
@@ -688,31 +688,48 @@ profilesRouter.get('/profiles', async (req: Request, res: Response, next: NextFu
         profileQuery = profileQuery.or(`full_name.ilike.%${safeSearch}%,email.ilike.%${safeSearch}%`)
       }
 
-      let enrollmentQuery = supabase
-        .from('class_enrollments')
-        .select('id, student_name, student_email')
-        .order('student_name', { ascending: true })
-        .limit(5000)
+      let snapshotQuery = role === 'trainee'
+        ? supabase
+          .from('class_enrollments')
+          .select('id, student_name, student_email')
+          .order('student_name', { ascending: true })
+          .limit(5000)
+        : supabase
+          .from('class_trainers')
+          .select('id, trainer_name, trainer_email')
+          .order('trainer_name', { ascending: true })
+          .limit(5000)
 
       if (safeSearch) {
-        enrollmentQuery = enrollmentQuery.or(`student_name.ilike.%${safeSearch}%,student_email.ilike.%${safeSearch}%`)
+        snapshotQuery = role === 'trainee'
+          ? snapshotQuery.or(`student_name.ilike.%${safeSearch}%,student_email.ilike.%${safeSearch}%`)
+          : snapshotQuery.or(`trainer_name.ilike.%${safeSearch}%,trainer_email.ilike.%${safeSearch}%`)
       }
 
-      const [profileResult, enrollmentResult] = await Promise.all([profileQuery, enrollmentQuery])
+      const [profileResult, snapshotResult] = await Promise.all([profileQuery, snapshotQuery])
       if (profileResult.error) throw profileResult.error
-      if (enrollmentResult.error) throw enrollmentResult.error
+      if (snapshotResult.error) throw snapshotResult.error
 
       const profileRows = (profileResult.data ?? []) as DirectoryRow[]
-      const enrollmentRows = (enrollmentResult.data ?? []).map(row => {
-        const typed = row as { id: string; student_name: string; student_email: string }
-        return {
-          id: `enrollment:${typed.id}`,
-          full_name: typed.student_name,
-          email: typed.student_email,
-        }
-      })
+      const snapshotRows = role === 'trainee'
+        ? (snapshotResult.data ?? []).map(row => {
+          const typed = row as { id: string; student_name: string; student_email: string }
+          return {
+            id: `enrollment:${typed.id}`,
+            full_name: typed.student_name,
+            email: typed.student_email,
+          }
+        })
+        : (snapshotResult.data ?? []).map(row => {
+          const typed = row as { id: string; trainer_name: string; trainer_email: string }
+          return {
+            id: `trainer:${typed.id}`,
+            full_name: typed.trainer_name,
+            email: typed.trainer_email,
+          }
+        })
 
-      const merged = mergeDirectoryRows(profileRows, enrollmentRows).filter(row => rowMatchesSearch(row, safeSearch))
+      const merged = mergeDirectoryRows(profileRows, snapshotRows).filter(row => rowMatchesSearch(row, safeSearch))
       if (paginated) {
         const from = page * limit
         res.json({ data: merged.slice(from, from + limit), total: merged.length, page, limit })

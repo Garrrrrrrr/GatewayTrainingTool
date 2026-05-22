@@ -57,7 +57,10 @@ export const drillUpdateBodySchema = drillBodySchema.partial().refine(
 
 export const trainerBodySchema = z.object({
   trainer_name: z.string().trim().min(1).max(160),
-  trainer_email: z.string().trim().email().max(254),
+  trainer_email: z.preprocess(
+    value => typeof value === 'string' && value.trim() === '' ? undefined : value,
+    z.string().trim().email().max(254).optional(),
+  ),
   role: trainerRoleSchema,
 })
 
@@ -89,6 +92,7 @@ export const scheduleBodySchema = z.object({
   end_time: timeSchema,
   notes: z.string().trim().max(2000).nullable().optional(),
   trainer_id: z.string().uuid().nullable().optional(),
+  trainer_ids: z.array(z.string().uuid()).max(20).optional(),
   group_label: z.string().trim().max(80).nullable().optional(),
 })
 
@@ -97,6 +101,7 @@ export const scheduleBatchBodySchema = z.object({
   start_time: timeSchema,
   end_time: timeSchema,
   trainer_id: z.string().uuid().nullable().optional(),
+  trainer_ids: z.array(z.string().uuid()).max(20).optional(),
   group_label: z.string().trim().max(80).nullable().optional(),
   date_from: dateSchema,
   date_to: dateSchema,

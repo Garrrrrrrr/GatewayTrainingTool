@@ -385,6 +385,7 @@ async function seed() {
             end_time: '15:00',
             notes: `Day ${slotCount + 1} training session`,
             trainer_id: trainerId,
+            trainer_ids: trainerId ? [trainerId] : [],
             group_label: slotCount % 2 === 0 ? 'A' : 'B',
           })
         if (slotError) {

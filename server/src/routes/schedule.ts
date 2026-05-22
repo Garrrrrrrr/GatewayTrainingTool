@@ -32,6 +32,11 @@ export const scheduleRouter = Router()
 /** Columns that can be used in the sort_by query param. */
 const SORTABLE_COLUMNS = new Set(['slot_date', 'start_time'])
 
+function uniqueTrainerIds(trainer_ids: string[] | undefined, trainer_id?: string | null): string[] {
+  const ids = trainer_ids && trainer_ids.length > 0 ? trainer_ids : trainer_id ? [trainer_id] : []
+  return [...new Set(ids.filter(Boolean))]
+}
+
 /**
  * GET /schedule
  * Auth: coordinator
@@ -176,11 +181,12 @@ scheduleRouter.post('/classes/:classId/schedule/batch', async (req: Request, res
   try {
     const body = validateBody(scheduleBatchBodySchema, req, res)
     if (!body) return
-    const { days_of_week, start_time, end_time, trainer_id, group_label, date_from, date_to } = body
+    const { days_of_week, start_time, end_time, trainer_id, trainer_ids, group_label, date_from, date_to } = body
 
     const classId = req.params.classId as string
     const daySet = new Set<number>(days_of_week)
-    const slots: { class_id: string; slot_date: string; start_time: string; end_time: string; trainer_id: string | null; group_label: string | null }[] = []
+    const slotTrainerIds = uniqueTrainerIds(trainer_ids, trainer_id)
+    const slots: { class_id: string; slot_date: string; start_time: string; end_time: string; trainer_id: string | null; trainer_ids: string[]; group_label: string | null }[] = []
     const cursor = new Date(date_from + 'T12:00:00')
     const endDate = new Date(date_to + 'T12:00:00')
 
@@ -191,7 +197,8 @@ scheduleRouter.post('/classes/:classId/schedule/batch', async (req: Request, res
           slot_date: cursor.toISOString().slice(0, 10),
           start_time,
           end_time,
-          trainer_id: trainer_id || null,
+          trainer_id: slotTrainerIds[0] ?? null,
+          trainer_ids: slotTrainerIds,
           group_label: group_label || null,
         })
       }
@@ -254,7 +261,8 @@ scheduleRouter.post('/classes/:classId/schedule', async (req: Request, res: Resp
   try {
     const body = validateBody(scheduleBodySchema, req, res)
     if (!body) return
-    const { slot_date, start_time, end_time, notes, trainer_id, group_label } = body
+    const { slot_date, start_time, end_time, notes, trainer_id, trainer_ids, group_label } = body
+    const slotTrainerIds = uniqueTrainerIds(trainer_ids, trainer_id)
     const { data, error } = await supabase
       .from('class_schedule_slots')
       .insert({
@@ -263,7 +271,8 @@ scheduleRouter.post('/classes/:classId/schedule', async (req: Request, res: Resp
         start_time,
         end_time,
         notes: notes ?? null,
-        trainer_id: trainer_id ?? null,
+        trainer_id: slotTrainerIds[0] ?? null,
+        trainer_ids: slotTrainerIds,
         group_label: group_label ?? null,
       })
       .select()
@@ -295,7 +304,8 @@ scheduleRouter.put('/classes/:classId/schedule/:id', async (req: Request, res: R
   try {
     const body = validateBody(scheduleBodySchema, req, res)
     if (!body) return
-    const { slot_date, start_time, end_time, notes, trainer_id, group_label } = body
+    const { slot_date, start_time, end_time, notes, trainer_id, trainer_ids, group_label } = body
+    const slotTrainerIds = uniqueTrainerIds(trainer_ids, trainer_id)
     const { data: before, error: beforeError } = await supabase
       .from('class_schedule_slots')
       .select('*')
@@ -313,7 +323,8 @@ scheduleRouter.put('/classes/:classId/schedule/:id', async (req: Request, res: R
         start_time,
         end_time,
         notes: notes ?? null,
-        trainer_id: trainer_id ?? null,
+        trainer_id: slotTrainerIds[0] ?? null,
+        trainer_ids: slotTrainerIds,
         group_label: group_label ?? null,
       })
       .eq('id', req.params.id)

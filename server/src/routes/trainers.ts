@@ -22,6 +22,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express'
 import { supabase } from '../lib/supabase'
 import { logAudit } from '../lib/audit'
+import { manualTrainerEmail, normalizeStudentEmail, normalizeStudentName } from '../lib/manualStudents'
 import { trainerBodySchema, validateBody } from '../lib/validation'
 
 export const trainersRouter = Router()
@@ -56,13 +57,29 @@ trainersRouter.post('/classes/:classId/trainers', async (req: Request, res: Resp
   try {
     const body = validateBody(trainerBodySchema, req, res)
     if (!body) return
-    const { trainer_name, trainer_email, role } = body
+    const classId = req.params.classId as string
+    const trainerName = normalizeStudentName(body.trainer_name)
+    const trainerEmail = normalizeStudentEmail(body.trainer_email) ?? manualTrainerEmail(classId, trainerName)
+
+    const { data: existing, error: existingError } = await supabase
+      .from('class_trainers')
+      .select('id')
+      .eq('class_id', classId)
+      .eq('trainer_email', trainerEmail)
+      .maybeSingle()
+    if (existingError) throw existingError
+    if (existing) {
+      res.status(409).json({ error: 'Trainer is already assigned to this class' })
+      return
+    }
+
+    const { role } = body
     const { data, error } = await supabase
       .from('class_trainers')
       .insert({
-        class_id: req.params.classId,
-        trainer_name,
-        trainer_email,
+        class_id: classId,
+        trainer_name: trainerName,
+        trainer_email: trainerEmail,
         role,
       })
       .select()
@@ -74,7 +91,7 @@ trainersRouter.post('/classes/:classId/trainers', async (req: Request, res: Resp
       tableName: 'class_trainers',
       recordId: (data as { id: string }).id,
       after: data as Record<string, unknown>,
-      metadata: { class_id: req.params.classId, trainer_email, role },
+      metadata: { class_id: classId, trainer_email: trainerEmail, role },
       ipAddress: req.ip,
     })
     res.status(201).json(data)
@@ -94,12 +111,15 @@ trainersRouter.put('/classes/:classId/trainers/:id', async (req: Request, res: R
   try {
     const body = validateBody(trainerBodySchema, req, res)
     if (!body) return
-    const { trainer_name, trainer_email, role } = body
+    const classId = req.params.classId as string
+    const trainerName = normalizeStudentName(body.trainer_name)
+    const trainerEmail = normalizeStudentEmail(body.trainer_email) ?? manualTrainerEmail(classId, trainerName)
+    const { role } = body
     const { data: before, error: beforeError } = await supabase
       .from('class_trainers')
       .select('*')
       .eq('id', req.params.id)
-      .eq('class_id', req.params.classId)
+      .eq('class_id', classId)
       .single()
     if (beforeError || !before) {
       res.status(404).json({ error: 'Trainer not found' })
@@ -107,9 +127,9 @@ trainersRouter.put('/classes/:classId/trainers/:id', async (req: Request, res: R
     }
     const { data, error } = await supabase
       .from('class_trainers')
-      .update({ trainer_name, trainer_email, role })
+      .update({ trainer_name: trainerName, trainer_email: trainerEmail, role })
       .eq('id', req.params.id)
-      .eq('class_id', req.params.classId)
+      .eq('class_id', classId)
       .select()
       .single()
     if (error) {
@@ -126,7 +146,7 @@ trainersRouter.put('/classes/:classId/trainers/:id', async (req: Request, res: R
       recordId: req.params.id as string,
       before: before as Record<string, unknown>,
       after: data as Record<string, unknown>,
-      metadata: { class_id: req.params.classId, trainer_email, role },
+      metadata: { class_id: classId, trainer_email: trainerEmail, role },
       ipAddress: req.ip,
     })
     res.json(data)

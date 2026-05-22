@@ -2,7 +2,7 @@
  * pages/ClassDetail/ClassScheduleSection.tsx — Schedule slot management tab
  *
  * Allows coordinators to create, edit, and delete time-slot entries for a class.
- * Schedule slots define when a specific trainer will work with a specific student
+ * Schedule slots define when trainer(s) will work with a specific student
  * group (A, B, C) on a given date and time range.
  *
  * The component fetches both schedule slots and trainers in parallel on mount:
@@ -17,8 +17,8 @@
  * that slot's data. Clicking the Remove button deletes without a confirmation
  * dialog (low-stakes operation compared to deleting a class or report).
  *
- * The `trainerName` helper resolves a `trainer_id` (class_trainers.id) to a
- * display name for the schedule table, falling back to em-dash if not found.
+ * The `trainerNames` helper resolves `trainer_ids` (class_trainers.id values)
+ * to display names for the schedule table, falling back to em-dash if none exist.
  */
 
 import { useState, useMemo } from 'react'
@@ -49,7 +49,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
-  const [trainerId, setTrainerId] = useState<string>('')
+  const [trainerIds, setTrainerIds] = useState<string[]>([])
   const [groupLabel, setGroupLabel] = useState('')
   const [saving, setSaving] = useState(false)
 
@@ -58,7 +58,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
   const [recDays, setRecDays] = useState<number[]>([])
   const [recStartTime, setRecStartTime] = useState('')
   const [recEndTime, setRecEndTime] = useState('')
-  const [recTrainerId, setRecTrainerId] = useState('')
+  const [recTrainerIds, setRecTrainerIds] = useState<string[]>([])
   const [recGroupLabel, setRecGroupLabel] = useState('')
   const [recDateFrom, setRecDateFrom] = useState(startDate ?? '')
   const [recDateTo, setRecDateTo] = useState(endDate ?? '')
@@ -93,7 +93,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
         days_of_week: recDays,
         start_time: recStartTime,
         end_time: recEndTime,
-        trainer_id: recTrainerId || undefined,
+        trainer_ids: recTrainerIds,
         group_label: recGroupLabel.trim() || undefined,
         date_from: recDateFrom,
         date_to: recDateTo,
@@ -115,7 +115,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
     setStartTime('')
     setEndTime('')
     setNotes('')
-    setTrainerId('')
+    setTrainerIds([])
     setGroupLabel('')
     setFormOpen(true)
   }
@@ -127,7 +127,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
     setStartTime(slot.start_time)
     setEndTime(slot.end_time)
     setNotes(slot.notes ?? '')
-    setTrainerId(slot.trainer_id ?? '')
+    setTrainerIds(slot.trainer_ids?.length ? slot.trainer_ids : slot.trainer_id ? [slot.trainer_id] : [])
     setGroupLabel(slot.group_label ?? '')
     setFormOpen(true)
   }
@@ -153,7 +153,8 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
       start_time: startTime,
       end_time: endTime,
       notes: notes.trim() || null,
-      trainer_id: trainerId || null,
+      trainer_id: trainerIds[0] ?? null,
+      trainer_ids: trainerIds,
       group_label: groupLabel.trim() || null,
     }
 
@@ -188,9 +189,18 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
    * Resolves a trainer ID to a display name for the schedule table.
    * Returns em-dash if no trainer is assigned or the ID can't be found.
    */
-  function trainerName(id: string | null) {
-    if (!id) return '—'
-    return trainers.find(t => t.id === id)?.trainer_name ?? '—'
+  function toggleTrainer(id: string) {
+    setTrainerIds(prev => prev.includes(id) ? prev.filter(trainerId => trainerId !== id) : [...prev, id])
+  }
+
+  function toggleRecTrainer(id: string) {
+    setRecTrainerIds(prev => prev.includes(id) ? prev.filter(trainerId => trainerId !== id) : [...prev, id])
+  }
+
+  function trainerNames(slot: ClassScheduleSlot) {
+    const ids = slot.trainer_ids?.length ? slot.trainer_ids : slot.trainer_id ? [slot.trainer_id] : []
+    if (ids.length === 0) return '—'
+    return ids.map(id => trainers.find(t => t.id === id)?.trainer_name).filter(Boolean).join(', ') || '—'
   }
 
   const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
@@ -248,13 +258,17 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
                 </label>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Trainer
-                  <select value={trainerId} onChange={e => setTrainerId(e.target.value)} className={fieldClass}>
-                    <option value="">— None —</option>
-                    {trainers.map(t => (
-                      <option key={t.id} value={t.id}>{t.trainer_name} ({t.role})</option>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Trainers
+                  <div className="mt-1 max-h-32 overflow-auto rounded-md border border-slate-200 bg-slate-100 p-1 dark:border-white/10 dark:bg-tt-elevated">
+                    {trainers.length === 0 ? (
+                      <p className="px-2 py-1.5 text-[11px] text-slate-500">Assign trainers first.</p>
+                    ) : trainers.map(t => (
+                      <label key={t.id} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-xs text-slate-700 hover:bg-white dark:text-slate-200 dark:hover:bg-tt-surface">
+                        <input type="checkbox" checked={trainerIds.includes(t.id)} onChange={() => toggleTrainer(t.id)} className="accent-tt-blue" />
+                        <span>{t.trainer_name} ({t.role})</span>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 </label>
               </div>
               <div>
@@ -322,11 +336,17 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400">Trainer
-                  <select value={recTrainerId} onChange={e => setRecTrainerId(e.target.value)} className={fieldClass}>
-                    <option value="">— None —</option>
-                    {trainers.map(t => <option key={t.id} value={t.id}>{t.trainer_name}</option>)}
-                  </select>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400">Trainers
+                  <div className="mt-1 max-h-32 overflow-auto rounded-md border border-slate-200 bg-slate-100 p-1 dark:border-white/10 dark:bg-tt-elevated">
+                    {trainers.length === 0 ? (
+                      <p className="px-2 py-1.5 text-[11px] text-slate-500">Assign trainers first.</p>
+                    ) : trainers.map(t => (
+                      <label key={t.id} className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-xs text-slate-700 hover:bg-white dark:text-slate-200 dark:hover:bg-tt-surface">
+                        <input type="checkbox" checked={recTrainerIds.includes(t.id)} onChange={() => toggleRecTrainer(t.id)} className="accent-tt-blue" />
+                        <span>{t.trainer_name}</span>
+                      </label>
+                    ))}
+                  </div>
                 </label>
                 <label className="block text-xs font-medium text-slate-500 dark:text-slate-400">Group
                   <input type="text" value={recGroupLabel} onChange={e => setRecGroupLabel(e.target.value)} className={fieldClass} placeholder="e.g. A" />
@@ -378,7 +398,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
                   <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{slot.slot_date}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{slot.start_time}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{slot.end_time}</td>
-                  <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{trainerName(slot.trainer_id)}</td>
+                  <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{trainerNames(slot)}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{slot.group_label ?? '—'}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400 max-w-[120px] truncate" title={slot.notes ?? undefined}>{slot.notes ?? '—'}</td>
                   <td className="px-3 py-2 text-right">

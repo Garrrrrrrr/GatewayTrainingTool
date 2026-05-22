@@ -19,6 +19,16 @@ export function manualStudentEmail(classId: string, studentName: string): string
   return `manual+${slug}.${classId.slice(0, 8)}@${MANUAL_STUDENT_EMAIL_DOMAIN}`
 }
 
+export function manualTrainerEmail(classId: string, trainerName: string): string {
+  const slug = normalizeStudentName(trainerName)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '.')
+    .replace(/^\.+|\.+$/g, '')
+    .slice(0, 80) || 'trainer'
+
+  return `manual.trainer+${slug}.${classId.slice(0, 8)}@${MANUAL_STUDENT_EMAIL_DOMAIN}`
+}
+
 export function isManualStudentEmail(email: string): boolean {
   return email.toLowerCase().endsWith(`@${MANUAL_STUDENT_EMAIL_DOMAIN}`)
 }

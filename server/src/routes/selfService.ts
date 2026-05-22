@@ -264,7 +264,7 @@ selfServiceRouter.get('/me/today', async (req: Request, res: Response, next: Nex
         .in('id', classIds),
       supabase
         .from('class_schedule_slots')
-        .select('id, class_id, slot_date, start_time, end_time, group_label, notes, trainer_id')
+        .select('id, class_id, slot_date, start_time, end_time, group_label, notes, trainer_id, trainer_ids')
         .in('class_id', classIds)
         .eq('slot_date', targetDate)
         .order('start_time', { ascending: true }),
@@ -293,7 +293,10 @@ selfServiceRouter.get('/me/today', async (req: Request, res: Response, next: Nex
 
     const reports = (reportsResult.data ?? []) as TrainerTodayReport[]
     const slots = (scheduleResult.data ?? [])
-      .filter((slot: { trainer_id: string | null }) => slot.trainer_id === null || trainerIds.includes(slot.trainer_id))
+      .filter((slot: { trainer_id: string | null; trainer_ids?: string[] | null }) => {
+        const slotTrainerIds = slot.trainer_ids?.length ? slot.trainer_ids : slot.trainer_id ? [slot.trainer_id] : []
+        return slotTrainerIds.length === 0 || slotTrainerIds.some(id => trainerIds.includes(id))
+      })
       .map((slot: {
         id: string
         class_id: string
@@ -303,6 +306,7 @@ selfServiceRouter.get('/me/today', async (req: Request, res: Response, next: Nex
         group_label: string | null
         notes: string | null
         trainer_id: string | null
+        trainer_ids?: string[] | null
       }) => {
         const cls = classMap.get(slot.class_id)
         const slotGroup = groupKey(slot.group_label)
@@ -331,7 +335,8 @@ selfServiceRouter.get('/me/today', async (req: Request, res: Response, next: Nex
           group_label: slot.group_label,
           notes: slot.notes,
           trainer_id: slot.trainer_id,
-          assigned_to_me: slot.trainer_id === null || trainerIds.includes(slot.trainer_id),
+          trainer_ids: slot.trainer_ids ?? [],
+          assigned_to_me: (slot.trainer_ids?.length ? slot.trainer_ids : slot.trainer_id ? [slot.trainer_id] : []).some(id => trainerIds.includes(id)) || (!slot.trainer_id && !slot.trainer_ids?.length),
           report: exactReport ? reportSummary(exactReport) : null,
           copy_source_report: copySource ? reportSummary(copySource) : null,
         }

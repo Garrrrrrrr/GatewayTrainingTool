@@ -173,7 +173,7 @@ export function StudentReportInput({
             type="button"
             onClick={handleSignIn}
             disabled={signingIn}
-            className="rounded-[10px] bg-gw-blue px-4 py-2 text-sm font-semibold text-white hover:bg-gw-blue/90 disabled:opacity-40 transition-colors"
+            className="rounded-[10px] bg-tt-blue px-4 py-2 text-sm font-semibold text-white hover:bg-tt-blue/90 disabled:opacity-40 transition-colors"
           >
             {signingIn ? 'Signing in...' : 'Sign In for Attendance'}
           </button>
@@ -215,7 +215,7 @@ export function StudentReportInput({
           {drillInputs.map((d, idx) => {
             const isDrill = d.drill_type === 'drill'
             return (
-              <div key={d.drill_id} className="flex items-center gap-3 bg-slate-100 dark:bg-gw-elevated rounded-[10px] px-3 py-2">
+              <div key={d.drill_id} className="flex items-center gap-3 bg-slate-100 dark:bg-tt-elevated rounded-[10px] px-3 py-2">
                 <div className="flex-1 min-w-0">
                   <span className="text-sm text-slate-800 dark:text-slate-200 font-medium">{d.drill_name}</span>
                   <span className={`ml-2 text-[10px] font-medium px-1.5 py-0.5 rounded ${isDrill ? 'bg-blue-500/15 text-blue-400' : 'bg-purple-500/15 text-purple-400'}`}>
@@ -241,7 +241,7 @@ export function StudentReportInput({
                       value={isDrill ? (d.time_seconds ?? '') : (d.score ?? '')}
                       onChange={e => updateDrill(idx, isDrill ? 'time_seconds' : 'score', e.target.value)}
                       placeholder={isDrill ? 'Time (s)' : 'Score'}
-                      className="w-24 rounded-md bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] px-2 py-1.5 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-600 focus:border-gw-blue/40 focus:outline-none"
+                      className="w-24 rounded-md bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] px-2 py-1.5 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-600 focus:border-tt-blue/40 focus:outline-none"
                     />
                   )}
                 </div>
@@ -257,7 +257,7 @@ export function StudentReportInput({
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="self-start rounded-[10px] bg-gw-blue px-5 py-2 text-sm font-semibold text-white hover:bg-gw-blue/90 disabled:opacity-40 transition-colors"
+          className="self-start rounded-[10px] bg-tt-blue px-5 py-2 text-sm font-semibold text-white hover:bg-tt-blue/90 disabled:opacity-40 transition-colors"
         >
           {saving ? 'Saving...' : 'Save Progress'}
         </button>

@@ -1,4 +1,4 @@
-# Agent Guide — Gateway Training Tool
+# Agent Guide — Training Tool
 
 Everything a coding agent (Claude, Copilot, Cursor, etc.) needs to know to work on this project correctly and efficiently. Read this file before making any changes.
 
@@ -6,7 +6,7 @@ Everything a coding agent (Claude, Copilot, Cursor, etc.) needs to know to work 
 
 ## 1. What this project is
 
-An internal training management platform for **Gateway Casinos**. Coordinators create and manage training classes for casino table games (Blackjack, Baccarat, etc.) across properties in **BC, AB, and ON**. Trainers run the classes; students (trainees) attend them.
+An internal training management platform for **training teams**. Coordinators create and manage training classes for casino table games (Blackjack, Baccarat, etc.) across properties in **BC, AB, and ON**. Trainers run the classes; students (trainees) attend them.
 
 The app tracks: classes, schedules, drill/test scores, daily reports, trainer assignments, student enrollments, and logged hours (for payroll).
 
@@ -15,7 +15,7 @@ The app tracks: classes, schedules, drill/test scores, daily reports, trainer as
 ## 2. Repository layout
 
 ```
-GatewayTrainingTool/
+TrainingTool/
 ├── api/index.ts                  # Vercel serverless entry — re-exports server/src/index.ts
 ├── server/                       # Express REST API (TypeScript)
 │   └── src/
@@ -205,12 +205,12 @@ Each report can include drill/test results per student:
 - After saving a report, the `reportCacheRef` for that report is invalidated so "View PDF" re-fetches fresh data
 
 ### 4.7 Color palette
-The Gateway brand colors are defined in `web/tailwind.config.js`:
-- `gw-darkest`: `#081C30` — sidebar gradient start
-- `gw-dark`: `#134270` — primary brand color, sidebar gradient end
-- `gw-navy`: `#131371`
-- `gw-teal`: `#137171`
-- `gw-blue`: `#1E69B3`
+The Training Tool brand colors are defined in `web/tailwind.config.js`:
+- `tt-darkest`: `#081C30` — sidebar gradient start
+- `tt-dark`: `#134270` — primary brand color, sidebar gradient end
+- `tt-navy`: `#131371`
+- `tt-teal`: `#137171`
+- `tt-blue`: `#1E69B3`
 
 Use white backgrounds with `#134270` accents for the main UI. Sidebar uses the dark gradient.
 

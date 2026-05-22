@@ -61,7 +61,7 @@ export function RoleSelectionPage() {
 
   if (pending) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-gw-darkest flex items-center justify-center px-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-tt-darkest flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <div className="w-14 h-14 rounded-full bg-amber-500/15 flex items-center justify-center mx-auto mb-4">
             <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
@@ -85,13 +85,13 @@ export function RoleSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-gw-darkest flex items-center justify-center px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-tt-darkest flex items-center justify-center px-4">
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
-          <div className="w-10 h-10 rounded-[10px] bg-gradient-to-br from-gw-blue to-gw-teal flex items-center justify-center mx-auto mb-4">
+          <div className="w-10 h-10 rounded-[10px] bg-gradient-to-br from-tt-blue to-tt-teal flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-lg leading-none select-none">G</span>
           </div>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-1">Welcome to Gateway Training Tool</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-1">Welcome to Training Tool</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">Complete your profile to get started.</p>
         </div>
 
@@ -108,7 +108,7 @@ export function RoleSelectionPage() {
                 value={firstName}
                 onChange={e => setFirstName(e.target.value)}
                 placeholder="John"
-                className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-gw-surface px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-gw-blue/40 focus:outline-none"
+                className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-tt-surface px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-tt-blue/40 focus:outline-none"
               />
             </div>
             <div className="flex flex-col gap-1.5 flex-1">
@@ -121,7 +121,7 @@ export function RoleSelectionPage() {
                 value={lastName}
                 onChange={e => setLastName(e.target.value)}
                 placeholder="Doe"
-                className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-gw-surface px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-gw-blue/40 focus:outline-none"
+                className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-tt-surface px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-tt-blue/40 focus:outline-none"
               />
             </div>
           </div>
@@ -135,7 +135,7 @@ export function RoleSelectionPage() {
               value={phone}
               onChange={e => setPhone(formatPhone(e.target.value))}
               placeholder="(604) 555-1234"
-              className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-gw-surface px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-gw-blue/40 focus:outline-none"
+              className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-tt-surface px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:border-tt-blue/40 focus:outline-none"
             />
           </div>
         </div>
@@ -150,14 +150,14 @@ export function RoleSelectionPage() {
               onClick={() => setSelected(r.value)}
               className={`flex items-start gap-4 p-4 rounded-[10px] border text-left transition-colors ${
                 selected === r.value
-                  ? 'bg-gw-blue/10 border-gw-blue/40'
-                  : 'bg-white dark:bg-gw-surface border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.15]'
+                  ? 'bg-tt-blue/10 border-tt-blue/40'
+                  : 'bg-white dark:bg-tt-surface border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.15]'
               }`}
             >
               <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0 ${
-                selected === r.value ? 'bg-gw-blue/20' : 'bg-slate-100 dark:bg-white/[0.04]'
+                selected === r.value ? 'bg-tt-blue/20' : 'bg-slate-100 dark:bg-white/[0.04]'
               }`}>
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={selected === r.value ? 'text-gw-blue' : 'text-slate-500 dark:text-slate-400'}>
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={selected === r.value ? 'text-tt-blue' : 'text-slate-500 dark:text-slate-400'}>
                   <path d={roleIcons[r.value]} />
                 </svg>
               </div>
@@ -184,7 +184,7 @@ export function RoleSelectionPage() {
           type="button"
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="w-full rounded-[10px] bg-gw-blue px-4 py-2.5 text-sm font-semibold text-white hover:bg-gw-blue/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="w-full rounded-[10px] bg-tt-blue px-4 py-2.5 text-sm font-semibold text-white hover:bg-tt-blue/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           {submitting ? 'Submitting...' : 'Continue'}
         </button>

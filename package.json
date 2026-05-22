@@ -1,5 +1,5 @@
 {
-  "name": "gateway-training-tool",
+  "name": "training-tool",
   "version": "1.0.0",
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",

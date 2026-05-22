@@ -27,10 +27,10 @@ export function LoginView() {
   return (
     <div className="min-h-screen flex">
       {/* Left — branded hero panel */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-gradient-to-br from-gw-darkest via-gw-dark to-gw-blue px-16 py-12">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-gradient-to-br from-tt-darkest via-tt-dark to-tt-blue px-16 py-12">
         <div>
           <span className="text-xs font-semibold tracking-[0.25em] uppercase text-white/50">
-            Gateway Casinos
+            training teams
           </span>
         </div>
 
@@ -44,7 +44,7 @@ export function LoginView() {
           <div className="flex flex-col gap-3 mt-2">
             {['Floor-ready drill logging', 'Digital competency tracking', 'Multi-site class management'].map(feature => (
               <div key={feature} className="flex items-center gap-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-gw-blue flex-shrink-0" />
+                <div className="h-1.5 w-1.5 rounded-full bg-tt-blue flex-shrink-0" />
                 <span className="text-sm text-white/70">{feature}</span>
               </div>
             ))}
@@ -52,7 +52,7 @@ export function LoginView() {
         </div>
 
         <p className="text-xs text-white/25">
-          © {new Date().getFullYear()} Gateway Casinos &amp; Entertainment (Unofficial)
+          © {new Date().getFullYear()} Training Tool
         </p>
       </div>
 
@@ -60,8 +60,8 @@ export function LoginView() {
       <div className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12">
         {/* Mobile-only wordmark */}
         <div className="mb-8 lg:hidden text-center">
-          <span className="text-xs font-semibold tracking-[0.25em] uppercase text-gw-dark">
-            Gateway Casinos
+          <span className="text-xs font-semibold tracking-[0.25em] uppercase text-tt-dark">
+            training teams
           </span>
         </div>
         <LoginForm />

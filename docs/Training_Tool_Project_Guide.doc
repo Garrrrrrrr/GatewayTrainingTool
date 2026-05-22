@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Gateway Training Tool Project Guide</title>
+  <title>Training Tool Project Guide</title>
   <style>
     @page { margin: 0.75in; }
     body {
@@ -122,7 +122,7 @@
 <body>
   <section class="cover">
     <div class="eyebrow">Project Guide</div>
-    <h1>Gateway Training Tool</h1>
+    <h1>Training Tool</h1>
     <p class="subtitle">Beginner-friendly guide to the web application, its features, and how it supports training coordination.</p>
     <div class="meta">
       <p><strong>Audience:</strong> Training coordinators, trainers, students/trainees, and leadership reviewers</p>
@@ -144,7 +144,7 @@
   </div>
 
   <h2>1. Overview</h2>
-  <p>Gateway Training Tool is a web-based internal training management application designed for Gateway Casinos training teams. It brings class setup, trainee rosters, schedules, daily reports, trainer hours, audit history, and role-specific dashboards into one organized system.</p>
+  <p>Training Tool is a web-based internal training management application designed for training teams. It brings class setup, trainee rosters, schedules, daily reports, trainer hours, audit history, and role-specific dashboards into one organized system.</p>
   <p>The goal is to reduce scattered paperwork and manual tracking while giving training coordinators a clearer view of what is happening across active classes. Instead of managing training information across separate spreadsheets, emails, handwritten notes, and shared folders, the web app provides a central place to track the daily training workflow.</p>
 
   <div class="screenshot">Screenshot placeholder: Insert a screenshot of the login page or main coordinator dashboard here.</div>
@@ -303,12 +303,12 @@
     <li>Add document upload improvements for scanned reports, PDFs, and supporting training files.</li>
     <li>Add manager read-only access for leaders who need visibility but should not edit records.</li>
     <li>Add export options for reports, student records, and compliance documentation.</li>
-    <li>Add Gateway single sign-on if the app is adopted more broadly.</li>
+    <li>Add single sign-on if the app is adopted more broadly.</li>
     <li>Add integration points for HR, LMS, or other training systems.</li>
   </ul>
 
   <h2>8. Summary</h2>
-  <p>Gateway Training Tool is intended to make training coordination easier, more visible, and more consistent. It gives coordinators a central operational view while allowing trainers and students to interact with the parts of the training process that apply to them.</p>
+  <p>Training Tool is intended to make training coordination easier, more visible, and more consistent. It gives coordinators a central operational view while allowing trainers and students to interact with the parts of the training process that apply to them.</p>
   <p>The strongest value of the app is not just that it stores records. Its value is that it connects records to daily training decisions: what is scheduled, who is assigned, what has been reported, who needs follow-up, and what changed over time.</p>
 </body>
 </html>

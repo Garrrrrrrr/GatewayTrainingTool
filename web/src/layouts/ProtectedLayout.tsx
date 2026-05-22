@@ -71,7 +71,7 @@ export function ProtectedLayout() {
   }
   if (pendingRequest) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-gw-darkest flex items-center justify-center px-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-tt-darkest flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
           <div className="w-14 h-14 rounded-full bg-amber-500/15 flex items-center justify-center mx-auto mb-4">
             <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
@@ -99,17 +99,17 @@ export function ProtectedLayout() {
     return (
       <>
       <CommandPalette />
-      <div className="min-h-screen w-screen bg-slate-50 dark:bg-gw-darkest">
+      <div className="min-h-screen w-screen bg-slate-50 dark:bg-tt-darkest">
         {/* Desktop icon sidebar — hidden on mobile */}
         <CoordinatorLayout />
 
         {/* Mobile top bar */}
-        <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-white dark:bg-gw-darkest border-b border-slate-200 dark:border-white/[0.06] px-4 md:hidden">
-          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-gw-blue to-gw-teal flex items-center justify-center shrink-0">
+        <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-white dark:bg-tt-darkest border-b border-slate-200 dark:border-white/[0.06] px-4 md:hidden">
+          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-tt-blue to-tt-teal flex items-center justify-center shrink-0">
             <span className="text-white font-bold text-sm leading-none select-none">G</span>
           </div>
-          <div className="w-8 h-8 rounded-full bg-gw-blue/20 border border-gw-blue/30 flex items-center justify-center select-none">
-            <span className="text-xs font-semibold text-gw-blue">{initials}</span>
+          <div className="w-8 h-8 rounded-full bg-tt-blue/20 border border-tt-blue/30 flex items-center justify-center select-none">
+            <span className="text-xs font-semibold text-tt-blue">{initials}</span>
           </div>
         </div>
 
@@ -120,7 +120,7 @@ export function ProtectedLayout() {
 
         {/* Mobile bottom nav */}
         <nav
-          className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around h-16 bg-white dark:bg-gw-surface border-t border-slate-200 dark:border-white/[0.06] md:hidden"
+          className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around h-16 bg-white dark:bg-tt-surface border-t border-slate-200 dark:border-white/[0.06] md:hidden"
           aria-label="Mobile navigation"
         >
           {BOTTOM_NAV.map(({ to, label, icon }) => (
@@ -129,7 +129,7 @@ export function ProtectedLayout() {
               to={to}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 px-3 py-1 transition-colors duration-100 ${
-                  isActive ? 'text-gw-blue' : 'text-slate-400 dark:text-slate-500'
+                  isActive ? 'text-tt-blue' : 'text-slate-400 dark:text-slate-500'
                 }`
               }
             >
@@ -156,7 +156,7 @@ export function ProtectedLayout() {
             onClick={() => setMoreOpen(false)}
           >
             <div
-              className="w-full bg-white dark:bg-gw-surface border-t border-slate-200 dark:border-white/[0.08] rounded-t-[14px] p-4 pb-8 animate-modal-in"
+              className="w-full bg-white dark:bg-tt-surface border-t border-slate-200 dark:border-white/[0.08] rounded-t-[14px] p-4 pb-8 animate-modal-in"
               onClick={e => e.stopPropagation()}
             >
               <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
@@ -169,7 +169,7 @@ export function ProtectedLayout() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 rounded-[10px] px-3 py-3 transition-colors duration-100 ${
                         isActive
-                          ? 'bg-gw-blue/20 border border-gw-blue/35 text-slate-900 dark:text-slate-100'
+                          ? 'bg-tt-blue/20 border border-tt-blue/35 text-slate-900 dark:text-slate-100'
                           : 'bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                       }`
                     }
@@ -197,17 +197,17 @@ export function ProtectedLayout() {
     return (
       <>
       <CommandPalette />
-      <div className="min-h-screen w-screen bg-slate-50 dark:bg-gw-darkest">
+      <div className="min-h-screen w-screen bg-slate-50 dark:bg-tt-darkest">
         <TrainerLayout />
 
         {/* Mobile top bar */}
-        <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-white dark:bg-gw-darkest border-b border-slate-200 dark:border-white/[0.06] px-4 md:hidden">
-          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-gw-blue to-gw-teal flex items-center justify-center shrink-0">
+        <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-white dark:bg-tt-darkest border-b border-slate-200 dark:border-white/[0.06] px-4 md:hidden">
+          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-tt-blue to-tt-teal flex items-center justify-center shrink-0">
             <span className="text-white font-bold text-sm leading-none select-none">G</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gw-blue/20 border border-gw-blue/30 flex items-center justify-center select-none">
-              <span className="text-xs font-semibold text-gw-blue">{initials}</span>
+            <div className="w-8 h-8 rounded-full bg-tt-blue/20 border border-tt-blue/30 flex items-center justify-center select-none">
+              <span className="text-xs font-semibold text-tt-blue">{initials}</span>
             </div>
           </div>
         </div>
@@ -219,7 +219,7 @@ export function ProtectedLayout() {
 
         {/* Mobile bottom nav */}
         <nav
-          className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around h-16 bg-white dark:bg-gw-surface border-t border-slate-200 dark:border-white/[0.06] md:hidden"
+          className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around h-16 bg-white dark:bg-tt-surface border-t border-slate-200 dark:border-white/[0.06] md:hidden"
           aria-label="Mobile navigation"
         >
           {TRAINER_BOTTOM_NAV.map(({ to, label, icon }) => (
@@ -228,7 +228,7 @@ export function ProtectedLayout() {
               to={to}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 px-3 py-1 transition-colors duration-100 ${
-                  isActive ? 'text-gw-blue' : 'text-slate-400 dark:text-slate-500'
+                  isActive ? 'text-tt-blue' : 'text-slate-400 dark:text-slate-500'
                 }`
               }
             >
@@ -255,7 +255,7 @@ export function ProtectedLayout() {
             onClick={() => setMoreOpen(false)}
           >
             <div
-              className="w-full bg-white dark:bg-gw-surface border-t border-slate-200 dark:border-white/[0.08] rounded-t-[14px] p-4 pb-8 animate-modal-in"
+              className="w-full bg-white dark:bg-tt-surface border-t border-slate-200 dark:border-white/[0.08] rounded-t-[14px] p-4 pb-8 animate-modal-in"
               onClick={e => e.stopPropagation()}
             >
               <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4" />
@@ -268,7 +268,7 @@ export function ProtectedLayout() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 rounded-[10px] px-3 py-3 transition-colors duration-100 ${
                         isActive
-                          ? 'bg-gw-blue/20 border border-gw-blue/35 text-slate-900 dark:text-slate-100'
+                          ? 'bg-tt-blue/20 border border-tt-blue/35 text-slate-900 dark:text-slate-100'
                           : 'bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/[0.06] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                       }`
                     }
@@ -298,16 +298,16 @@ export function ProtectedLayout() {
   return (
     <>
     <CommandPalette />
-    <div className="min-h-screen w-screen bg-slate-50 dark:bg-gw-darkest">
+    <div className="min-h-screen w-screen bg-slate-50 dark:bg-tt-darkest">
       <StudentLayout />
 
       {/* Mobile top bar */}
-      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-white dark:bg-gw-darkest border-b border-slate-200 dark:border-white/[0.06] px-4 md:hidden">
-        <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-gw-blue to-gw-teal flex items-center justify-center shrink-0">
+      <div className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-white dark:bg-tt-darkest border-b border-slate-200 dark:border-white/[0.06] px-4 md:hidden">
+        <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-tt-blue to-tt-teal flex items-center justify-center shrink-0">
           <span className="text-white font-bold text-sm leading-none select-none">G</span>
         </div>
-        <div className="w-8 h-8 rounded-full bg-gw-blue/20 border border-gw-blue/30 flex items-center justify-center select-none">
-          <span className="text-xs font-semibold text-gw-blue">{initials}</span>
+        <div className="w-8 h-8 rounded-full bg-tt-blue/20 border border-tt-blue/30 flex items-center justify-center select-none">
+          <span className="text-xs font-semibold text-tt-blue">{initials}</span>
         </div>
       </div>
 
@@ -318,7 +318,7 @@ export function ProtectedLayout() {
 
       {/* Mobile bottom nav */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around h-16 bg-white dark:bg-gw-surface border-t border-slate-200 dark:border-white/[0.06] md:hidden"
+        className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around h-16 bg-white dark:bg-tt-surface border-t border-slate-200 dark:border-white/[0.06] md:hidden"
         aria-label="Mobile navigation"
       >
         {STUDENT_NAV_ITEMS.map(({ to, label, icon }) => (
@@ -327,7 +327,7 @@ export function ProtectedLayout() {
             to={to}
             className={({ isActive }) =>
               `flex flex-col items-center gap-0.5 px-3 py-1 transition-colors duration-100 ${
-                isActive ? 'text-gw-blue' : 'text-slate-400 dark:text-slate-500'
+                isActive ? 'text-tt-blue' : 'text-slate-400 dark:text-slate-500'
               }`
             }
           >

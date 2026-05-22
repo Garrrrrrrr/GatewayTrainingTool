@@ -61,7 +61,7 @@ export function ScheduleTable({ slots, sort, onSort }: ScheduleTableProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-hidden">
+    <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm table-fixed">
           <colgroup>
@@ -92,7 +92,7 @@ export function ScheduleTable({ slots, sort, onSort }: ScheduleTableProps) {
               return (
                 <tr
                   key={s.id}
-                  className="border-b border-slate-100 dark:border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-gw-elevated cursor-pointer transition-colors duration-100"
+                  className="border-b border-slate-100 dark:border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-tt-elevated cursor-pointer transition-colors duration-100"
                   onClick={() => navigate(`/classes/${classSlug(s.classes.name)}`)}
                 >
                   <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200 truncate">

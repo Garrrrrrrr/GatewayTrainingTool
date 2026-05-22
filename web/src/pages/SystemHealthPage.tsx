@@ -44,7 +44,7 @@ export function SystemHealthPage() {
         <button
           type="button"
           onClick={loadHealth}
-          className="rounded-md bg-white dark:bg-gw-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-gw-elevated transition-colors duration-150"
+          className="rounded-md bg-white dark:bg-tt-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-tt-elevated transition-colors duration-150"
         >
           Refresh
         </button>
@@ -53,7 +53,7 @@ export function SystemHealthPage() {
       {loading ? (
         <div className="mt-6"><SkeletonCard lines={5} /></div>
       ) : health ? (
-        <section className="mt-6 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface p-5">
+        <section className="mt-6 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-tt-surface p-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Current Status</h3>

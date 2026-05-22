@@ -14,7 +14,7 @@
  *
  * The script uses the Supabase service role client (bypasses RLS).
  * It creates or reuses Supabase Auth users, then upserts matching profiles.
- * Seed users share SEED_USER_PASSWORD, defaulting to Gateway123!.
+ * Seed users share SEED_USER_PASSWORD, defaulting to TrainingTool123!.
  *
  * The script is idempotent-ish by default: it checks for existing classes by name
  * and skips if they already exist. Run it with --reset to delete app data first.
@@ -32,7 +32,7 @@ if (!url || !key) {
 
 const supabase = createClient(url, key, { auth: { persistSession: false } })
 const shouldReset = process.argv.includes('--reset')
-const seedUserPassword = process.env.SEED_USER_PASSWORD ?? 'Gateway123!'
+const seedUserPassword = process.env.SEED_USER_PASSWORD ?? 'TrainingTool123!'
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -56,16 +56,16 @@ type SeedProfile = {
 }
 
 const coordinatorProfiles: SeedProfile[] = [
-  { email: 'coordinator@gateway.ca', full_name: 'Casey Coordinator', role: 'coordinator', province: 'BC' },
+  { email: 'coordinator@trainingtool.local', full_name: 'Casey Coordinator', role: 'coordinator', province: 'BC' },
 ]
 
 const trainerProfiles: SeedProfile[] = [
-  { email: 'sarah.chen@gateway.ca', full_name: 'Sarah Chen', role: 'trainer', province: 'BC' },
-  { email: 'mike.johnson@gateway.ca', full_name: 'Mike Johnson', role: 'trainer', province: 'BC' },
-  { email: 'lisa.wong@gateway.ca', full_name: 'Lisa Wong', role: 'trainer', province: 'AB' },
-  { email: 'james.patel@gateway.ca', full_name: 'James Patel', role: 'trainer', province: 'AB' },
-  { email: 'maria.garcia@gateway.ca', full_name: 'Maria Garcia', role: 'trainer', province: 'ON' },
-  { email: 'david.kim@gateway.ca', full_name: 'David Kim', role: 'trainer', province: 'ON' },
+  { email: 'sarah.chen@trainingtool.local', full_name: 'Sarah Chen', role: 'trainer', province: 'BC' },
+  { email: 'mike.johnson@trainingtool.local', full_name: 'Mike Johnson', role: 'trainer', province: 'BC' },
+  { email: 'lisa.wong@trainingtool.local', full_name: 'Lisa Wong', role: 'trainer', province: 'AB' },
+  { email: 'james.patel@trainingtool.local', full_name: 'James Patel', role: 'trainer', province: 'AB' },
+  { email: 'maria.garcia@trainingtool.local', full_name: 'Maria Garcia', role: 'trainer', province: 'ON' },
+  { email: 'david.kim@trainingtool.local', full_name: 'David Kim', role: 'trainer', province: 'ON' },
 ]
 
 const studentNames = [
@@ -85,16 +85,16 @@ const studentProfiles: SeedProfile[] = studentNames.map((name, index) => ({
 const classes = [
   {
     name: 'BJ MAR 01',
-    site: 'Grand Villa',
+    site: 'Training Site West',
     province: 'BC' as const,
     game_type: 'Blackjack',
     start_date: '2026-03-02',
     end_date: '2026-04-10',
-    description: 'Blackjack dealer training — March cohort at Grand Villa Casino',
+    description: 'Blackjack dealer training — March cohort at Training Site West Casino',
   },
   {
     name: 'PG MAR 01',
-    site: 'Grand Villa',
+    site: 'Training Site West',
     province: 'BC' as const,
     game_type: 'Poker',
     start_date: '2026-03-09',
@@ -103,12 +103,12 @@ const classes = [
   },
   {
     name: 'BJ MAR AB',
-    site: 'Starlight',
+    site: 'Training Site North',
     province: 'AB' as const,
     game_type: 'Blackjack',
     start_date: '2026-03-05',
     end_date: '2026-04-13',
-    description: 'Blackjack training at Starlight Casino Edmonton',
+    description: 'Blackjack training at Training Site North',
   },
   {
     name: 'ROU APR 01',
@@ -121,7 +121,7 @@ const classes = [
   },
   {
     name: 'BJ MAY 01',
-    site: 'Grand Villa',
+    site: 'Training Site West',
     province: 'BC' as const,
     game_type: 'Blackjack',
     start_date: '2026-05-18',

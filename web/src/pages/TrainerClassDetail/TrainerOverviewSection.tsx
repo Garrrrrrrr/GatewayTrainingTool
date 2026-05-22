@@ -22,19 +22,19 @@ export function TrainerOverviewSection() {
   return (
     <section className="space-y-4">
       {/* Progress bar */}
-      <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Class progress</span>
           <span className="text-xs text-slate-500">Day {Math.min(elapsedDays, totalDays)} of {totalDays} ({completionPct}%)</span>
         </div>
         <div className="h-2 bg-slate-200 dark:bg-white/[0.06] rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-gw-blue to-gw-teal rounded-full transition-all duration-300" style={{ width: `${completionPct}%` }} />
+          <div className="h-full bg-gradient-to-r from-tt-blue to-tt-teal rounded-full transition-all duration-300" style={{ width: `${completionPct}%` }} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Class details */}
-        <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Class details</h3>
           {loading ? (
             <div className="space-y-2"><SkeletonText className="w-1/2" /><SkeletonText className="w-3/4" /></div>
@@ -59,7 +59,7 @@ export function TrainerOverviewSection() {
         </div>
 
         {/* Stats */}
-        <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Class stats</h3>
           {loading ? (
             <div className="space-y-2"><SkeletonText className="w-1/2" /><SkeletonText className="w-3/4" /></div>

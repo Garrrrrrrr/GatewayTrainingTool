@@ -131,7 +131,7 @@ export function ClassDocumentsSection({
   }
 
   return (
-    <section className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
       <header className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -151,7 +151,7 @@ export function ClassDocumentsSection({
                 onChange={e => setDescription(e.target.value)}
                 maxLength={500}
                 placeholder="Optional description"
-                className="mt-1 h-8 w-full min-w-[220px] rounded-md border border-slate-200 bg-slate-100 px-2.5 text-xs text-slate-800 outline-none focus:border-gw-blue/40 dark:border-white/10 dark:bg-gw-elevated dark:text-slate-200"
+                className="mt-1 h-8 w-full min-w-[220px] rounded-md border border-slate-200 bg-slate-100 px-2.5 text-xs text-slate-800 outline-none focus:border-tt-blue/40 dark:border-white/10 dark:bg-tt-elevated dark:text-slate-200"
                 disabled={uploadDisabled}
               />
             </label>
@@ -177,7 +177,7 @@ export function ClassDocumentsSection({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadDisabled}
-                className="h-8 rounded-md bg-gw-blue px-3 text-xs font-semibold text-white transition-colors hover:bg-gw-blue/90 disabled:opacity-40"
+                className="h-8 rounded-md bg-tt-blue px-3 text-xs font-semibold text-white transition-colors hover:bg-tt-blue/90 disabled:opacity-40"
               >
                 {uploading ? 'Uploading...' : 'Add file'}
               </button>
@@ -185,7 +185,7 @@ export function ClassDocumentsSection({
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
                 disabled={uploadDisabled}
-                className="h-8 rounded-md border border-gw-teal/30 bg-gw-teal/10 px-3 text-xs font-semibold text-gw-teal transition-colors hover:bg-gw-teal/15 disabled:opacity-40"
+                className="h-8 rounded-md border border-tt-teal/30 bg-tt-teal/10 px-3 text-xs font-semibold text-tt-teal transition-colors hover:bg-tt-teal/15 disabled:opacity-40"
               >
                 Take photo
               </button>
@@ -197,7 +197,7 @@ export function ClassDocumentsSection({
       {loading ? (
         <SkeletonTable rows={3} cols={4} />
       ) : documents.length === 0 ? (
-        <div className="rounded-[10px] bg-slate-100 dark:bg-gw-elevated">
+        <div className="rounded-[10px] bg-slate-100 dark:bg-tt-elevated">
           <EmptyState title="No documents yet" description={canUpload && !archived ? 'Add a PDF or take a photo to attach class paperwork.' : 'No class paperwork has been attached.'} variant="neutral" />
         </div>
       ) : (
@@ -229,7 +229,7 @@ export function ClassDocumentsSection({
                         type="button"
                         onClick={() => void openDocument(document)}
                         disabled={busyDocumentId === document.id}
-                        className="rounded px-2 py-1 text-[11px] font-medium text-gw-blue transition-colors hover:bg-gw-blue/10 disabled:opacity-40"
+                        className="rounded px-2 py-1 text-[11px] font-medium text-tt-blue transition-colors hover:bg-tt-blue/10 disabled:opacity-40"
                       >
                         Open
                       </button>

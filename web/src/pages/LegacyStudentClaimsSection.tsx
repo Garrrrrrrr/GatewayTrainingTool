@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { api, type LegacyStudentClaimRow } from '../lib/apiClient'
 import { useToast } from '../contexts/ToastContext'
 
-const inputClass = 'w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/60 focus:ring-2 focus:ring-gw-blue/20 dark:focus:border-gw-blue/40 dark:focus:ring-gw-blue/15'
+const inputClass = 'w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/60 focus:ring-2 focus:ring-tt-blue/20 dark:focus:border-tt-blue/40 dark:focus:ring-tt-blue/15'
 
 export function LegacyStudentClaimsSection() {
   const { toast } = useToast()
@@ -84,19 +84,19 @@ export function LegacyStudentClaimsSection() {
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Unclaimed</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{rows.length}</p>
         </div>
-        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Matched</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{matchedRows}</p>
         </div>
-        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Duplicates</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{duplicateRows}</p>
         </div>
-        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+        <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Selected</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{selectedIds.size}</p>
         </div>
@@ -117,7 +117,7 @@ export function LegacyStudentClaimsSection() {
           type="button"
           disabled={merging || selectedIds.size === 0}
           onClick={() => mergeRows([...selectedIds], bulkEmail, selectedRows[0]?.student_name)}
-          className="rounded-md bg-gw-blue text-white px-3 py-2 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-50"
+          className="rounded-md bg-tt-blue text-white px-3 py-2 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-50"
         >
           Merge selected
         </button>
@@ -137,7 +137,7 @@ export function LegacyStudentClaimsSection() {
                     type="checkbox"
                     checked={rows.length > 0 && selectedIds.size === rows.length}
                     onChange={toggleAllVisible}
-                    className="accent-gw-blue"
+                    className="accent-tt-blue"
                     aria-label="Select all legacy students"
                   />
                 </th>
@@ -159,7 +159,7 @@ export function LegacyStudentClaimsSection() {
                         type="checkbox"
                         checked={selectedIds.has(row.id)}
                         onChange={() => toggleSelected(row.id)}
-                        className="accent-gw-blue"
+                        className="accent-tt-blue"
                         aria-label={`Select ${row.student_name}`}
                       />
                     </td>

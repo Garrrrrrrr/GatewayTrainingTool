@@ -65,19 +65,19 @@ export function ClassPayrollSection({ classId, className }: ClassPayrollSectionP
     }
   }
 
-  const inputClass = 'bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-1.5 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15 [color-scheme:dark]'
+  const inputClass = 'bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-1.5 text-xs text-slate-700 dark:text-slate-200 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15 [color-scheme:dark]'
 
   return (
     <section className="flex flex-col gap-4">
       {/* Sub-view toggle */}
       <div className="flex items-center gap-3">
-        <div className="inline-flex rounded-md bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/[0.08] p-0.5">
+        <div className="inline-flex rounded-md bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/[0.08] p-0.5">
           <button
             type="button"
             onClick={() => setView('summary')}
             className={`px-3 py-1.5 text-xs font-medium rounded-[5px] transition-colors ${
               view === 'summary'
-                ? 'bg-gw-blue/20 text-gw-blue border border-gw-blue/30'
+                ? 'bg-tt-blue/20 text-tt-blue border border-tt-blue/30'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 border border-transparent'
             }`}
           >
@@ -88,7 +88,7 @@ export function ClassPayrollSection({ classId, className }: ClassPayrollSectionP
             onClick={() => setView('log')}
             className={`px-3 py-1.5 text-xs font-medium rounded-[5px] transition-colors ${
               view === 'log'
-                ? 'bg-gw-blue/20 text-gw-blue border border-gw-blue/30'
+                ? 'bg-tt-blue/20 text-tt-blue border border-tt-blue/30'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 border border-transparent'
             }`}
           >
@@ -113,7 +113,7 @@ export function ClassPayrollSection({ classId, className }: ClassPayrollSectionP
               <button
                 type="button"
                 onClick={() => { setDateFrom(''); setDateTo('') }}
-                className="text-xs text-gw-blue hover:text-blue-300 transition-colors underline underline-offset-2 pb-1.5"
+                className="text-xs text-tt-blue hover:text-blue-300 transition-colors underline underline-offset-2 pb-1.5"
               >
                 Clear dates
               </button>
@@ -143,7 +143,7 @@ export function ClassPayrollSection({ classId, className }: ClassPayrollSectionP
                   )}
                 </div>
                 {trainerRows.length === 0 ? (
-                  <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+                  <div className="bg-white dark:bg-tt-surface rounded-[10px]">
                     <EmptyState title="No trainer hours" description="Hours appear here once logged for trainers in this class." variant="neutral" />
                   </div>
                 ) : (
@@ -170,7 +170,7 @@ export function ClassPayrollSection({ classId, className }: ClassPayrollSectionP
                   )}
                 </div>
                 {studentRows.length === 0 ? (
-                  <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+                  <div className="bg-white dark:bg-tt-surface rounded-[10px]">
                     <EmptyState title="No student hours" description="Hours appear here once logged for students in this class." variant="neutral" />
                   </div>
                 ) : (

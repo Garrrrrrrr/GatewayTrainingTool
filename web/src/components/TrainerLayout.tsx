@@ -20,7 +20,7 @@ export const TRAINER_NAV_ITEMS: NavItem[] = [
 function NavTooltip({ label }: { label: string }) {
   return (
     <div className="pointer-events-none absolute left-full ml-2.5 top-1/2 -translate-y-1/2 z-[60] opacity-0 group-hover/tip:opacity-100 transition-opacity duration-100 whitespace-nowrap">
-      <div className="bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/10 rounded-md px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-lg">
+      <div className="bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/10 rounded-md px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-lg">
         {label}
       </div>
     </div>
@@ -33,7 +33,7 @@ export function TrainerLayout() {
   return (
     <aside className="hidden md:flex fixed top-0 left-0 h-full w-16 flex-col items-center py-4 gap-2 bg-white dark:bg-white/[0.03] border-r border-slate-200 dark:border-white/[0.06] z-50">
       {/* Logo mark */}
-      <div className="w-10 h-10 rounded-[10px] bg-gradient-to-br from-gw-blue to-gw-teal flex items-center justify-center shrink-0 mb-2">
+      <div className="w-10 h-10 rounded-[10px] bg-gradient-to-br from-tt-blue to-tt-teal flex items-center justify-center shrink-0 mb-2">
         <span className="text-white font-bold text-base leading-none select-none">G</span>
       </div>
 
@@ -46,7 +46,7 @@ export function TrainerLayout() {
               className={({ isActive }) =>
                 `w-10 h-10 rounded-[10px] flex items-center justify-center transition-colors duration-100 ${
                   isActive
-                    ? 'bg-gw-blue/20 border border-gw-blue/35 text-gw-blue'
+                    ? 'bg-tt-blue/20 border border-tt-blue/35 text-tt-blue'
                     : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-600 dark:hover:text-slate-300'
                 }`
               }
@@ -67,7 +67,7 @@ export function TrainerLayout() {
             className={({ isActive }) =>
               `w-10 h-10 rounded-[10px] flex items-center justify-center transition-colors duration-100 ${
                 isActive
-                  ? 'bg-gw-blue/20 border border-gw-blue/35 text-gw-blue'
+                  ? 'bg-tt-blue/20 border border-tt-blue/35 text-tt-blue'
                   : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-600 dark:hover:text-slate-300'
               }`
             }

@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        gw: {
+        tt: {
           darkest:     '#081C30',
           dark:        '#134270',
           navy:        '#131371',

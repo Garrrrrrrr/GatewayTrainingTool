@@ -17,13 +17,13 @@ const ToastContext = createContext<ToastContextValue | null>(null)
 const TOAST_ACCENT: Record<ToastType, string> = {
   success: 'border-l-4 border-emerald-400',
   error:   'border-l-4 border-rose-400',
-  info:    'border-l-4 border-gw-blue',
+  info:    'border-l-4 border-tt-blue',
 }
 
 const TOAST_ICON_BG: Record<ToastType, string> = {
   success: 'bg-emerald-500/15 text-emerald-400',
   error:   'bg-rose-500/15 text-rose-400',
-  info:    'bg-gw-blue/15 text-gw-blue',
+  info:    'bg-tt-blue/15 text-tt-blue',
 }
 
 function ToastIcon({ type }: { type: ToastType }) {
@@ -85,7 +85,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map(t => (
           <div
             key={t.id}
-            className={`pointer-events-auto animate-toast-in flex items-start gap-3 bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[10px] px-4 py-3 shadow-xl ${TOAST_ACCENT[t.type]}`}
+            className={`pointer-events-auto animate-toast-in flex items-start gap-3 bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[10px] px-4 py-3 shadow-xl ${TOAST_ACCENT[t.type]}`}
           >
             <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${TOAST_ICON_BG[t.type]}`}>
               <ToastIcon type={t.type} />

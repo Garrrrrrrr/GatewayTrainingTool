@@ -21,6 +21,7 @@
 import express, { Router, type Request, type Response, type NextFunction } from 'express'
 import { supabase } from '../lib/supabase'
 import { logAudit } from '../lib/audit'
+import { manualStudentEmail, normalizeStudentEmail, normalizeStudentName } from '../lib/manualStudents'
 import { autoFailNotComingBack } from '../lib/autoFail'
 import { writeLimiter } from '../middleware/rateLimiter'
 import {
@@ -1429,7 +1430,8 @@ selfServiceRouter.post('/me/my-classes/:classId/enrollments', writeLimiter, asyn
     const { data: cls } = await supabase.from('classes').select('archived').eq('id', classId).single()
     if (cls?.archived) { res.status(400).json({ error: 'Cannot modify data for archived classes' }); return }
 
-    const studentEmail = body.student_email.trim().toLowerCase()
+    const studentName = normalizeStudentName(body.student_name)
+    const studentEmail = normalizeStudentEmail(body.student_email) ?? manualStudentEmail(classId, studentName)
     const { data: existing, error: existingError } = await supabase
       .from('class_enrollments')
       .select('id')
@@ -1446,7 +1448,7 @@ selfServiceRouter.post('/me/my-classes/:classId/enrollments', writeLimiter, asyn
       .from('class_enrollments')
       .insert({
         class_id: classId,
-        student_name: body.student_name,
+        student_name: studentName,
         student_email: studentEmail,
         status: body.status,
         group_label: body.group_label ?? null,

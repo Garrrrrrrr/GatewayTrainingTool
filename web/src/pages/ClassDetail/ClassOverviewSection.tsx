@@ -37,19 +37,19 @@ export function ClassOverviewSection({ classData }: ClassOverviewSectionProps) {
   return (
     <section className="space-y-4">
       {/* Completion progress */}
-      <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Class progress</span>
           <span className="text-xs text-slate-500">Day {Math.min(elapsedDays, totalDays)} of {totalDays} ({completionPct}%)</span>
         </div>
         <div className="h-2 bg-slate-200 dark:bg-white/[0.06] rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-gw-blue to-gw-teal rounded-full transition-all duration-300" style={{ width: `${completionPct}%` }} />
+          <div className="h-full bg-gradient-to-r from-tt-blue to-tt-teal rounded-full transition-all duration-300" style={{ width: `${completionPct}%` }} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Class details card */}
-      <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Class details</h3>
         <dl className="space-y-2 text-sm">
           {[
@@ -68,7 +68,7 @@ export function ClassOverviewSection({ classData }: ClassOverviewSectionProps) {
       </div>
 
       {/* Trainers card */}
-      <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Trainers</h3>
         {loading ? (
           <div className="space-y-2">
@@ -91,7 +91,7 @@ export function ClassOverviewSection({ classData }: ClassOverviewSectionProps) {
                     className={
                       'inline-block rounded-full px-1.5 py-0.5 text-[10px] font-medium ' +
                       (t.role === 'primary'
-                        ? 'bg-gw-blue/20 text-blue-300'
+                        ? 'bg-tt-blue/20 text-blue-300'
                         : 'bg-white/[0.06] text-slate-500 dark:text-slate-400')
                     }
                   >
@@ -105,7 +105,7 @@ export function ClassOverviewSection({ classData }: ClassOverviewSectionProps) {
       </div>
 
       {/* Students & schedule card */}
-      <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Students & schedule</h3>
         {loading ? (
           <div className="space-y-2">

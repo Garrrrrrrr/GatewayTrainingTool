@@ -1011,7 +1011,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
     return <SkeletonTable rows={4} cols={5} />
   }
 
-  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
   return (
     <>
@@ -1023,7 +1023,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
       )}
 
       {mode === 'reports' && (
-        <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
             <div>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daily reports</h3>
@@ -1036,19 +1036,19 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                 <button
                   type="button"
                   onClick={() => openDraftFromScheduleSlot(todaysScheduleSlots.find(slot => !reportExistsForScheduleSlot(slot)) ?? todaysScheduleSlots[0])}
-                  className="rounded-md bg-gw-blue/15 border border-gw-blue/30 text-gw-blue font-semibold px-3 py-1.5 text-xs hover:bg-gw-blue/20 transition-colors duration-150"
+                  className="rounded-md bg-tt-blue/15 border border-tt-blue/30 text-tt-blue font-semibold px-3 py-1.5 text-xs hover:bg-tt-blue/20 transition-colors duration-150"
                 >
                   Draft today
                 </button>
               )}
-              <button type="button" onClick={openAddReport} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 flex-shrink-0">
+              <button type="button" onClick={openAddReport} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 flex-shrink-0">
                 + Add daily report
               </button>
             </div>
           </header>
 
           {todaysScheduleSlots.length > 0 && (
-            <section className="mb-4 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-gw-elevated p-3">
+            <section className="mb-4 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-tt-elevated p-3">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <div>
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Today's scheduled drafts</h4>
@@ -1061,7 +1061,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   const slotEnrollments = enrollmentsForScheduleSlot(slot)
                   const trainerName = slot.trainer_id ? trainers.find(t => t.id === slot.trainer_id)?.trainer_name : null
                   return (
-                    <div key={slot.id} className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+                    <div key={slot.id} className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
@@ -1077,7 +1077,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                           className={`rounded-md border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
                             exists
                               ? 'border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
-                              : 'border-gw-blue/30 bg-gw-blue/15 text-gw-blue hover:bg-gw-blue/20'
+                              : 'border-tt-blue/30 bg-tt-blue/15 text-tt-blue hover:bg-tt-blue/20'
                           }`}
                         >
                           {exists ? 'Draft another' : 'Draft report'}
@@ -1090,13 +1090,13 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             </section>
           )}
 
-          <section className="mb-4 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-gw-elevated p-3 space-y-3">
+          <section className="mb-4 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-tt-elevated p-3 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Import Legacy Reports</h4>
                 <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Upload an old Excel daily report workbook. Each sheet is imported as one daily report.</p>
               </div>
-              <label className="inline-flex items-center rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-gw-elevated transition-colors">
+              <label className="inline-flex items-center rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-tt-elevated transition-colors">
                 {importParsing ? 'Parsing…' : 'Upload .xlsx'}
                 <input type="file" accept=".xlsx,.xls" className="hidden" onChange={handleLegacyFileSelected} disabled={importParsing || importing} />
               </label>
@@ -1107,7 +1107,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             )}
 
             {excludedLegacySheets.length > 0 && (
-              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
                 <p className="mb-1 font-semibold text-slate-600 dark:text-slate-300">Excluded sheets</p>
                 <div className="space-y-0.5">
                   {excludedLegacySheets.map(sheet => (
@@ -1143,7 +1143,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             )}
 
             {(importBatchesLoading || importBatches.length > 0) && (
-              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <p className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Import history</p>
                   <button type="button" onClick={loadImportBatches} className="rounded-md border border-slate-200 dark:border-white/10 px-2 py-1 text-[10px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
@@ -1208,29 +1208,29 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             {(parsedLegacyReports.length > 0 || parsedPayrollRows.length > 0) && (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wide text-slate-500">Reports</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{selectedParsedLegacyReports.length}/{parsedLegacyReports.length}</p>
                   </div>
-                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wide text-slate-500">Students</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{legacyImportReview.parsedStudentCount}</p>
                   </div>
-                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wide text-slate-500">New enrollments</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{legacyImportReview.missingStudentNames.length}</p>
                   </div>
-                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wide text-slate-500">Progress comments</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{legacyImportReview.progressEntries}</p>
                   </div>
-                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2">
+                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2">
                     <p className="text-[10px] uppercase tracking-wide text-slate-500">Warnings</p>
                     <p className={`text-sm font-semibold ${legacyImportReview.warningCount ? 'text-amber-500' : 'text-slate-800 dark:text-slate-200'}`}>{legacyImportReview.warningCount}</p>
                   </div>
                 </div>
                 {(importReviewLoading || importReview) && (
-                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface px-3 py-2 text-[11px] text-slate-600 dark:text-slate-300">
+                  <div className="rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface px-3 py-2 text-[11px] text-slate-600 dark:text-slate-300">
                     {importReviewLoading ? (
                       <p>Checking import against current class data…</p>
                     ) : importReview && (
@@ -1258,7 +1258,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   </div>
                 )}
                 {parsedLegacyReports.length > 0 && (
-                  <div className="overflow-auto rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface">
+                  <div className="overflow-auto rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface">
                     <table className="min-w-full text-[11px]">
                       <thead>
                         <tr className="border-b border-slate-200 dark:border-white/[0.06]">
@@ -1267,7 +1267,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                               type="checkbox"
                               checked={parsedLegacyReports.length > 0 && selectedLegacyReportSheets.size === parsedLegacyReports.length}
                               onChange={toggleAllLegacyReports}
-                              className="accent-gw-blue"
+                              className="accent-tt-blue"
                               aria-label="Select all parsed report sheets"
                             />
                           </th>
@@ -1299,7 +1299,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                                   type="checkbox"
                                   checked={selected}
                                   onChange={() => toggleSelectedLegacyReport(parsed.sheetName)}
-                                  className="accent-gw-blue"
+                                  className="accent-tt-blue"
                                   aria-label={`Include ${parsed.sheetName}`}
                                 />
                               </td>
@@ -1324,7 +1324,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   </div>
                 )}
                 {parsedPayrollRows.length > 0 && (
-                  <div className="overflow-auto rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface">
+                  <div className="overflow-auto rounded-md border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface">
                     <table className="min-w-full text-[11px]">
                       <thead>
                         <tr className="border-b border-slate-200 dark:border-white/[0.06]">
@@ -1333,7 +1333,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                               type="checkbox"
                               checked={parsedPayrollRows.length > 0 && selectedPayrollRowKeys.size === parsedPayrollRows.length}
                               onChange={toggleAllPayrollRows}
-                              className="accent-gw-blue"
+                              className="accent-tt-blue"
                               aria-label="Select all payroll rows"
                             />
                           </th>
@@ -1357,7 +1357,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                                   type="checkbox"
                                   checked={selected}
                                   onChange={() => toggleSelectedPayrollRow(key)}
-                                  className="accent-gw-blue"
+                                  className="accent-tt-blue"
                                   aria-label={`Include payroll row ${index + 1}`}
                                 />
                               </td>
@@ -1384,7 +1384,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                     type="button"
                     onClick={handleImportParsedReports}
                     disabled={importing || importParsing || (selectedParsedLegacyReports.length === 0 && selectedParsedPayrollRows.length === 0)}
-                    className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 disabled:opacity-60"
+                    className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 disabled:opacity-60"
                   >
                     {importing ? 'Importing…' : `Import ${selectedParsedLegacyReports.length} report${selectedParsedLegacyReports.length === 1 ? '' : 's'}${selectedParsedPayrollRows.length ? ` + ${selectedParsedPayrollRows.length} payroll` : ''}`}
                   </button>
@@ -1396,7 +1396,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
           {reportFormOpen && (
             <>
             {reportDraft && (
-              <p className="mb-2 rounded-md border border-gw-blue/25 bg-gw-blue/10 px-3 py-2 text-xs text-gw-blue">
+              <p className="mb-2 rounded-md border border-tt-blue/25 bg-tt-blue/10 px-3 py-2 text-xs text-tt-blue">
                 Draft created from schedule: {reportDraft.sourceLabel}
               </p>
             )}
@@ -1419,7 +1419,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
           )}
 
           {reports.length === 0 ? (
-            <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+            <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
               <EmptyState
                 title="No daily reports yet"
                 description={`Create a report for ${className} to start tracking training sessions.`}
@@ -1431,14 +1431,14 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             {/* Mobile: card layout */}
             <div className="sm:hidden space-y-2">
               {reports.map(r => (
-                <div key={r.id} className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
+                <div key={r.id} className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <label className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                       <input
                         type="checkbox"
                         checked={selectedReportIds.has(r.id)}
                         onChange={() => toggleSelectReport(r.id)}
-                        className="rounded border-white/20 bg-slate-100 dark:bg-gw-elevated text-gw-blue focus:ring-gw-blue/30 [color-scheme:dark]"
+                        className="rounded border-white/20 bg-slate-100 dark:bg-tt-elevated text-tt-blue focus:ring-tt-blue/30 [color-scheme:dark]"
                       />
                       Select
                     </label>
@@ -1449,14 +1449,14 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     <button type="button" onClick={() => openEditReport(r)} className="rounded-md bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">Edit</button>
-                    <button type="button" onClick={() => handleViewPdf(r)} className="rounded-md bg-gw-blue/15 border border-gw-blue/35 px-2.5 py-1.5 text-xs text-gw-blue hover:bg-gw-blue/20 transition-colors">View PDF</button>
+                    <button type="button" onClick={() => handleViewPdf(r)} className="rounded-md bg-tt-blue/15 border border-tt-blue/35 px-2.5 py-1.5 text-xs text-tt-blue hover:bg-tt-blue/20 transition-colors">View PDF</button>
                     <button type="button" onClick={() => handleRemoveReport(r.id)} className="rounded-md bg-rose-500/10 border border-rose-500/25 px-2.5 py-1.5 text-xs text-rose-400 hover:bg-rose-500/15 transition-colors">Remove</button>
                   </div>
                 </div>
               ))}
             </div>
             {/* Desktop: table layout */}
-            <div className="hidden sm:block bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-hidden">
+            <div className="hidden sm:block bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-hidden">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -1465,7 +1465,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                         type="checkbox"
                         checked={reports.length > 0 && selectedReportIds.size === reports.length}
                         onChange={toggleSelectAllReports}
-                        className="rounded border-white/20 bg-slate-100 dark:bg-gw-elevated text-gw-blue focus:ring-gw-blue/30 [color-scheme:dark]"
+                        className="rounded border-white/20 bg-slate-100 dark:bg-tt-elevated text-tt-blue focus:ring-tt-blue/30 [color-scheme:dark]"
                       />
                     </th>
                     <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Date</th>
@@ -1477,13 +1477,13 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                 </thead>
                 <tbody>
                   {reports.map(r => (
-                    <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-gw-surface transition-colors duration-100">
+                    <tr key={r.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-tt-surface transition-colors duration-100">
                       <td className="w-10 px-3 py-2">
                         <input
                           type="checkbox"
                           checked={selectedReportIds.has(r.id)}
                           onChange={() => toggleSelectReport(r.id)}
-                          className="rounded border-white/20 bg-slate-100 dark:bg-gw-elevated text-gw-blue focus:ring-gw-blue/30 [color-scheme:dark]"
+                          className="rounded border-white/20 bg-slate-100 dark:bg-tt-elevated text-tt-blue focus:ring-tt-blue/30 [color-scheme:dark]"
                         />
                       </td>
                       <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{r.report_date}</td>
@@ -1493,7 +1493,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button type="button" onClick={() => openEditReport(r)} className="rounded-md bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">Edit</button>
-                          <button type="button" onClick={() => handleViewPdf(r)} className="rounded-md bg-gw-blue/15 border border-gw-blue/35 px-2 py-1 text-gw-blue hover:bg-gw-blue/20 transition-colors">View PDF</button>
+                          <button type="button" onClick={() => handleViewPdf(r)} className="rounded-md bg-tt-blue/15 border border-tt-blue/35 px-2 py-1 text-tt-blue hover:bg-tt-blue/20 transition-colors">View PDF</button>
                           <button type="button" onClick={() => handleRemoveReport(r.id)} className="rounded-md bg-rose-500/10 border border-rose-500/25 px-2 py-1 text-rose-400 hover:bg-rose-500/15 transition-colors">Remove</button>
                         </div>
                       </td>
@@ -1503,7 +1503,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
               </table>
             </div>
             {selectedReportIds.size > 0 && (
-              <div className="sticky bottom-0 mt-2 flex items-center justify-between gap-3 bg-gw-dark border border-slate-200 dark:border-white/[0.08] rounded-[10px] px-3 py-2">
+              <div className="sticky bottom-0 mt-2 flex items-center justify-between gap-3 bg-tt-dark border border-slate-200 dark:border-white/[0.08] rounded-[10px] px-3 py-2">
                 <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{selectedReportIds.size} selected</span>
                 <div className="flex items-center gap-2">
                   <button
@@ -1529,19 +1529,19 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
       )}
 
       {mode === 'hours' && (
-        <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
             <div>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Logged hours</h3>
               <p className="mt-0.5 text-xs text-slate-500">Track hours for trainers and students for payroll. Total: {totalHours.toFixed(1)} hrs</p>
             </div>
-            <button type="button" onClick={openAddHours} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 self-start sm:self-auto flex-shrink-0">
+            <button type="button" onClick={openAddHours} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 self-start sm:self-auto flex-shrink-0">
               + Log hours
             </button>
           </header>
 
           {hoursFormOpen && (
-            <div className="mb-4 bg-slate-100 dark:bg-gw-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
+            <div className="mb-4 bg-slate-100 dark:bg-tt-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
               <form onSubmit={handleSaveHours} className="space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <label className="block text-xs font-medium text-slate-500 dark:text-slate-400">Date
@@ -1555,11 +1555,11 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Person type</label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 cursor-pointer">
-                      <input type="radio" name="personType" checked={hoursPersonType === 'trainer'} onChange={() => { setHoursPersonType('trainer'); setHoursEnrollmentId('') }} className="accent-gw-blue" />
+                      <input type="radio" name="personType" checked={hoursPersonType === 'trainer'} onChange={() => { setHoursPersonType('trainer'); setHoursEnrollmentId('') }} className="accent-tt-blue" />
                       Trainer
                     </label>
                     <label className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 cursor-pointer">
-                      <input type="radio" name="personType" checked={hoursPersonType === 'student'} onChange={() => { setHoursPersonType('student'); setHoursTrainerId('') }} className="accent-gw-blue" />
+                      <input type="radio" name="personType" checked={hoursPersonType === 'student'} onChange={() => { setHoursPersonType('student'); setHoursTrainerId('') }} className="accent-tt-blue" />
                       Student
                     </label>
                   </div>
@@ -1588,8 +1588,8 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   </label>
                 </div>
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => setHoursFormOpen(false)} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Cancel</button>
-                  <button type="submit" disabled={hoursSaving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+                  <button type="button" onClick={() => setHoursFormOpen(false)} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Cancel</button>
+                  <button type="submit" disabled={hoursSaving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-60">
                     {hoursSaving ? 'Saving…' : editingHours ? 'Save changes' : 'Log hours'}
                   </button>
                 </div>
@@ -1598,7 +1598,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
           )}
 
           {hours.length === 0 ? (
-            <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+            <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
               <EmptyState
                 title="No logged hours yet"
                 description={`Log hours for ${className} to track trainer and student time.`}
@@ -1610,7 +1610,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             {/* Mobile: card layout */}
             <div className="sm:hidden space-y-2">
               {hours.map(h => (
-                <div key={h.id} className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 cursor-pointer active:bg-white dark:bg-gw-surface" onClick={() => openEditHours(h)}>
+                <div key={h.id} className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 cursor-pointer active:bg-white dark:bg-tt-surface" onClick={() => openEditHours(h)}>
                   <div className="flex items-start justify-between gap-2 text-xs">
                     <div>
                       <p className="font-medium text-slate-700 dark:text-slate-200">{h.log_date}</p>
@@ -1622,7 +1622,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
               ))}
             </div>
             {/* Desktop: table layout */}
-            <div className="hidden sm:block bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-hidden">
+            <div className="hidden sm:block bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-hidden">
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -1635,7 +1635,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                 </thead>
                 <tbody>
                   {hours.map(h => (
-                    <tr key={h.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-gw-surface cursor-pointer transition-colors duration-100" onClick={() => openEditHours(h)}>
+                    <tr key={h.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-tt-surface cursor-pointer transition-colors duration-100" onClick={() => openEditHours(h)}>
                       <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{h.log_date}</td>
                       <td className="px-3 py-2 text-slate-500 dark:text-slate-400 capitalize">{h.person_type}</td>
                       <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{personName(h)}</td>
@@ -1663,8 +1663,8 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
 
     {batchDetail && (
       <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/50 px-4 py-6" onClick={() => setBatchDetail(null)}>
-        <div className="w-full max-w-3xl max-h-[88vh] overflow-auto rounded-[10px] border border-slate-200 dark:border-white/10 bg-white dark:bg-gw-surface shadow-2xl" onClick={e => e.stopPropagation()}>
-          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface px-4 py-3">
+        <div className="w-full max-w-3xl max-h-[88vh] overflow-auto rounded-[10px] border border-slate-200 dark:border-white/10 bg-white dark:bg-tt-surface shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-slate-200 dark:border-white/[0.06] bg-white dark:bg-tt-surface px-4 py-3">
             <div>
               <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Import batch details</h3>
               <p className="mt-0.5 text-xs text-slate-500">{batchDetail.import_id} · {formatBatchDate(batchDetail.created_at)} · {batchDetail.status.replace('_', ' ')}</p>
@@ -1675,19 +1675,19 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
           </div>
           <div className="space-y-4 p-4 text-xs">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wide text-slate-500">Reports</p>
                 <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{batchDetail.report_count}</p>
               </div>
-              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wide text-slate-500">Payroll</p>
                 <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{batchDetail.payroll_count}</p>
               </div>
-              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wide text-slate-500">Enrollments</p>
                 <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{batchDetail.enrollment_count}</p>
               </div>
-              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+              <div className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wide text-slate-500">Unmatched Progress</p>
                 <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{batchDetail.progress_unmatched}</p>
               </div>
@@ -1703,7 +1703,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                 ['Payroll row IDs', batchDetail.created_hour_ids],
                 ['Enrollment IDs', batchDetail.created_enrollment_ids],
               ].map(([label, ids]) => (
-                <div key={label as string} className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated px-3 py-2">
+                <div key={label as string} className="rounded-md border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated px-3 py-2">
                   <p className="mb-1 font-semibold text-slate-700 dark:text-slate-200">{label as string}</p>
                   {(ids as string[]).length === 0 ? (
                     <p className="text-slate-500">None</p>

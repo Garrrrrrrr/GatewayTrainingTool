@@ -1,4 +1,4 @@
-# Developer Guide — Gateway Training Tool
+# Developer Guide — Training Tool
 
 A personal reference for understanding how this codebase works, why it's built this way, and how to navigate it effectively.
 
@@ -30,11 +30,11 @@ A personal reference for understanding how this codebase works, why it's built t
 
 ## 1. The big picture
 
-This is a training management app for Gateway Casinos. Think of it like a lightweight LMS (Learning Management System), but purpose-built for casino table game training.
+This is a training management app for training teams. Think of it like a lightweight LMS (Learning Management System), but purpose-built for casino table game training.
 
 **Who uses it:**
 - **Coordinators** are the admins. They create classes, assign trainers, enroll students, manage schedules, review daily reports, and drill into per-student progress dashboards.
-- **Trainers** run the classes on the casino floor. They have a self-service dashboard showing their assigned classes, enrolled student counts, and upcoming schedule slots.
+- **Trainers** run the classes on the training floor. They have a self-service dashboard showing their assigned classes, enrolled student counts, and upcoming schedule slots.
 - **Trainees (students)** attend classes to learn games like Blackjack. They have a self-service dashboard showing their enrolled classes, upcoming schedule, daily progress ratings, and drill results.
 
 **What it tracks:**
@@ -358,7 +358,7 @@ The hours table tracks payroll-relevant data:
 - `person_type`: is this a trainer or student?
 - `hours`: 0-24 (decimal)
 - `paid`: was this paid time?
-- `live_training`: was this on the casino floor (vs. classroom)?
+- `live_training`: was this on the training floor (vs. classroom)?
 - Either `trainer_id` or `enrollment_id` is set, never both
 
 ### 5.5 Audit logs
@@ -601,7 +601,7 @@ The `Production` branch is the main deployment branch. Pushing to it triggers a 
 
 ```bash
 # 1. Clone the repo
-git clone <repo-url> && cd GatewayTrainingTool
+git clone <repo-url> && cd TrainingTool
 
 # 2. Install dependencies
 cd server && npm install
@@ -749,8 +749,8 @@ attendance: {
 
 | Term | Meaning |
 |------|---------|
-| **Class** | A training cohort — e.g. "Blackjack April 2025 at Grand Villa" |
-| **Site** | A Gateway Casino property code (e.g. "GVE" for Grand Villa) |
+| **Class** | A training cohort — e.g. "Blackjack April 2025 at Training Site West" |
+| **Site** | A training site property code (e.g. "Site A" for Training Site West) |
 | **Province** | BC (British Columbia), AB (Alberta), or ON (Ontario) |
 | **Game type** | The casino game being trained (Blackjack, Baccarat, Roulette, etc.) |
 | **Drill** | A timed practice exercise (e.g. chip cutting) with a par time |
@@ -762,7 +762,7 @@ attendance: {
 | **EE/ME/AD/NI** | Rating scale: Exceeds Expectations / Meets Expectations / Approaching Development / Needs Improvement |
 | **Group label** | Sub-groups within a class (e.g. "A", "B") for splitting students into concurrent training sessions |
 | **Meet-and-greet (MG)** | An initial orientation session; tracked by confirmed vs attended headcount |
-| **Live training** | Training on the actual casino floor (vs. classroom simulation) |
+| **Live training** | Training on the actual training floor (vs. classroom simulation) |
 | **Override hours** | Manual corrections to computed hour totals when logged data doesn't match reality |
 | **Archived** | A class that's complete/inactive — hidden from the active list but preserved for records |
 | **Slug** | The URL-safe version of a class name ("BJ APR 01" → "BJ-APR-01") |

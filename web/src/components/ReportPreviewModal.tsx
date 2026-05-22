@@ -179,7 +179,7 @@ export function ReportPreviewModal({ args, onClose }: { args: ReportPdfArgs; onC
     <div className="fixed inset-0 z-50 flex flex-col bg-black/40 dark:bg-black/60 animate-backdrop-in" onClick={onClose}>
       {/* Toolbar */}
       <div
-        className="flex flex-col gap-2 bg-slate-50 px-3 py-3 flex-shrink-0 animate-modal-in dark:bg-gw-darkest sm:flex-row sm:items-center sm:justify-between sm:px-4"
+        className="flex flex-col gap-2 bg-slate-50 px-3 py-3 flex-shrink-0 animate-modal-in dark:bg-tt-darkest sm:flex-row sm:items-center sm:justify-between sm:px-4"
         onClick={e => e.stopPropagation()}
       >
         <span className="min-w-0 truncate text-sm font-medium text-slate-900 dark:text-white">
@@ -203,7 +203,7 @@ export function ReportPreviewModal({ args, onClose }: { args: ReportPdfArgs; onC
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 rounded-md bg-gw-blue px-3 py-1.5 text-xs font-medium text-white hover:bg-gw-blue-hover"
+            className="inline-flex items-center gap-1.5 rounded-md bg-tt-blue px-3 py-1.5 text-xs font-medium text-white hover:bg-tt-blue-hover"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="6 9 6 2 18 2 18 9" />

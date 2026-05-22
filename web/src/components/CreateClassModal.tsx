@@ -98,7 +98,7 @@ export function CreateClassModal({ onClose, onSuccess }: CreateClassModalProps) 
   }
 
   const inputClass =
-    'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+    'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
   return (
     <div
@@ -107,7 +107,7 @@ export function CreateClassModal({ onClose, onSuccess }: CreateClassModalProps) 
       aria-modal="true"
       aria-labelledby="create-class-title"
     >
-      <div className="w-full max-w-md bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl animate-modal-in overflow-hidden">
+      <div className="w-full max-w-md bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl animate-modal-in overflow-hidden">
         <div className="border-b border-slate-200 dark:border-white/[0.06] px-6 py-4 flex items-start justify-between gap-3">
           <div>
             <h2 id="create-class-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
@@ -153,7 +153,7 @@ export function CreateClassModal({ onClose, onSuccess }: CreateClassModalProps) 
                 type="text"
                 value={site}
                 onChange={e => setSite(e.target.value)}
-                placeholder="e.g. GVE, SLE, GVB"
+                placeholder="e.g. Site A, Site B"
                 className={inputClass}
               />
             </div>
@@ -243,14 +243,14 @@ export function CreateClassModal({ onClose, onSuccess }: CreateClassModalProps) 
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md bg-white dark:bg-gw-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-gw-elevated transition-colors duration-150"
+              className="rounded-md bg-white dark:bg-tt-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-tt-elevated transition-colors duration-150"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50"
+              className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50"
             >
               {loading ? 'Creating…' : 'Create class'}
             </button>

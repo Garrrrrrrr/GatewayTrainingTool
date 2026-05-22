@@ -155,7 +155,7 @@ export function generateReportHtml({ report, className, trainers, enrollments, d
     </div>
     <div class="header-right">
       <div>Generated ${new Date().toLocaleDateString('en-CA')}</div>
-      <div>Gateway Casinos Training Tool</div>
+      <div>Training Tool</div>
     </div>
   </div>
 
@@ -207,7 +207,7 @@ export function generateReportHtml({ report, className, trainers, enrollments, d
 
   <footer>
     <span>${esc(className)} — ${esc(report.report_date)}</span>
-    <span>Gateway Casinos &amp; Entertainment (Unofficial)</span>
+    <span>Training Tool</span>
   </footer>
 
 ${report.drill_times.length > 0 ? (() => {
@@ -267,7 +267,7 @@ ${report.drill_times.length > 0 ? (() => {
 
     <footer style="margin-top:16px">
       <span>${esc(className)} — ${esc(report.report_date)} — Drill &amp; Test Results</span>
-      <span>Gateway Casinos &amp; Entertainment (Unofficial)</span>
+      <span>Training Tool</span>
     </footer>
   </div>`
 })() : ''}

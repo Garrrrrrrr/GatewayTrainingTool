@@ -80,7 +80,7 @@ function workbookFile(name: string): File {
 
 test('parseLegacyWorkbook imports report sheets and routes excluded/payroll sheets', async () => {
   const result = await parseLegacyWorkbook({
-    file: workbookFile('DR for GVE Ext. Disc 1-3 group C.xlsx'),
+    file: workbookFile('DR for Site A Ext. Disc 1-3 group C.xlsx'),
     trainers,
     defaultGame: 'Blackjack',
     classStartDate: '2026-04-09',

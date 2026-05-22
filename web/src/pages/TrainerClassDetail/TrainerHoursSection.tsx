@@ -9,7 +9,7 @@ import type { ClassLoggedHours } from '../../types'
 
 type HoursTab = 'my-hours' | 'student-hours'
 
-const fieldClass = 'w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+const fieldClass = 'w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
 export function TrainerHoursSection() {
   const { classId, classInfo, trainerHours, studentHours, enrollments, loading, refreshHours, setTrainerHours, setStudentHours } = useTrainerClassDetail()
@@ -200,7 +200,7 @@ export function TrainerHoursSection() {
   const enrollmentMap = new Map(enrollments.map(e => [e.id, e]))
 
   return (
-    <section className="bg-white dark:bg-gw-surface rounded-[10px] p-4 flex flex-col gap-4">
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] p-4 flex flex-col gap-4">
       {/* Sub-tab bar */}
       <div className="flex gap-1 border-b border-slate-200 dark:border-white/[0.06] -mx-4 px-4">
         {(['my-hours', 'student-hours'] as const).map(t => (
@@ -209,7 +209,7 @@ export function TrainerHoursSection() {
             type="button"
             onClick={() => setActiveTab(t)}
             className={`px-3 py-2 text-xs font-medium whitespace-nowrap border-b-2 transition-colors ${
-              activeTab === t ? 'border-gw-blue text-gw-blue' : 'border-transparent text-slate-500 hover:text-slate-600 dark:text-slate-300'
+              activeTab === t ? 'border-tt-blue text-tt-blue' : 'border-transparent text-slate-500 hover:text-slate-600 dark:text-slate-300'
             }`}
           >
             {t === 'my-hours' ? 'My Hours' : 'Student Hours'}
@@ -222,18 +222,18 @@ export function TrainerHoursSection() {
         <>
           <div className="flex items-center justify-between gap-2">
             <div>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Total: <span className="text-gw-blue">{totalMyHours}h</span></p>
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">Total: <span className="text-tt-blue">{totalMyHours}h</span></p>
               <p className="text-xs text-slate-500">Paid: {trainerHours.filter(h => h.paid).reduce((s, h) => s + h.hours, 0)}h · Unpaid: {trainerHours.filter(h => !h.paid).reduce((s, h) => s + h.hours, 0)}h</p>
             </div>
             {!archived && (
-              <button type="button" onClick={() => myFormOpen ? resetMyForm() : setMyFormOpen(true)} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all">
+              <button type="button" onClick={() => myFormOpen ? resetMyForm() : setMyFormOpen(true)} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all">
                 {myFormOpen ? 'Cancel' : '+ Log hours'}
               </button>
             )}
           </div>
 
           {myFormOpen && (
-            <form onSubmit={handleMySave} className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-gw-elevated p-3">
+            <form onSubmit={handleMySave} className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-tt-elevated p-3">
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">{myEditing ? 'Edit hours entry' : 'Log my hours'}</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="col-span-2 sm:col-span-1">
@@ -248,10 +248,10 @@ export function TrainerHoursSection() {
                 </div>
                 <div className="flex flex-col gap-2 justify-end">
                   <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" checked={myPaid} onChange={e => setMyPaid(e.target.checked)} className="accent-gw-blue" /> Paid
+                    <input type="checkbox" checked={myPaid} onChange={e => setMyPaid(e.target.checked)} className="accent-tt-blue" /> Paid
                   </label>
                   <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" checked={myLive} onChange={e => setMyLive(e.target.checked)} className="accent-gw-blue" /> Live training
+                    <input type="checkbox" checked={myLive} onChange={e => setMyLive(e.target.checked)} className="accent-tt-blue" /> Live training
                   </label>
                 </div>
                 <div className="col-span-2 sm:col-span-4">
@@ -260,8 +260,8 @@ export function TrainerHoursSection() {
                   </label>
                 </div>
                 <div className="col-span-2 sm:col-span-4 flex justify-end gap-2">
-                  <button type="button" onClick={resetMyForm} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold">Cancel</button>
-                  <button type="submit" disabled={mySaving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+                  <button type="button" onClick={resetMyForm} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold">Cancel</button>
+                  <button type="submit" disabled={mySaving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
                     {mySaving ? 'Saving…' : myEditing ? 'Update' : 'Log hours'}
                   </button>
                 </div>
@@ -272,11 +272,11 @@ export function TrainerHoursSection() {
           {loading ? (
             <SkeletonTable rows={3} cols={5} />
           ) : trainerHours.length === 0 ? (
-            <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+            <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
               <EmptyState title="No hours logged yet" description="Log your training hours for this class." variant="neutral" />
             </div>
           ) : (
-            <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-x-auto">
+            <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -290,7 +290,7 @@ export function TrainerHoursSection() {
                 </thead>
                 <tbody>
                   {trainerHours.map(h => (
-                    <tr key={h.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-white dark:bg-gw-surface transition-colors">
+                    <tr key={h.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-white dark:bg-tt-surface transition-colors">
                       <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{h.log_date}</td>
                       <td className="px-3 py-2 text-slate-700 dark:text-slate-200 font-medium">{h.hours}h</td>
                       <td className="px-3 py-2">
@@ -303,7 +303,7 @@ export function TrainerHoursSection() {
                       <td className="px-3 py-2 text-right">
                         {!archived && (
                           <div className="flex items-center justify-end gap-1">
-                            <button type="button" onClick={() => openMyEdit(h)} className="rounded px-2 py-1 text-[11px] font-medium text-gw-blue hover:bg-gw-blue/10">Edit</button>
+                            <button type="button" onClick={() => openMyEdit(h)} className="rounded px-2 py-1 text-[11px] font-medium text-tt-blue hover:bg-tt-blue/10">Edit</button>
                             <button type="button" onClick={() => setMyDeleteTarget(h)} className="rounded px-2 py-1 text-[11px] font-medium text-rose-400 hover:bg-rose-500/10">Delete</button>
                           </div>
                         )}
@@ -326,10 +326,10 @@ export function TrainerHoursSection() {
             <p className="text-xs text-slate-500 dark:text-slate-400">Log hours for enrolled students.</p>
             {!archived && (
               <div className="flex gap-2">
-                <button type="button" onClick={() => { setStuFormOpen(!stuFormOpen || stuBulkMode); setStuBulkMode(false); if (stuEditing) resetStuForm() }} className="rounded-md bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 font-semibold px-3 py-1.5 text-xs hover:bg-slate-100 dark:bg-gw-elevated transition-all">
+                <button type="button" onClick={() => { setStuFormOpen(!stuFormOpen || stuBulkMode); setStuBulkMode(false); if (stuEditing) resetStuForm() }} className="rounded-md bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 font-semibold px-3 py-1.5 text-xs hover:bg-slate-100 dark:bg-tt-elevated transition-all">
                   {stuFormOpen && !stuBulkMode ? 'Cancel' : '+ Individual'}
                 </button>
-                <button type="button" onClick={() => { setStuFormOpen(!stuFormOpen || !stuBulkMode); setStuBulkMode(true); setStuEditing(null) }} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all">
+                <button type="button" onClick={() => { setStuFormOpen(!stuFormOpen || !stuBulkMode); setStuBulkMode(true); setStuEditing(null) }} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all">
                   {stuFormOpen && stuBulkMode ? 'Cancel' : '+ Bulk log'}
                 </button>
               </div>
@@ -338,7 +338,7 @@ export function TrainerHoursSection() {
 
           {/* Individual form */}
           {stuFormOpen && !stuBulkMode && (
-            <form onSubmit={handleStuSave} className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-gw-elevated p-3">
+            <form onSubmit={handleStuSave} className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-tt-elevated p-3">
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">{stuEditing ? 'Edit student hours' : 'Log student hours'}</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
@@ -361,10 +361,10 @@ export function TrainerHoursSection() {
                 </div>
                 <div className="flex flex-col gap-2 justify-end">
                   <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" checked={stuPaid} onChange={e => setStuPaid(e.target.checked)} className="accent-gw-blue" /> Paid
+                    <input type="checkbox" checked={stuPaid} onChange={e => setStuPaid(e.target.checked)} className="accent-tt-blue" /> Paid
                   </label>
                   <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" checked={stuLive} onChange={e => setStuLive(e.target.checked)} className="accent-gw-blue" /> Live training
+                    <input type="checkbox" checked={stuLive} onChange={e => setStuLive(e.target.checked)} className="accent-tt-blue" /> Live training
                   </label>
                 </div>
                 <div className="col-span-2 sm:col-span-3">
@@ -373,8 +373,8 @@ export function TrainerHoursSection() {
                   </label>
                 </div>
                 <div className="col-span-2 sm:col-span-4 flex justify-end gap-2">
-                  <button type="button" onClick={resetStuForm} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold">Cancel</button>
-                  <button type="submit" disabled={stuSaving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+                  <button type="button" onClick={resetStuForm} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold">Cancel</button>
+                  <button type="submit" disabled={stuSaving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
                     {stuSaving ? 'Saving…' : stuEditing ? 'Update' : 'Log hours'}
                   </button>
                 </div>
@@ -384,7 +384,7 @@ export function TrainerHoursSection() {
 
           {/* Bulk form */}
           {stuFormOpen && stuBulkMode && (
-            <form onSubmit={handleBulkSave} className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-gw-elevated p-3">
+            <form onSubmit={handleBulkSave} className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-tt-elevated p-3">
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-3">Bulk log hours for all students</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
                 <div>
@@ -394,14 +394,14 @@ export function TrainerHoursSection() {
                 </div>
                 <div className="flex flex-col gap-2 justify-end">
                   <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" checked={bulkPaid} onChange={e => setBulkPaid(e.target.checked)} className="accent-gw-blue" /> Paid
+                    <input type="checkbox" checked={bulkPaid} onChange={e => setBulkPaid(e.target.checked)} className="accent-tt-blue" /> Paid
                   </label>
                   <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" checked={bulkLive} onChange={e => setBulkLive(e.target.checked)} className="accent-gw-blue" /> Live training
+                    <input type="checkbox" checked={bulkLive} onChange={e => setBulkLive(e.target.checked)} className="accent-tt-blue" /> Live training
                   </label>
                 </div>
               </div>
-              <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-hidden mb-3">
+              <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden mb-3">
                 <table className="min-w-full text-xs">
                   <thead>
                     <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -420,7 +420,7 @@ export function TrainerHoursSection() {
                             step={0.5}
                             value={bulkHoursMap[e.id] ?? ''}
                             onChange={ev => setBulkHoursMap(prev => ({ ...prev, [e.id]: ev.target.value }))}
-                            className="w-20 bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded px-1.5 py-1 text-[10px] text-slate-700 dark:text-slate-200 outline-none"
+                            className="w-20 bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded px-1.5 py-1 text-[10px] text-slate-700 dark:text-slate-200 outline-none"
                             placeholder="0"
                           />
                         </td>
@@ -430,8 +430,8 @@ export function TrainerHoursSection() {
                 </table>
               </div>
               <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => { setStuFormOpen(false); setStuBulkMode(false) }} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold">Cancel</button>
-                <button type="submit" disabled={bulkSaving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
+                <button type="button" onClick={() => { setStuFormOpen(false); setStuBulkMode(false) }} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold">Cancel</button>
+                <button type="submit" disabled={bulkSaving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50">
                   {bulkSaving ? 'Saving…' : 'Log all'}
                 </button>
               </div>
@@ -441,11 +441,11 @@ export function TrainerHoursSection() {
           {loading ? (
             <SkeletonTable rows={4} cols={5} />
           ) : studentHours.length === 0 ? (
-            <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+            <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
               <EmptyState title="No student hours yet" description="Log hours for enrolled students." variant="neutral" />
             </div>
           ) : (
-            <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-x-auto">
+            <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead>
                   <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -461,7 +461,7 @@ export function TrainerHoursSection() {
                   {studentHours.map(h => {
                     const enr = enrollmentMap.get(h.enrollment_id ?? '')
                     return (
-                      <tr key={h.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-white dark:bg-gw-surface transition-colors">
+                      <tr key={h.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-white dark:bg-tt-surface transition-colors">
                         <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{h.log_date}</td>
                         <td className="px-3 py-2 text-slate-600 dark:text-slate-300">{enr?.student_name ?? '—'}</td>
                         <td className="px-3 py-2 text-slate-700 dark:text-slate-200 font-medium">{h.hours}h</td>
@@ -474,7 +474,7 @@ export function TrainerHoursSection() {
                         <td className="px-3 py-2 text-right">
                           {!archived && (
                             <div className="flex items-center justify-end gap-1">
-                              <button type="button" onClick={() => openStuEdit(h)} className="rounded px-2 py-1 text-[11px] font-medium text-gw-blue hover:bg-gw-blue/10">Edit</button>
+                              <button type="button" onClick={() => openStuEdit(h)} className="rounded px-2 py-1 text-[11px] font-medium text-tt-blue hover:bg-tt-blue/10">Edit</button>
                               <button type="button" onClick={() => setStuDeleteTarget(h)} className="rounded px-2 py-1 text-[11px] font-medium text-rose-400 hover:bg-rose-500/10">Delete</button>
                             </div>
                           )}

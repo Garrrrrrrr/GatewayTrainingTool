@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { api, type FeedbackCategory, type FeedbackInboxItem, type FeedbackStatus } from '../lib/apiClient'
 import { useToast } from '../contexts/ToastContext'
 
-const inputClass = 'w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/60 focus:ring-2 focus:ring-gw-blue/20 dark:focus:border-gw-blue/40 dark:focus:ring-gw-blue/15'
+const inputClass = 'w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/60 focus:ring-2 focus:ring-tt-blue/20 dark:focus:border-tt-blue/40 dark:focus:ring-tt-blue/15'
 
 const STATUS_OPTIONS: Array<{ value: FeedbackStatus | ''; label: string }> = [
   { value: '', label: 'All statuses' },
@@ -89,8 +89,8 @@ export function FeedbackInboxSection() {
             onClick={() => setStatus(value)}
             className={`rounded-md border px-3 py-2 text-left transition-colors ${
               status === value
-                ? 'border-gw-blue/35 bg-gw-blue/10 text-gw-blue'
-                : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-gw-elevated text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.05]'
+                ? 'border-tt-blue/35 bg-tt-blue/10 text-tt-blue'
+                : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-tt-elevated text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.05]'
             }`}
           >
             <p className="text-[10px] uppercase tracking-wide">{statusLabel(value)}</p>

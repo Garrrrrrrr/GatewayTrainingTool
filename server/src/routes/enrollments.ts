@@ -22,6 +22,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express'
 import { supabase } from '../lib/supabase'
 import { logAudit } from '../lib/audit'
+import { manualStudentEmail, normalizeStudentEmail, normalizeStudentName } from '../lib/manualStudents'
 import {
   enrollmentBatchBodySchema,
   enrollmentBodySchema,
@@ -144,13 +145,29 @@ enrollmentsRouter.post('/classes/:classId/enrollments', async (req: Request, res
   try {
     const body = validateBody(enrollmentBodySchema, req, res)
     if (!body) return
-    const { student_name, student_email, status, group_label } = body
+    const classId = req.params.classId as string
+    const studentName = normalizeStudentName(body.student_name)
+    const studentEmail = normalizeStudentEmail(body.student_email) ?? manualStudentEmail(classId, studentName)
+
+    const { data: existing, error: existingError } = await supabase
+      .from('class_enrollments')
+      .select('id')
+      .eq('class_id', classId)
+      .eq('student_email', studentEmail)
+      .maybeSingle()
+    if (existingError) throw existingError
+    if (existing) {
+      res.status(409).json({ error: 'Student is already enrolled in this class' })
+      return
+    }
+
+    const { status, group_label } = body
     const { data, error } = await supabase
       .from('class_enrollments')
       .insert({
-        class_id: req.params.classId,
-        student_name,
-        student_email,
+        class_id: classId,
+        student_name: studentName,
+        student_email: studentEmail,
         status,
         group_label: group_label ?? null,
       })
@@ -163,7 +180,7 @@ enrollmentsRouter.post('/classes/:classId/enrollments', async (req: Request, res
       tableName: 'class_enrollments',
       recordId: (data as { id: string }).id,
       after: data as Record<string, unknown>,
-      metadata: { class_id: req.params.classId, student_email, status },
+      metadata: { class_id: classId, student_email: studentEmail, status },
       ipAddress: req.ip,
     })
     res.status(201).json(data)

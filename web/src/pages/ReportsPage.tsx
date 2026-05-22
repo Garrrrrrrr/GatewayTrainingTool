@@ -90,7 +90,7 @@ export function ReportsPage() {
         {loading ? (
           <SkeletonTable rows={5} cols={5} />
         ) : reports.length === 0 ? (
-          <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px]">
             {hasActiveFilters ? (
               <EmptyState
                 title="No reports match your filters"

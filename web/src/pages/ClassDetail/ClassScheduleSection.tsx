@@ -193,10 +193,10 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
     return trainers.find(t => t.id === id)?.trainer_name ?? '—'
   }
 
-  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
   return (
-    <section className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Schedule</h3>
@@ -208,7 +208,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
           <button type="button" onClick={() => { setRecDateFrom(startDate ?? ''); setRecDateTo(endDate ?? ''); setRecurringOpen(true) }} className="rounded-md bg-white/[0.04] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-medium px-3 py-1.5 text-xs hover:bg-white/[0.08] transition-colors">
             Recurring
           </button>
-          <button type="button" onClick={openAddForm} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150">
+          <button type="button" onClick={openAddForm} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150">
             + Add slot
           </button>
         </div>
@@ -222,7 +222,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
 
       {formOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{editingSlot ? 'Edit schedule slot' : 'Add schedule slot'}</h4>
@@ -268,8 +268,8 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
                 </label>
               </div>
               <div className="md:col-span-2 flex justify-end gap-2">
-                <button type="button" onClick={closeForm} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Cancel</button>
-                <button type="submit" disabled={saving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+                <button type="button" onClick={closeForm} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Cancel</button>
+                <button type="submit" disabled={saving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
                   {saving ? 'Saving…' : editingSlot ? 'Save changes' : 'Add slot'}
                 </button>
               </div>
@@ -280,7 +280,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
 
       {recurringOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Create recurring schedule</h4>
@@ -296,7 +296,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
                 <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Days of the week</label>
                 <div className="flex gap-1.5">
                   {DAY_NAMES.map((name, i) => (
-                    <button key={i} type="button" onClick={() => toggleRecDay(i)} className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors ${recDays.includes(i) ? 'bg-gw-blue/20 border border-gw-blue/35 text-gw-blue' : 'bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'}`}>
+                    <button key={i} type="button" onClick={() => toggleRecDay(i)} className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors ${recDays.includes(i) ? 'bg-tt-blue/20 border border-tt-blue/35 text-tt-blue' : 'bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200'}`}>
                       {name}
                     </button>
                   ))}
@@ -338,8 +338,8 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
               )}
 
               <div className="flex justify-end gap-2 pt-1">
-                <button type="button" onClick={() => setRecurringOpen(false)} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Cancel</button>
-                <button type="submit" disabled={recSaving || recDays.length === 0} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+                <button type="button" onClick={() => setRecurringOpen(false)} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Cancel</button>
+                <button type="submit" disabled={recSaving || recDays.length === 0} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
                   {recSaving ? 'Creating…' : `Create ${recPreviewCount} slot${recPreviewCount !== 1 ? 's' : ''}`}
                 </button>
               </div>
@@ -351,7 +351,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
       {loading ? (
         <SkeletonTable rows={3} cols={7} />
       ) : slots.length === 0 ? (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
           <EmptyState
             title="No schedule slots yet"
             description={`Add slots for ${className} to assign trainers and groups to specific times.`}
@@ -359,7 +359,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
           />
         </div>
       ) : (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-x-auto">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-x-auto">
           <table className="min-w-full text-xs">
             <thead>
               <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -374,7 +374,7 @@ export function ClassScheduleSection({ classId, className, startDate, endDate }:
             </thead>
             <tbody>
               {slots.map(slot => (
-                <tr key={slot.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-gw-surface cursor-pointer transition-colors duration-100" onClick={() => openEditForm(slot)}>
+                <tr key={slot.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-tt-surface cursor-pointer transition-colors duration-100" onClick={() => openEditForm(slot)}>
                   <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{slot.slot_date}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{slot.start_time}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400">{slot.end_time}</td>

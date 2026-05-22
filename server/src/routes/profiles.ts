@@ -34,7 +34,7 @@ import {
 
 export const profilesRouter = Router()
 
-const LEGACY_EMAIL_DOMAIN = 'gatewaytraining.local'
+const LEGACY_EMAIL_DOMAIN = 'trainingtool.local'
 
 function normalizeName(value: string): string {
   return value.replace(/\s+/g, ' ').trim()

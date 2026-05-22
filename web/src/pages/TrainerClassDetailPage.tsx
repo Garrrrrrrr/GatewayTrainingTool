@@ -59,7 +59,7 @@ function ClassDetailInner() {
         </div>
         <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full ${
           classInfo.trainer_role === 'primary'
-            ? 'bg-gw-blue/20 text-gw-blue'
+            ? 'bg-tt-blue/20 text-tt-blue'
             : 'bg-slate-100 dark:bg-white/[0.06] text-slate-500 dark:text-slate-400'
         }`}>
           {classInfo.trainer_role}
@@ -75,7 +75,7 @@ function ClassDetailInner() {
             onClick={() => setTab(key)}
             className={`px-3 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
               tab === key
-                ? 'border-gw-blue text-gw-blue'
+                ? 'border-tt-blue text-tt-blue'
                 : 'border-transparent text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-700 dark:text-slate-300'
             }`}
           >

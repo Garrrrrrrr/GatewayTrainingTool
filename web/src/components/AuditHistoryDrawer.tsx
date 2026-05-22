@@ -90,10 +90,10 @@ export function AuditHistoryDrawer({
   return (
     <div className="fixed inset-0 z-[80] bg-black/40 dark:bg-black/60" onClick={onClose}>
       <aside
-        className="absolute right-0 top-0 h-full w-full max-w-3xl overflow-y-auto bg-white dark:bg-gw-surface shadow-2xl"
+        className="absolute right-0 top-0 h-full w-full max-w-3xl overflow-y-auto bg-white dark:bg-tt-surface shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
-        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 dark:border-white/[0.06] bg-white/95 dark:bg-gw-surface/95 px-5 py-4 backdrop-blur">
+        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 dark:border-white/[0.06] bg-white/95 dark:bg-tt-surface/95 px-5 py-4 backdrop-blur">
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Audit History</h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{tableName} / {recordId}</p>

@@ -168,10 +168,10 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
     })
   }
 
-  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
   return (
-    <section className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Trainers</h3>
@@ -182,7 +182,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
         <button
           type="button"
           onClick={() => { setAssignOpen(true); searchProfiles('') }}
-          className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 self-start sm:self-auto flex-shrink-0"
+          className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 self-start sm:self-auto flex-shrink-0"
         >
           + Assign trainer
         </button>
@@ -196,7 +196,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
 
       {assignOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md mx-2 max-h-[80vh] overflow-y-auto bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-md mx-2 max-h-[80vh] overflow-y-auto bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Assign trainer</h4>
@@ -215,7 +215,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
               </select>
             </div>
 
-            <div className="max-h-64 overflow-auto rounded-[10px] bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/[0.06]">
+            <div className="max-h-64 overflow-auto rounded-[10px] bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/[0.06]">
               {searchLoading ? (
                 <p className="px-3 py-2 text-[11px] text-slate-500">Searching…</p>
               ) : searchResults.length === 0 ? (
@@ -223,12 +223,12 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
               ) : (
                 <ul className="divide-y divide-slate-200 dark:divide-white/[0.04] text-xs">
                   {searchResults.map(p => (
-                    <li key={p.id} className="flex cursor-pointer items-center justify-between px-3 py-2 hover:bg-white dark:bg-gw-surface transition-colors" onClick={() => handleAssignTrainer(p)}>
+                    <li key={p.id} className="flex cursor-pointer items-center justify-between px-3 py-2 hover:bg-white dark:bg-tt-surface transition-colors" onClick={() => handleAssignTrainer(p)}>
                       <div>
                         <p className="font-medium text-slate-700 dark:text-slate-200">{p.full_name ?? p.email}</p>
                         <p className="text-[11px] text-slate-500">{p.email}</p>
                       </div>
-                      <span className="text-[11px] text-gw-blue">Assign</span>
+                      <span className="text-[11px] text-tt-blue">Assign</span>
                     </li>
                   ))}
                 </ul>
@@ -240,7 +240,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
 
       {editingTrainer && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md mx-2 bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-md mx-2 bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Edit trainer</h4>
@@ -271,8 +271,8 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
                 </label>
               </div>
               <div className="md:col-span-3 flex justify-end items-end gap-2">
-                <button type="button" onClick={() => setEditingTrainer(null)} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Cancel</button>
-                <button type="submit" className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all">Save changes</button>
+                <button type="button" onClick={() => setEditingTrainer(null)} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Cancel</button>
+                <button type="submit" className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all">Save changes</button>
               </div>
             </form>
           </div>
@@ -282,7 +282,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
       {loading ? (
         <SkeletonTable rows={3} cols={4} />
       ) : trainers.length === 0 ? (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
           <EmptyState
             title="No trainers assigned yet"
             description={`Assign trainers to ${className} to include them in schedules and reports.`}
@@ -290,7 +290,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
           />
         </div>
       ) : (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-hidden">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -303,7 +303,7 @@ export function ClassTrainersSection({ classId, className }: ClassTrainersSectio
               </thead>
               <tbody>
                 {trainers.map(t => (
-                  <tr key={t.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-gw-surface cursor-pointer transition-colors duration-100" onClick={() => openEditTrainer(t)}>
+                  <tr key={t.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-tt-surface cursor-pointer transition-colors duration-100" onClick={() => openEditTrainer(t)}>
                     <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{t.trainer_name}</td>
                     <td className="hidden sm:table-cell px-3 py-2 text-slate-500 dark:text-slate-400">{t.trainer_email}</td>
                     <td className="px-3 py-2 text-slate-500 dark:text-slate-400 capitalize">{t.role}</td>

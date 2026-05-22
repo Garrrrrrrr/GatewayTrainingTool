@@ -761,7 +761,7 @@ export const api = {
       classId: string,
       body: {
         student_name: string
-        student_email: string
+        student_email?: string
         status: EnrollmentStatus
         group_label?: string | null
       },
@@ -1036,7 +1036,7 @@ export const api = {
     // Class-scoped writes — enrollments (trainer manual fail/unfail)
     createEnrollment: (classId: string, body: {
       student_name: string;
-      student_email: string;
+      student_email?: string;
       status: EnrollmentStatus;
       group_label?: string | null;
     }) =>

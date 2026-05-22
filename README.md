@@ -1,5 +1,5 @@
-# GatewayTrainingTool
-A web-based internal training management platform for Gateway Casinos, supporting coordinators, trainers, and students across BC, AB, and ON properties. Built for the floor — fast drill logging, digital assessments, and real-time scheduling in one place.
+# TrainingTool
+A web-based internal training management platform for training teams, supporting coordinators, trainers, and students across BC, AB, and ON properties. Built for the floor — fast drill logging, digital assessments, and real-time scheduling in one place.
 
 ---
 
@@ -56,7 +56,7 @@ Phase 2 turns the data collected in Phase 1 into actionable records. Coordinator
 - [ ] Graduation checklist — all criteria (attendance, drills, test scores) must pass before graduation
 - [ ] Progress dashboards — per-student view; cohort heat map for coordinators
 - [ ] Retraining flags — auto-raised on repeat failure; routed to coordinator with skill gap detail
-- [ ] Digital SLE / GVE forms — replaces paper; auto-generates PDF copy for records
+- [ ] Digital site forms — replaces paper; auto-generates PDF copy for records
 - [ ] Audit log — immutable record of all score entries, sign-offs, and report uploads with user + timestamp
 - [ ] Notification centre — shift reminders, missed drill alerts, sign-off requests
 - [ ] Drill template builder — coordinators create templates with par times and scoring bands, shared across properties
@@ -80,7 +80,7 @@ Phase 3 connects the tool to the wider ecosystem and surfaces the patterns in tr
  
 ### Phase 4 — Mobile: Native App Expansion *(Months 11–14)*
  
-Phase 4 converts the web app into a native mobile experience, adding capabilities that only make sense on a device in hand on the casino floor.
+Phase 4 converts the web app into a native mobile experience, adding capabilities that only make sense on a device in hand on the training floor.
  
 - [ ] Offline mode — drill logs work without Wi-Fi in pits and back-of-house; syncs on reconnect
 - [ ] Push notifications — native OS alerts for shifts, sign-off requests, and report uploads
@@ -91,7 +91,7 @@ Phase 4 converts the web app into a native mobile experience, adding capabilitie
  
 ## Ideas for Future Consideration
  
-- **Gateway SSO integration** — single sign-on using existing Gateway employee credentials
+- **single sign-on integration** — single sign-on using existing identity provider credentials
 - **Manager read-only view** — pit managers and floor supervisors can view active class schedules and student progress without trainer-level access
 - **API for third-party LMS** — export training records to external systems for HR or compliance use
  
@@ -100,7 +100,7 @@ Phase 4 converts the web app into a native mobile experience, adding capabilitie
 ## Project Structure *(planned)*
  
 ```
-gateway-training-tool/
+training-tool/
 ├── apps/
 │   ├── web/          # React + TypeScript frontend
 │   └── api/          # Node.js + Express backend
@@ -122,4 +122,4 @@ gateway-training-tool/
  
 ## Contributing
  
-This is an internal Gateway Casinos project. Contact the Training Technology team for access and contribution guidelines.
+This is an internal training teams project. Contact the Training Technology team for access and contribution guidelines.

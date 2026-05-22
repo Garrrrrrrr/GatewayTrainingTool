@@ -9,7 +9,7 @@ import { LegacyStudentClaimsSection } from './LegacyStudentClaimsSection'
 import { FeedbackInboxSection } from './FeedbackInboxSection'
 import { PROVINCES, type Profile } from '../types'
 
-const inputClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/60 focus:ring-2 focus:ring-gw-blue/20 dark:focus:border-gw-blue/40 dark:focus:ring-gw-blue/15'
+const inputClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/60 focus:ring-2 focus:ring-tt-blue/20 dark:focus:border-tt-blue/40 dark:focus:ring-tt-blue/15'
 const fieldLabel = 'text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider'
 const profileCache = new Map<string, Profile>()
 
@@ -132,7 +132,7 @@ export function SettingsContent() {
   const memberSince = (iso: string) =>
     new Date(iso).toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })
 
-  const sectionClass = 'bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.06] rounded-[10px] p-5'
+  const sectionClass = 'bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.06] rounded-[10px] p-5'
   const sectionHeading = 'text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400'
 
   return (
@@ -160,7 +160,7 @@ export function SettingsContent() {
                 <button
                   type="button"
                   onClick={startEditing}
-                  className="rounded-md bg-slate-100 dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-gw-elevated transition-colors duration-150"
+                  className="rounded-md bg-slate-100 dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-tt-elevated transition-colors duration-150"
                 >
                   Edit profile
                 </button>
@@ -241,7 +241,7 @@ export function SettingsContent() {
                   type="button"
                   onClick={cancelEditing}
                   disabled={saving}
-                  className="rounded-md bg-slate-100 dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-gw-elevated transition-colors duration-150 disabled:opacity-50"
+                  className="rounded-md bg-slate-100 dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-tt-elevated transition-colors duration-150 disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -249,7 +249,7 @@ export function SettingsContent() {
                   type="button"
                   onClick={handleSave}
                   disabled={saving}
-                  className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50"
+                  className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50"
                 >
                   {saving ? 'Saving…' : 'Save changes'}
                 </button>
@@ -271,8 +271,8 @@ export function SettingsContent() {
                 type="button"
                 onClick={toggleTheme}
                 aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gw-blue/50 ${
-                  theme === 'dark' ? 'bg-gw-blue' : 'bg-slate-300'
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-tt-blue/50 ${
+                  theme === 'dark' ? 'bg-tt-blue' : 'bg-slate-300'
                 }`}
               >
                 <span
@@ -321,7 +321,7 @@ export function SettingsContent() {
                   type="button"
                   onClick={handleFeedbackSubmit}
                   disabled={sendingFeedback}
-                  className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50"
+                  className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-4 py-2 text-sm font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50"
                 >
                   {sendingFeedback ? 'Sending…' : 'Send feedback'}
                 </button>

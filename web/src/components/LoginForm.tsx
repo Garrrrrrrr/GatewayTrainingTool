@@ -82,8 +82,8 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white shadow-lg p-8 flex flex-col gap-6">
       <div className="text-center">
-        <h2 className="text-lg font-semibold text-gw-dark">
-          {mode === 'reset' ? 'Reset password' : 'Gateway Training Tool'}
+        <h2 className="text-lg font-semibold text-tt-dark">
+          {mode === 'reset' ? 'Reset password' : 'Training Tool'}
         </h2>
         <p className="mt-1 text-sm text-slate-500">
           {mode === 'signin' && 'Sign in to your account'}
@@ -106,7 +106,7 @@ export function LoginForm() {
             onChange={e => setEmail(e.target.value)}
             required
             disabled={status === 'loading'}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-gw-blue focus:ring-1 focus:ring-gw-blue disabled:bg-slate-50 disabled:text-slate-400"
+            className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-tt-blue focus:ring-1 focus:ring-tt-blue disabled:bg-slate-50 disabled:text-slate-400"
           />
         </div>
 
@@ -124,7 +124,7 @@ export function LoginForm() {
               onChange={e => setPassword(e.target.value)}
               required
               disabled={status === 'loading'}
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-gw-blue focus:ring-1 focus:ring-gw-blue disabled:bg-slate-50 disabled:text-slate-400"
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-tt-blue focus:ring-1 focus:ring-tt-blue disabled:bg-slate-50 disabled:text-slate-400"
             />
           </div>
         )}
@@ -142,7 +142,7 @@ export function LoginForm() {
 
         <button
           type="submit"
-          className="mt-1 inline-flex w-full items-center justify-center rounded-md bg-gw-blue px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-gw-blue-hover disabled:opacity-60"
+          className="mt-1 inline-flex w-full items-center justify-center rounded-md bg-tt-blue px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-tt-blue-hover disabled:opacity-60"
           disabled={status === 'loading'}
         >
           {status === 'loading'
@@ -166,7 +166,7 @@ export function LoginForm() {
         </>
       )}
 
-      <div className="flex flex-col items-center gap-1.5 text-xs text-gw-blue">
+      <div className="flex flex-col items-center gap-1.5 text-xs text-tt-blue">
         {mode === 'signin' && (
           <>
             <button type="button" className="hover:underline" onClick={() => { setMode('reset'); setMessage('') }}>

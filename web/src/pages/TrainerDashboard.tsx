@@ -104,7 +104,7 @@ export function TrainerDashboard({ email }: { email: string }) {
       {/* Summary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {stats.map(({ label, value }) => (
-          <div key={label} className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] px-4 py-3">
+          <div key={label} className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] px-4 py-3">
             <p className="text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-wide font-medium">{label}</p>
             <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
           </div>
@@ -117,12 +117,12 @@ export function TrainerDashboard({ email }: { email: string }) {
       {upcomingSessions.length > 0 && (
         <section>
           <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Upcoming Sessions</h3>
-          <div className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] divide-y divide-slate-100 dark:divide-white/[0.04]">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] divide-y divide-slate-100 dark:divide-white/[0.04]">
             {upcomingSessions.slice(0, 8).map(slot => (
               <Link
                 key={slot.id}
                 to={`/my-classes/${slot.class_id}`}
-                className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-gw-elevated transition-colors"
+                className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-tt-elevated transition-colors"
               >
                 <div className="text-center min-w-[44px]">
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase">{new Date(slot.slot_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}</p>
@@ -156,7 +156,7 @@ export function TrainerDashboard({ email }: { email: string }) {
           )}
         </h3>
         {classes.length === 0 ? (
-          <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px]">
             <EmptyState
               title="No classes assigned"
               description="You are not currently assigned to any classes."
@@ -195,11 +195,11 @@ function TodaySection({ date, loading, slots }: { date: string; loading: boolean
       {loading ? (
         <SkeletonCard lines={3} />
       ) : slots.length === 0 ? (
-        <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
+        <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-tt-surface px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
           No assigned sessions today.
         </div>
       ) : (
-        <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface divide-y divide-slate-100 dark:divide-white/[0.04]">
+        <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-tt-surface divide-y divide-slate-100 dark:divide-white/[0.04]">
           {slots.map(slot => (
             <div key={slot.id} className="flex flex-col gap-3 px-4 py-3 lg:flex-row lg:items-center">
               <div className="flex-1 min-w-0">
@@ -237,17 +237,17 @@ function TodaySection({ date, loading, slots }: { date: string; loading: boolean
                     View class
                   </Link>
                 ) : slot.report ? (
-                  <Link to={reportActionPath(slot, 'edit')} className="rounded-md bg-gw-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                  <Link to={reportActionPath(slot, 'edit')} className="rounded-md bg-tt-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-tt-blue/90 transition-colors">
                     Edit report
                   </Link>
                 ) : (
                   <>
                     {slot.copy_source_report && (
-                      <Link to={reportActionPath(slot, 'copy')} className="rounded-md border border-gw-teal/30 bg-gw-teal/10 px-3 py-1.5 text-xs font-semibold text-gw-teal hover:bg-gw-teal/15 transition-colors">
+                      <Link to={reportActionPath(slot, 'copy')} className="rounded-md border border-tt-teal/30 bg-tt-teal/10 px-3 py-1.5 text-xs font-semibold text-tt-teal hover:bg-tt-teal/15 transition-colors">
                         Copy previous
                       </Link>
                     )}
-                    <Link to={reportActionPath(slot, 'create')} className="rounded-md bg-gw-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                    <Link to={reportActionPath(slot, 'create')} className="rounded-md bg-tt-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-tt-blue/90 transition-colors">
                       Create report
                     </Link>
                   </>
@@ -266,7 +266,7 @@ function ClassCard({ cls }: { cls: TrainerMyClassesResponse['classes'][0] }) {
   return (
     <Link
       to={`/my-classes/${cls.class_id}`}
-      className={`rounded-[10px] border bg-white dark:bg-gw-surface p-4 flex flex-col gap-3 hover:border-gw-blue/30 transition-colors duration-150 ${
+      className={`rounded-[10px] border bg-white dark:bg-tt-surface p-4 flex flex-col gap-3 hover:border-tt-blue/30 transition-colors duration-150 ${
         cls.archived ? 'opacity-60 border-slate-200 dark:border-white/[0.04]' : 'border-slate-200 dark:border-white/[0.08]'
       }`}
     >
@@ -278,7 +278,7 @@ function ClassCard({ cls }: { cls: TrainerMyClassesResponse['classes'][0] }) {
         <div className="flex flex-col items-end gap-1">
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
             cls.trainer_role === 'primary'
-              ? 'bg-gw-blue/20 text-gw-blue'
+              ? 'bg-tt-blue/20 text-tt-blue'
               : 'bg-slate-100 dark:bg-white/[0.06] text-slate-500 dark:text-slate-400'
           }`}>
             {cls.trainer_role}
@@ -304,7 +304,7 @@ function ClassCard({ cls }: { cls: TrainerMyClassesResponse['classes'][0] }) {
       )}
 
       {nextSlot && (
-        <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gw-elevated rounded px-2 py-1">
+        <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-tt-elevated rounded px-2 py-1">
           <span className="font-medium whitespace-nowrap text-slate-700 dark:text-slate-300">{nextSlot.slot_date}</span>
           <span>{nextSlot.start_time}–{nextSlot.end_time}</span>
           {nextSlot.group_label && (

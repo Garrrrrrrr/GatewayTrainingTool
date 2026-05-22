@@ -31,7 +31,7 @@ function getKey(): Buffer {
     return Buffer.from(raw, 'hex')
   }
   // Fallback: derive using scrypt with a static salt (not ideal — prefer the hex form)
-  return scryptSync(raw, 'gateway-training-tool-salt', 32)
+  return scryptSync(raw, 'training-tool-salt', 32)
 }
 
 export interface EncryptedValue {

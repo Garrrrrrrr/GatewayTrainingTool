@@ -76,7 +76,7 @@ export function TrainerHoursPage() {
     setPage(0)
   }
 
-  const inputClass = 'h-8 bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/10 rounded px-2.5 text-xs text-slate-800 dark:text-slate-200 outline-none focus:border-gw-blue/40'
+  const inputClass = 'h-8 bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/10 rounded px-2.5 text-xs text-slate-800 dark:text-slate-200 outline-none focus:border-tt-blue/40'
 
   return (
     <div className="flex flex-col gap-4">
@@ -92,9 +92,9 @@ export function TrainerHoursPage() {
           { label: 'Paid hours', value: `${summary.paid_hours}h`, accent: true },
           { label: 'Unpaid hours', value: `${summary.unpaid_hours}h` },
         ].map(({ label, value, accent }) => (
-          <div key={label} className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 text-center">
+          <div key={label} className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 text-center">
             <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{label}</p>
-            <p className={`text-xl font-bold ${accent ? 'text-gw-blue' : 'text-slate-800 dark:text-slate-200'}`}>{value}</p>
+            <p className={`text-xl font-bold ${accent ? 'text-tt-blue' : 'text-slate-800 dark:text-slate-200'}`}>{value}</p>
           </div>
         ))}
       </div>
@@ -115,12 +115,12 @@ export function TrainerHoursPage() {
       {loading ? (
         <SkeletonTable rows={5} cols={5} />
       ) : rows.length === 0 ? (
-        <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px]">
           <EmptyState title="No hours found" description="No hours entries match your filters." variant="neutral" action={{ label: 'Reset filters', onClick: reset }} />
         </div>
       ) : (
         <>
-          <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-x-auto">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-x-auto">
             <table className="min-w-full text-xs">
               <thead>
                 <tr className="bg-slate-50 dark:bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -134,7 +134,7 @@ export function TrainerHoursPage() {
               </thead>
               <tbody>
                 {rows.map(h => (
-                  <tr key={h.id} className="border-b border-slate-100 dark:border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-gw-elevated transition-colors">
+                  <tr key={h.id} className="border-b border-slate-100 dark:border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-tt-elevated transition-colors">
                     <td className="px-3 py-2 text-slate-800 dark:text-slate-200 font-medium">{h.log_date}</td>
                     <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{h.classes.name}</td>
                     <td className="px-3 py-2 text-slate-800 dark:text-slate-200 font-semibold">{h.hours}h</td>

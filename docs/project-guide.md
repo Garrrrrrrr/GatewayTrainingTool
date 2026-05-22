@@ -1,8 +1,8 @@
-# Gateway Training Tool: Project Guide
+# Training Tool: Project Guide
 
 **Document purpose:** A beginner-friendly guide for stakeholders, training coordinators, trainers, and new users.
 
-**Project:** Gateway Training Tool  
+**Project:** Training Tool  
 **Audience:** Training coordinators, trainers, students/trainees, and leadership reviewers  
 **Status:** Working web application prototype / internal training platform  
 
@@ -10,7 +10,7 @@
 
 ## 1. Overview
 
-Gateway Training Tool is a web-based internal training management application designed for Gateway Casinos training teams. It brings class setup, trainee rosters, schedules, daily reports, trainer hours, audit history, and role-specific dashboards into one organized system.
+Training Tool is a web-based internal training management application designed for training teams. It brings class setup, trainee rosters, schedules, daily reports, trainer hours, audit history, and role-specific dashboards into one organized system.
 
 The goal is to reduce scattered paperwork and manual tracking while giving training coordinators a clearer view of what is happening across active classes. Instead of managing training information across separate spreadsheets, emails, handwritten notes, and shared folders, the web app provides a central place to track the daily training workflow.
 
@@ -276,7 +276,7 @@ The following improvements would make the tool stronger as it moves toward wider
 - Add document upload improvements for scanned reports, PDFs, and supporting training files.
 - Add manager read-only access for leaders who need visibility but should not edit records.
 - Add export options for reports, student records, and compliance documentation.
-- Add Gateway single sign-on if the app is adopted more broadly.
+- Add single sign-on if the app is adopted more broadly.
 - Add integration points for HR, LMS, or other training systems.
 
 ## 10. Implementation Notes
@@ -287,7 +287,6 @@ The application is designed to be expanded over time. The current structure supp
 
 ## 11. Summary
 
-Gateway Training Tool is intended to make training coordination easier, more visible, and more consistent. It gives coordinators a central operational view while allowing trainers and students to interact with the parts of the training process that apply to them.
+Training Tool is intended to make training coordination easier, more visible, and more consistent. It gives coordinators a central operational view while allowing trainers and students to interact with the parts of the training process that apply to them.
 
 The strongest value of the app is not just that it stores records. Its value is that it connects records to daily training decisions: what is scheduled, who is assigned, what has been reported, who needs follow-up, and what changed over time.
-

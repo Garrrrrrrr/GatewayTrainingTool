@@ -165,7 +165,7 @@ export function ScheduleCalendar({ slots }: ScheduleCalendarProps) {
   const btnClass = 'p-1 rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-slate-700 dark:text-slate-300 transition-colors'
 
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface overflow-hidden">
+    <div className="rounded-xl border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-tt-surface overflow-hidden">
       {/* Navigation header */}
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-slate-200 dark:border-white/[0.06]">
         {/* Left: prev year / prev month */}
@@ -221,7 +221,7 @@ export function ScheduleCalendar({ slots }: ScheduleCalendarProps) {
           return (
             <div
               key={index}
-              className={`min-h-[90px] p-1.5 transition-colors ${isCurrentMonth ? 'bg-white dark:bg-gw-surface' : 'bg-slate-50 dark:bg-gw-darkest'}`}
+              className={`min-h-[90px] p-1.5 transition-colors ${isCurrentMonth ? 'bg-white dark:bg-tt-surface' : 'bg-slate-50 dark:bg-tt-darkest'}`}
             >
               {/* Day number */}
               <div className="flex items-start justify-between mb-1">
@@ -229,7 +229,7 @@ export function ScheduleCalendar({ slots }: ScheduleCalendarProps) {
                   className={`
                     inline-flex items-center justify-center text-xs leading-none
                     ${isToday
-                      ? 'w-6 h-6 rounded-full bg-gw-blue text-white font-bold'
+                      ? 'w-6 h-6 rounded-full bg-tt-blue text-white font-bold'
                       : isCurrentMonth
                         ? 'text-slate-700 dark:text-slate-300 font-medium'
                         : 'text-slate-400 dark:text-slate-600'

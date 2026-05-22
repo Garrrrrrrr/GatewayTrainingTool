@@ -9,7 +9,7 @@
  *                          but plugins can inject into this layer)
  *   @tailwind utilities  — All utility classes (e.g. flex, text-sm, bg-white)
  *
- * All custom colour tokens (gw-blue, gw-dark, gw-darkest, etc.) are defined
+ * All custom colour tokens (tt-blue, tt-dark, tt-darkest, etc.) are defined
  * in `tailwind.config.js` and consumed here via the utilities layer.
  *
  * Do not add component-level styles here. Prefer Tailwind utility classes

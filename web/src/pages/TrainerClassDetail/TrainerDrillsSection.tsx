@@ -100,10 +100,10 @@ export function TrainerDrillsSection() {
     }
   }
 
-  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
   return (
-    <section className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -118,7 +118,7 @@ export function TrainerDrillsSection() {
           <button
             type="button"
             onClick={() => formOpen ? resetForm() : (setFormOpen(true), setEditingDrill(null), setFormName(''), setFormType('drill'), setFormParTime(''), setFormTargetScore(''))}
-            className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 self-start sm:self-auto flex-shrink-0"
+            className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150 self-start sm:self-auto flex-shrink-0"
           >
             {formOpen ? 'Cancel' : '+ Add drill / test'}
           </button>
@@ -126,7 +126,7 @@ export function TrainerDrillsSection() {
       </header>
 
       {formOpen && (
-        <form onSubmit={handleSave} className="mb-4 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-gw-elevated p-3">
+        <form onSubmit={handleSave} className="mb-4 rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-slate-100 dark:bg-tt-elevated p-3">
           <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
             {editingDrill ? `Editing: ${editingDrill.name}` : 'New drill / test'}
           </p>
@@ -153,8 +153,8 @@ export function TrainerDrillsSection() {
               </label>
             </div>
             <div className="md:col-span-4 flex justify-end items-end gap-2">
-              <button type="button" onClick={resetForm} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors duration-150">Cancel</button>
-              <button type="submit" disabled={saving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50">
+              <button type="button" onClick={resetForm} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors duration-150">Cancel</button>
+              <button type="submit" disabled={saving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all duration-150 disabled:opacity-50">
                 {saving ? 'Saving…' : editingDrill ? 'Update drill' : 'Save drill'}
               </button>
             </div>
@@ -165,11 +165,11 @@ export function TrainerDrillsSection() {
       {loading ? (
         <SkeletonTable rows={3} cols={6} />
       ) : drills.length === 0 ? (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
           <EmptyState title="No drills or tests yet" description="Add drills and tests to track student performance." variant="neutral" />
         </div>
       ) : (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-x-auto">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-x-auto">
           <table className="min-w-full text-xs">
             <thead>
               <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -183,7 +183,7 @@ export function TrainerDrillsSection() {
             </thead>
             <tbody>
               {drills.map(drill => (
-                <tr key={drill.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-gw-surface transition-colors duration-100">
+                <tr key={drill.id} className="border-b border-white/[0.03] hover:bg-white dark:bg-tt-surface transition-colors duration-100">
                   <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{drill.name}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400 capitalize">{drill.type}</td>
                   <td className="px-3 py-2 text-slate-500 dark:text-slate-400 hidden sm:table-cell">{drill.par_time_seconds ?? '—'}</td>
@@ -205,7 +205,7 @@ export function TrainerDrillsSection() {
                   <td className="px-3 py-2 text-right">
                     {!archived && (
                       <div className="flex items-center justify-end gap-1">
-                        <button type="button" onClick={() => openEditForm(drill)} className="rounded px-2 py-1 text-[11px] font-medium text-gw-blue hover:bg-gw-blue/10 transition-colors">Edit</button>
+                        <button type="button" onClick={() => openEditForm(drill)} className="rounded px-2 py-1 text-[11px] font-medium text-tt-blue hover:bg-tt-blue/10 transition-colors">Edit</button>
                         <button type="button" onClick={() => setDeleteTarget(drill)} className="rounded px-2 py-1 text-[11px] font-medium text-rose-400 hover:bg-rose-500/10 transition-colors">Delete</button>
                       </div>
                     )}

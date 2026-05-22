@@ -9,8 +9,8 @@ interface ScheduleFilterBarProps {
   classes: Class[]
 }
 
-const selectClass = 'bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md text-sm pl-3 pr-8 py-1.5 text-slate-800 dark:text-slate-200 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15 appearance-none cursor-pointer'
-const inputClass  = 'bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md text-sm px-3 py-1.5 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+const selectClass = 'bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md text-sm pl-3 pr-8 py-1.5 text-slate-800 dark:text-slate-200 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15 appearance-none cursor-pointer'
+const inputClass  = 'bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md text-sm px-3 py-1.5 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
 export function ScheduleFilterBar({ filters, setFilter, resetFilters, classes }: ScheduleFilterBarProps) {
   // Derive unique sites from classes, filtered by selected province
@@ -48,7 +48,7 @@ export function ScheduleFilterBar({ filters, setFilter, resetFilters, classes }:
     filters.archived !== false
 
   return (
-    <div className="bg-white dark:bg-gw-surface rounded-[10px] p-3 flex flex-col gap-2">
+    <div className="bg-white dark:bg-tt-surface rounded-[10px] p-3 flex flex-col gap-2">
       {/* Row 1: Main filters */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Province */}
@@ -145,7 +145,7 @@ export function ScheduleFilterBar({ filters, setFilter, resetFilters, classes }:
           <button
             type="button"
             onClick={resetFilters}
-            className="text-xs text-gw-blue underline underline-offset-2 hover:text-blue-300 transition-colors px-1"
+            className="text-xs text-tt-blue underline underline-offset-2 hover:text-blue-300 transition-colors px-1"
           >
             Reset
           </button>
@@ -160,7 +160,7 @@ export function ScheduleFilterBar({ filters, setFilter, resetFilters, classes }:
             setFilter('archived', e.target.checked)
             setFilter('class_id', '')
           }}
-          className="rounded border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-gw-elevated text-gw-blue focus:ring-gw-blue/30"
+          className="rounded border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-tt-elevated text-tt-blue focus:ring-tt-blue/30"
         />
         Include archived classes
       </label>

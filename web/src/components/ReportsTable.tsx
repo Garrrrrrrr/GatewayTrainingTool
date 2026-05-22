@@ -41,7 +41,7 @@ function SortArrow({ column, sort }: { column: string; sort: ReportsSort }) {
     )
   }
   return (
-    <svg className="w-3 h-3 ml-1 inline text-gw-blue" viewBox="0 0 12 12" fill="currentColor">
+    <svg className="w-3 h-3 ml-1 inline text-tt-blue" viewBox="0 0 12 12" fill="currentColor">
       {sort.direction === 'asc' ? <path d="M6 2l3 4H3z" /> : <path d="M6 10l-3-4h6z" />}
     </svg>
   )
@@ -55,7 +55,7 @@ export function ReportsTable({ reports, sort, onSort, onReportClick }: ReportsTa
   }
 
   return (
-    <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-hidden">
+    <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm table-fixed">
           <colgroup>
@@ -87,7 +87,7 @@ export function ReportsTable({ reports, sort, onSort, onReportClick }: ReportsTa
               return (
                 <tr
                   key={r.id}
-                  className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-gw-elevated cursor-pointer transition-colors duration-100"
+                  className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-tt-elevated cursor-pointer transition-colors duration-100"
                   onClick={() => onReportClick(r)}
                 >
                   <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200 truncate">{r.classes.name}</td>

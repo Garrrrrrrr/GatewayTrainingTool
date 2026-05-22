@@ -58,7 +58,7 @@ export function TraineeDashboard({ email }: { email: string }) {
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px]">
         <EmptyState title="Something went wrong" description={error} variant="neutral" />
       </div>
     )
@@ -86,13 +86,13 @@ export function TraineeDashboard({ email }: { email: string }) {
       <section>
         <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Your Classes</h3>
         {classes.length === 0 ? (
-          <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px]">
             <EmptyState title="No classes" description="You are not enrolled in any classes." variant="neutral" />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {classes.map(c => (
-              <Link key={c.enrollment_id} to={`/my-class/${c.class_id}`} className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-gw-surface p-4 flex flex-col gap-3 hover:border-white/[0.15] transition-colors">
+              <Link key={c.enrollment_id} to={`/my-class/${c.class_id}`} className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-tt-surface p-4 flex flex-col gap-3 hover:border-white/[0.15] transition-colors">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-semibold text-slate-800 dark:text-slate-200">{c.class_name}</p>
@@ -124,7 +124,7 @@ export function TraineeDashboard({ email }: { email: string }) {
                     <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Upcoming</p>
                     <div className="flex flex-col gap-1">
                       {c.upcoming_slots.map(slot => (
-                        <div key={slot.id} className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gw-elevated rounded px-2 py-1">
+                        <div key={slot.id} className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-tt-elevated rounded px-2 py-1">
                           <span className="font-medium whitespace-nowrap text-slate-700 dark:text-slate-300">{slot.slot_date}</span>
                           <span>{slot.start_time}–{slot.end_time}</span>
                           {slot.group_label && (
@@ -153,7 +153,7 @@ export function TraineeDashboard({ email }: { email: string }) {
         {progress.length === 0 ? (
           <p className="text-xs text-slate-400 dark:text-slate-500">No progress data recorded yet.</p>
         ) : (
-          <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-hidden">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
@@ -170,7 +170,7 @@ export function TraineeDashboard({ email }: { email: string }) {
                 </thead>
                 <tbody>
                   {progress.map((p, i) => (
-                    <tr key={i} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-gw-elevated transition-colors duration-100">
+                    <tr key={i} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-tt-elevated transition-colors duration-100">
                       <td className="px-4 py-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">{p.report_date}</td>
                       <td className="px-4 py-3 text-slate-500 dark:text-slate-400 truncate hidden sm:table-cell">{p.class_name}</td>
                       <td className="px-4 py-3 text-slate-500 dark:text-slate-400 truncate hidden md:table-cell">{p.session_label ?? '—'}</td>
@@ -216,7 +216,7 @@ export function TraineeDashboard({ email }: { email: string }) {
               const first = times[0]
               const isDrill = first.drill_type === 'drill'
               return (
-                <div key={drillName} className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-gw-surface p-4">
+                <div key={drillName} className="rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-tt-surface p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{drillName}</span>
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isDrill ? 'bg-blue-500/15 text-blue-400' : 'bg-purple-500/15 text-purple-400'}`}>

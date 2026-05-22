@@ -6,7 +6,7 @@ export function SkeletonText({ className = '' }: { className?: string }) {
 
 export function SkeletonCard({ lines = 3 }: { lines?: number }) {
   return (
-    <div className="rounded-[10px] bg-white dark:bg-gw-surface p-4">
+    <div className="rounded-[10px] bg-white dark:bg-tt-surface p-4">
       <div className="h-4 w-1/3 rounded animate-shimmer mb-3" />
       {Array.from({ length: lines }, (_, i) => (
         <div
@@ -21,7 +21,7 @@ export function SkeletonCard({ lines = 3 }: { lines?: number }) {
 
 export function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) {
   return (
-    <div className="rounded-[10px] bg-white dark:bg-gw-surface overflow-hidden">
+    <div className="rounded-[10px] bg-white dark:bg-tt-surface overflow-hidden">
       <div className="bg-slate-50 dark:bg-white/[0.02] px-4 py-3 flex gap-4 border-b border-slate-200 dark:border-white/[0.06]">
         {Array.from({ length: cols }, (_, i) => (
           <div key={i} className="h-3 w-20 rounded animate-shimmer" style={{ animationDelay: `${i * 0.1}s` }} />

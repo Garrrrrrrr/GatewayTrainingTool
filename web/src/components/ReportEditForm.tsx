@@ -47,8 +47,8 @@ interface ReportEditFormProps {
   showDrillTimer?: boolean
 }
 
-const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
-const inlineFieldClass = 'bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-1 py-0.5 text-[11px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40'
+const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
+const inlineFieldClass = 'bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-1 py-0.5 text-[11px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40'
 const RATINGS: DailyRating[] = ['EE', 'ME', 'AD', 'NI']
 
 interface ReportAutosaveSnapshot {
@@ -468,7 +468,7 @@ export function ReportEditForm({
   const timerRunning = timerStartedAt !== null
 
   return (
-    <div className="mb-4 bg-slate-100 dark:bg-gw-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-4 text-xs">
+    <div className="mb-4 bg-slate-100 dark:bg-tt-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-4 text-xs">
       {autosaveDraft && (
         <div className="rounded-md border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-amber-700 dark:text-amber-300">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -482,7 +482,7 @@ export function ReportEditForm({
               <button type="button" onClick={restoreAutosaveDraft} className="rounded-md bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 text-[11px] font-semibold hover:bg-amber-500/20 transition-colors">
                 Restore draft
               </button>
-              <button type="button" onClick={discardAutosaveDraft} className="rounded-md bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/10 px-2.5 py-1 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
+              <button type="button" onClick={discardAutosaveDraft} className="rounded-md bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/10 px-2.5 py-1 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
                 Discard
               </button>
             </div>
@@ -540,8 +540,8 @@ export function ReportEditForm({
               trainers.map(t => {
                 const checked = selectedTrainerIds.includes(t.id)
                 return (
-                  <label key={t.id} className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] cursor-pointer ${checked ? 'border-gw-blue/40 bg-gw-blue/15 text-gw-blue' : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-700 dark:text-slate-300'}`}>
-                    <input type="checkbox" checked={checked} onChange={e => { setSelectedTrainerIds(prev => e.target.checked ? [...prev, t.id] : prev.filter(id => id !== t.id)) }} className="accent-gw-blue" />
+                  <label key={t.id} className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] cursor-pointer ${checked ? 'border-tt-blue/40 bg-tt-blue/15 text-tt-blue' : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-700 dark:text-slate-300'}`}>
+                    <input type="checkbox" checked={checked} onChange={e => { setSelectedTrainerIds(prev => e.target.checked ? [...prev, t.id] : prev.filter(id => id !== t.id)) }} className="accent-tt-blue" />
                     {t.trainer_name}
                   </label>
                 )
@@ -554,7 +554,7 @@ export function ReportEditForm({
 
         {/* Hours totals */}
         <CollapsibleSection label="Hours totals">
-        <div className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
           <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Hours totals</p>
           <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">Calculated from logged hours up to this report date; override fields take precedence.</p>
           <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -565,7 +565,7 @@ export function ReportEditForm({
               const liveDisplay = overrideLiveHours.trim() !== '' ? Number(overrideLiveHours) : totals.live
               return (
                 <>
-                  <div className="bg-slate-100 dark:bg-gw-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
+                  <div className="bg-slate-100 dark:bg-tt-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
                     <div className="text-[10px] text-slate-400 dark:text-slate-500">Training hours to date</div>
                     <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{Number.isNaN(hoursToDateDisplay) ? '—' : hoursToDateDisplay.toFixed(2)}</div>
                     <div className="mt-1 text-[10px] text-slate-400 dark:text-slate-500">Calculated: {totals.hoursToDate.toFixed(2)}</div>
@@ -573,7 +573,7 @@ export function ReportEditForm({
                       <input type="number" step="0.25" min="0" value={overrideHoursToDate} onChange={e => setOverrideHoursToDate(e.target.value)} className={`${fieldClass} mt-1`} />
                     </label>
                   </div>
-                  <div className="bg-slate-100 dark:bg-gw-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
+                  <div className="bg-slate-100 dark:bg-tt-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
                     <div className="text-[10px] text-slate-400 dark:text-slate-500">Total paid hours</div>
                     <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{Number.isNaN(paidDisplay) ? '—' : paidDisplay.toFixed(2)}</div>
                     <div className="mt-1 text-[10px] text-slate-400 dark:text-slate-500">Calculated: {totals.paid.toFixed(2)}</div>
@@ -581,7 +581,7 @@ export function ReportEditForm({
                       <input type="number" step="0.25" min="0" value={overridePaidHours} onChange={e => setOverridePaidHours(e.target.value)} className={`${fieldClass} mt-1`} />
                     </label>
                   </div>
-                  <div className="bg-slate-100 dark:bg-gw-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
+                  <div className="bg-slate-100 dark:bg-tt-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
                     <div className="text-[10px] text-slate-400 dark:text-slate-500">Total live training hours</div>
                     <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{Number.isNaN(liveDisplay) ? '—' : liveDisplay.toFixed(2)}</div>
                     <div className="mt-1 text-[10px] text-slate-400 dark:text-slate-500">Calculated: {totals.live.toFixed(2)}</div>
@@ -610,7 +610,7 @@ export function ReportEditForm({
           {timelineItems.length === 0 ? (
             <p className="text-[11px] text-slate-400 dark:text-slate-500">No timeline rows yet. Add blocks like in the spreadsheet.</p>
           ) : (
-            <div className="overflow-auto bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
+            <div className="overflow-auto bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
               <table className="min-w-full text-[11px]">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -624,7 +624,7 @@ export function ReportEditForm({
                 </thead>
                 <tbody>
                   {timelineItems.map((item, index) => (
-                    <tr key={item.id} draggable onDragStart={() => { dragIndexRef.current = index }} onDragOver={e => e.preventDefault()} onDrop={() => { const from = dragIndexRef.current; if (from === null || from === index) return; setTimelineItems(prev => { const next = [...prev]; const [moved] = next.splice(from, 1); next.splice(index, 0, moved); return next }); dragIndexRef.current = null }} className="border-b border-slate-100 dark:border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-gw-elevated transition-colors">
+                    <tr key={item.id} draggable onDragStart={() => { dragIndexRef.current = index }} onDragOver={e => e.preventDefault()} onDrop={() => { const from = dragIndexRef.current; if (from === null || from === index) return; setTimelineItems(prev => { const next = [...prev]; const [moved] = next.splice(from, 1); next.splice(index, 0, moved); return next }); dragIndexRef.current = null }} className="border-b border-slate-100 dark:border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-slate-100 dark:bg-tt-elevated transition-colors">
                       <td className="px-2 py-1 cursor-grab active:cursor-grabbing text-slate-400 dark:text-slate-500 select-none">⠿</td>
                       <td className="px-2 py-1">
                         <div className="flex gap-1">
@@ -668,7 +668,7 @@ export function ReportEditForm({
           {progressRows.length === 0 ? (
             <p className="text-[11px] text-slate-400 dark:text-slate-500">No enrolled trainees in this class yet.</p>
           ) : (
-            <div className="overflow-auto bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
+            <div className="overflow-auto bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
               <table className="min-w-full text-[11px]">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -686,7 +686,7 @@ export function ReportEditForm({
                     const enrollment = enrollments.find(e => e.id === row.enrollment_id)
                     const updateRow = (patch: Partial<ClassDailyReportTraineeProgress>) => { setProgressRows(prev => prev.map((r, i) => (i === index ? { ...r, ...patch } : r))) }
                     return (
-                      <tr key={row.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-gw-elevated transition-colors">
+                      <tr key={row.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-tt-elevated transition-colors">
                         <td className="px-2 py-1 align-top">
                           <div className="text-slate-800 dark:text-slate-200">{enrollment?.student_name ?? 'Unknown'}</div>
                           <div className="text-[10px] text-slate-400 dark:text-slate-500">{enrollment?.student_email}</div>
@@ -709,7 +709,7 @@ export function ReportEditForm({
                         </td>
                         <td className="px-2 py-1 align-top">
                           <label className="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 cursor-pointer">
-                            <input type="checkbox" checked={row.attendance ?? true} onChange={e => updateRow({ attendance: e.target.checked, ...(e.target.checked ? {} : { late: false }) })} className="accent-gw-blue" />
+                            <input type="checkbox" checked={row.attendance ?? true} onChange={e => updateRow({ attendance: e.target.checked, ...(e.target.checked ? {} : { late: false }) })} className="accent-tt-blue" />
                             <span>Yes</span>
                           </label>
                         </td>
@@ -721,13 +721,13 @@ export function ReportEditForm({
                         </td>
                         <td className="px-2 py-1 align-top">
                           <label className="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 cursor-pointer">
-                            <input type="checkbox" checked={row.coming_back_next_day ?? true} onChange={e => updateRow({ coming_back_next_day: e.target.checked })} className="accent-gw-blue" />
+                            <input type="checkbox" checked={row.coming_back_next_day ?? true} onChange={e => updateRow({ coming_back_next_day: e.target.checked })} className="accent-tt-blue" />
                             <span>Yes</span>
                           </label>
                         </td>
                         <td className="px-2 py-1 align-top">
                           <label className="inline-flex items-center gap-1.5 text-slate-400 cursor-pointer">
-                            <input type="checkbox" checked={row.homework_completed ?? false} onChange={e => updateRow({ homework_completed: e.target.checked })} className="accent-gw-blue" />
+                            <input type="checkbox" checked={row.homework_completed ?? false} onChange={e => updateRow({ homework_completed: e.target.checked })} className="accent-tt-blue" />
                             <span>Yes</span>
                           </label>
                         </td>
@@ -755,7 +755,7 @@ export function ReportEditForm({
           </div>
 
           {showDrillTimer && activeDrills.length > 0 && enrollments.length > 0 && (
-            <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-gw-surface p-3">
+            <div className="rounded-[10px] border border-slate-200 dark:border-white/[0.06] bg-white dark:bg-tt-surface p-3">
               <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-3 items-end">
                 <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400">Trainee
                   <select value={timerEnrollmentId} onChange={e => setTimerEnrollmentId(e.target.value)} className={fieldClass}>
@@ -787,22 +787,22 @@ export function ReportEditForm({
                           placeholder={selectedTimerDrill.target_score != null ? `Target ${selectedTimerDrill.target_score}` : 'Score'}
                         />
                       </label>
-                      <button type="button" onClick={applyScoreResult} className="h-8 rounded-md bg-gw-blue px-3 text-[11px] font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                      <button type="button" onClick={applyScoreResult} className="h-8 rounded-md bg-tt-blue px-3 text-[11px] font-semibold text-white hover:bg-tt-blue/90 transition-colors">
                         Apply
                       </button>
                     </div>
                   ) : (
                     <div className="flex flex-wrap items-center justify-end gap-2">
-                      <div className="min-w-[78px] rounded-md border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-gw-elevated px-2 py-1 text-center text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      <div className="min-w-[78px] rounded-md border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-tt-elevated px-2 py-1 text-center text-sm font-semibold text-slate-900 dark:text-slate-100">
                         {formatElapsedTime(timerElapsedMs)}
                       </div>
-                      <button type="button" onClick={timerRunning ? stopTimer : startTimer} className="h-8 rounded-md bg-gw-blue px-3 text-[11px] font-semibold text-white hover:bg-gw-blue/90 transition-colors">
+                      <button type="button" onClick={timerRunning ? stopTimer : startTimer} className="h-8 rounded-md bg-tt-blue px-3 text-[11px] font-semibold text-white hover:bg-tt-blue/90 transition-colors">
                         {timerRunning ? 'Stop' : 'Start'}
                       </button>
                       <button type="button" onClick={resetTimer} className="h-8 rounded-md border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/[0.06] px-3 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
                         Reset
                       </button>
-                      <button type="button" onClick={applyTimerResult} disabled={timerElapsedMs === 0} className="h-8 rounded-md border border-gw-blue/30 bg-gw-blue/10 px-3 text-[11px] font-semibold text-gw-blue hover:bg-gw-blue/15 disabled:opacity-40 transition-colors">
+                      <button type="button" onClick={applyTimerResult} disabled={timerElapsedMs === 0} className="h-8 rounded-md border border-tt-blue/30 bg-tt-blue/10 px-3 text-[11px] font-semibold text-tt-blue hover:bg-tt-blue/15 disabled:opacity-40 transition-colors">
                         Apply
                       </button>
                     </div>
@@ -817,11 +817,11 @@ export function ReportEditForm({
           ) : drillTimeRows.length === 0 ? (
             <p className="text-[11px] text-slate-500">Click &quot;Load drills for trainees&quot; to populate the grid.</p>
           ) : (
-            <div className="overflow-auto bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
+            <div className="overflow-auto bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
               <table className="min-w-full text-[11px]">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
-                    <th className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500 sticky left-0 bg-white dark:bg-gw-surface">Trainee</th>
+                    <th className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500 sticky left-0 bg-white dark:bg-tt-surface">Trainee</th>
                     {activeDrills.map(drill => (
                       <th key={drill.id} className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500">
                         <div>{drill.name}</div>
@@ -832,8 +832,8 @@ export function ReportEditForm({
                 </thead>
                 <tbody>
                   {enrollments.map(enr => (
-                    <tr key={enr.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-gw-elevated transition-colors">
-                      <td className="px-2 py-1 text-slate-800 dark:text-slate-200 whitespace-nowrap sticky left-0 bg-white dark:bg-gw-surface">{enr.student_name}</td>
+                    <tr key={enr.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-tt-elevated transition-colors">
+                      <td className="px-2 py-1 text-slate-800 dark:text-slate-200 whitespace-nowrap sticky left-0 bg-white dark:bg-tt-surface">{enr.student_name}</td>
                       {activeDrills.map(drill => {
                         const row = drillTimeRows.find(r => r.enrollment_id === enr.id && r.drill_id === drill.id)
                         if (!row) return <td key={drill.id} className="px-2 py-1 text-slate-500">—</td>
@@ -859,7 +859,7 @@ export function ReportEditForm({
                                     ? row.score >= drill.target_score
                                       ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
                                       : 'border-amber-500/40 bg-amber-500/10 text-amber-300'
-                                    : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-gw-elevated text-slate-800 dark:text-slate-200'
+                                    : 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-tt-elevated text-slate-800 dark:text-slate-200'
                               }`}
                               placeholder={drill.type === 'drill' ? 'sec' : 'score'}
                             />
@@ -905,8 +905,8 @@ export function ReportEditForm({
               Delete report
             </button>
           )}
-          <button type="button" onClick={onCancel} className="rounded-md bg-white dark:bg-gw-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Cancel</button>
-          <button type="submit" disabled={saving} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+          <button type="button" onClick={onCancel} className="rounded-md bg-white dark:bg-tt-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Cancel</button>
+          <button type="submit" disabled={saving} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-60">
             {saving ? 'Saving…' : report ? 'Save changes' : 'Add report'}
           </button>
         </div>

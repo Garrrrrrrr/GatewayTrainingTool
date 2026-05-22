@@ -30,7 +30,7 @@ export function MyClassesPage() {
     return (
       <Link
         to={`/my-classes/${cls.class_id}`}
-        className={`rounded-[10px] border bg-white dark:bg-gw-surface p-4 flex flex-col gap-3 hover:border-gw-blue/30 transition-colors duration-150 ${
+        className={`rounded-[10px] border bg-white dark:bg-tt-surface p-4 flex flex-col gap-3 hover:border-tt-blue/30 transition-colors duration-150 ${
           cls.archived ? 'opacity-60 border-slate-100 dark:border-white/[0.04]' : 'border-slate-200 dark:border-white/[0.08]'
         }`}
       >
@@ -42,7 +42,7 @@ export function MyClassesPage() {
           <div className="flex flex-col items-end gap-1">
             <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
               cls.trainer_role === 'primary'
-                ? 'bg-gw-blue/20 text-gw-blue'
+                ? 'bg-tt-blue/20 text-tt-blue'
                 : 'bg-slate-100 dark:bg-white/[0.06] text-slate-500 dark:text-slate-400'
             }`}>
               {cls.trainer_role}
@@ -66,7 +66,7 @@ export function MyClassesPage() {
         )}
 
         {nextSlot && (
-          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gw-elevated rounded px-2 py-1">
+          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-tt-elevated rounded px-2 py-1">
             <span className="font-medium whitespace-nowrap text-slate-700 dark:text-slate-300">{nextSlot.slot_date}</span>
             <span>{nextSlot.start_time}–{nextSlot.end_time}</span>
             {nextSlot.group_label && (
@@ -90,7 +90,7 @@ export function MyClassesPage() {
       </header>
 
       {classes.length === 0 ? (
-        <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+        <div className="bg-white dark:bg-tt-surface rounded-[10px]">
           <EmptyState
             title="No classes assigned"
             description="You are not currently assigned to any classes."

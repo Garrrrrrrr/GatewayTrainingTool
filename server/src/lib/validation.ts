@@ -63,7 +63,10 @@ export const trainerBodySchema = z.object({
 
 export const enrollmentBodySchema = z.object({
   student_name: z.string().trim().min(1).max(160),
-  student_email: z.string().trim().email().max(254),
+  student_email: z.preprocess(
+    value => typeof value === 'string' && value.trim() === '' ? undefined : value,
+    z.string().trim().email().max(254).optional(),
+  ),
   status: enrollmentStatusSchema.default('enrolled'),
   group_label: z.string().trim().max(80).nullable().optional(),
 })

@@ -17,7 +17,7 @@ interface InProgressPageProps {
 export function InProgressPage({ email, onSignOut }: InProgressPageProps) {
   return (
     <div className="flex w-full justify-center">
-      <div className="w-full max-w-md rounded-[14px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-gw-surface shadow-xl p-8 flex flex-col items-center gap-4 text-center">
+      <div className="w-full max-w-md rounded-[14px] border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-tt-surface shadow-xl p-8 flex flex-col items-center gap-4 text-center">
         <div className="text-4xl" aria-hidden="true">🚧</div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Work in progress</h2>
         <p className="text-sm text-slate-500 dark:text-slate-400">

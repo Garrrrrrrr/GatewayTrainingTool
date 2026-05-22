@@ -12,7 +12,7 @@ export function PayrollTable({ rows, personLabel, hideClassCount }: PayrollTable
   const numPct = hideClassCount ? 'w-[16.6%]' : 'w-[14%]'
 
   return (
-    <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-hidden">
+    <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm table-fixed">
           <colgroup>
@@ -35,7 +35,7 @@ export function PayrollTable({ rows, personLabel, hideClassCount }: PayrollTable
           </thead>
           <tbody>
             {rows.map(r => (
-              <tr key={r.person_id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-100 dark:bg-gw-elevated transition-colors duration-100">
+              <tr key={r.person_id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-100 dark:bg-tt-elevated transition-colors duration-100">
                 <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200 truncate">{r.person_name}</td>
                 <td className="px-4 py-3 text-slate-400 truncate hidden sm:table-cell">{r.person_email}</td>
                 <td className="px-4 py-3 text-slate-800 dark:text-slate-200 text-right font-medium">{r.total_hours}</td>

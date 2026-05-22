@@ -40,7 +40,7 @@ export function StudentClassDetailPage() {
 
   if (error || !classInfo) {
     return (
-      <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px]">
         <EmptyState title="Error loading class" description={error ?? 'Class not found.'} variant="neutral" />
       </div>
     )
@@ -87,7 +87,7 @@ export function StudentClassDetailPage() {
           <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Upcoming Schedule</h3>
           <div className="flex flex-col gap-1">
             {upcoming_slots.map(slot => (
-              <div key={slot.id} className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 bg-white dark:bg-gw-surface rounded-[10px] px-3 py-2 border border-slate-200 dark:border-white/[0.06]">
+              <div key={slot.id} className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 bg-white dark:bg-tt-surface rounded-[10px] px-3 py-2 border border-slate-200 dark:border-white/[0.06]">
                 <span className="font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">{slot.slot_date}</span>
                 <span>{slot.start_time} – {slot.end_time}</span>
                 {slot.group_label && (
@@ -110,7 +110,7 @@ export function StudentClassDetailPage() {
           Today's Session
         </h3>
         {reports.length === 0 ? (
-          <div className="bg-white dark:bg-gw-surface rounded-[10px]">
+          <div className="bg-white dark:bg-tt-surface rounded-[10px]">
             <EmptyState title="No session today" description="There is no daily report for today. Check your upcoming schedule." variant="neutral" />
           </div>
         ) : (
@@ -120,14 +120,14 @@ export function StudentClassDetailPage() {
               return (
                 <div
                   key={report.report_id}
-                  className="rounded-[10px] border border-gw-blue/30 bg-white dark:bg-gw-surface overflow-hidden"
+                  className="rounded-[10px] border border-tt-blue/30 bg-white dark:bg-tt-surface overflow-hidden"
                 >
                   <div className="px-4 py-3">
                     <div className="flex items-center gap-3 mb-1">
                       <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{report.report_date}</span>
                       {report.session_label && <span className="text-xs text-slate-500 dark:text-slate-400">{report.session_label}</span>}
                       {report.game && <span className="text-xs text-slate-400 dark:text-slate-500">{report.game}</span>}
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gw-blue/15 text-gw-blue border border-gw-blue/25">
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-tt-blue/15 text-tt-blue border border-tt-blue/25">
                         Today
                       </span>
                       {prog?.attendance && (

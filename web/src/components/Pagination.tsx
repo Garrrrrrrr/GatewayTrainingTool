@@ -28,8 +28,8 @@ export function Pagination({ page, limit, total, onPageChange, itemLabel = 'resu
   }
 
   const btnBase = 'px-2.5 py-1 rounded-md text-xs font-medium border transition-colors duration-100'
-  const btnDefault = `${btnBase} border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-gw-elevated hover:text-slate-800 dark:hover:text-slate-200`
-  const btnActive = `${btnBase} border-gw-blue/35 bg-gw-blue/20 text-gw-blue`
+  const btnDefault = `${btnBase} border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-tt-elevated hover:text-slate-800 dark:hover:text-slate-200`
+  const btnActive = `${btnBase} border-tt-blue/35 bg-tt-blue/20 text-tt-blue`
   const btnDisabled = `${btnBase} border-slate-200/50 dark:border-white/[0.05] text-slate-400 dark:text-slate-600 cursor-not-allowed`
 
   return (

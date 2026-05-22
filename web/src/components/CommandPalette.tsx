@@ -187,7 +187,7 @@ export function CommandPalette() {
       onClick={() => setOpen(false)}
     >
       <div
-        className="w-full max-w-lg bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl overflow-hidden animate-modal-in"
+        className="w-full max-w-lg bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl overflow-hidden animate-modal-in"
         onClick={e => e.stopPropagation()}
       >
         {/* Search input */}
@@ -222,7 +222,7 @@ export function CommandPalette() {
                 onClick={() => selectItem(item)}
                 onMouseEnter={() => setSelectedIndex(i)}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-75 ${
-                  i === selectedIndex ? 'bg-gw-blue/10 text-slate-900 dark:text-slate-100' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.03]'
+                  i === selectedIndex ? 'bg-tt-blue/10 text-slate-900 dark:text-slate-100' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.03]'
                 }`}
               >
                 <svg className="w-4 h-4 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>

@@ -54,6 +54,8 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
     [],
   )
   const [searchLoading, setSearchLoading] = useState(false)
+  const [manualName, setManualName] = useState('')
+  const [manualEmail, setManualEmail] = useState('')
   // Set when a student row is clicked to open the edit modal
   const [editingEnrollment, setEditingEnrollment] = useState<ClassEnrollment | null>(null)
   // Edit form field state
@@ -173,6 +175,44 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
     }
   }
 
+  async function handleCreateManualStudent(e: React.FormEvent) {
+    e.preventDefault()
+    const studentName = manualName.trim()
+    const studentEmail = manualEmail.trim().toLowerCase()
+    if (!studentName) {
+      setError('Student name is required')
+      return
+    }
+    if (studentEmail && students.some(s => s.student_email.toLowerCase() === studentEmail)) {
+      setError('Student is already enrolled in this class')
+      return
+    }
+
+    setSaving(true)
+    setError(null)
+    try {
+      const created = await api.enrollments.create(classId, {
+        student_name: studentName,
+        ...(studentEmail ? { student_email: studentEmail } : {}),
+        status,
+        group_label: groupLabel.trim() || null,
+      })
+      setEnrollments(prev => [...prev, created])
+      setManualName('')
+      setManualEmail('')
+      setStatus('enrolled')
+      setGroupLabel('')
+      toast('Student created and enrolled', 'success')
+      refreshEnrollments()
+    } catch (err) {
+      console.error('manualCreateEnrollment error:', (err as Error).message)
+      toast((err as Error).message, 'error')
+      setError((err as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   /** Pre-fills the edit modal with the selected enrollment's current values. */
   function openEditStudent(enrollment: ClassEnrollment) {
     setEditingEnrollment(enrollment)
@@ -244,10 +284,10 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
     }
   }
 
-  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+  const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-200 placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
   return (
-    <section className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Students</h3>
@@ -259,7 +299,7 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
           <button type="button" onClick={() => { setCsvOpen(true); setCsvRows([]); setCsvResult(null) }} className="rounded-md bg-white/[0.04] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-medium px-3 py-1.5 text-xs hover:bg-white/[0.08] transition-colors">
             Import CSV
           </button>
-          <button type="button" onClick={() => { setEnrollOpen(true); searchProfiles('') }} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150">
+          <button type="button" onClick={() => { setEnrollOpen(true); searchProfiles('') }} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white font-semibold px-3 py-1.5 text-xs hover:brightness-110 transition-all duration-150">
             + Enroll student
           </button>
         </div>
@@ -273,7 +313,7 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
 
       {csvOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Import students from CSV</h4>
@@ -284,10 +324,10 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
               </button>
             </header>
 
-            <input type="file" accept=".csv,text/csv" onChange={handleCsvFile} className="mb-3 block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 dark:bg-gw-elevated file:px-3 file:py-1.5 file:text-xs file:text-slate-700 dark:text-slate-200 file:cursor-pointer" />
+            <input type="file" accept=".csv,text/csv" onChange={handleCsvFile} className="mb-3 block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 dark:bg-tt-elevated file:px-3 file:py-1.5 file:text-xs file:text-slate-700 dark:text-slate-200 file:cursor-pointer" />
 
             {csvRows.length > 0 && (
-              <div className="max-h-48 overflow-auto rounded-md bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/[0.06] mb-3">
+              <div className="max-h-48 overflow-auto rounded-md bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/[0.06] mb-3">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -323,8 +363,8 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
             )}
 
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setCsvOpen(false)} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Close</button>
-              <button type="button" onClick={handleCsvImport} disabled={csvSaving || csvRows.filter(r => r.valid).length === 0} className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+              <button type="button" onClick={() => setCsvOpen(false)} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Close</button>
+              <button type="button" onClick={handleCsvImport} disabled={csvSaving || csvRows.filter(r => r.valid).length === 0} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
                 {csvSaving ? 'Importing…' : `Import ${csvRows.filter(r => r.valid).length} student${csvRows.filter(r => r.valid).length !== 1 ? 's' : ''}`}
               </button>
             </div>
@@ -334,13 +374,13 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
 
       {enrollOpen && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md mx-2 max-h-[80vh] overflow-y-auto bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-md mx-2 max-h-[80vh] overflow-y-auto bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Enroll student</h4>
                 <p className="mt-0.5 text-[11px] text-slate-500">Search existing trainee profiles and add them to this class.</p>
               </div>
-              <button type="button" onClick={() => { setEnrollOpen(false); setSearchTerm(''); setSearchResults([]); setGroupLabel(''); setStatus('enrolled') }} className="w-7 h-7 rounded-md bg-white/[0.06] text-slate-500 hover:text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors" aria-label="Close">
+              <button type="button" onClick={() => { setEnrollOpen(false); setSearchTerm(''); setSearchResults([]); setGroupLabel(''); setStatus('enrolled'); setManualName(''); setManualEmail('') }} className="w-7 h-7 rounded-md bg-white/[0.06] text-slate-500 hover:text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors" aria-label="Close">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </header>
@@ -354,7 +394,20 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
               <input type="text" value={groupLabel} onChange={e => setGroupLabel(e.target.value)} placeholder="Group" className={`w-20 ${fieldClass}`} />
             </div>
 
-            <div className="max-h-64 overflow-auto rounded-[10px] bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/[0.06]">
+            <form onSubmit={handleCreateManualStudent} className="mb-3 rounded-[10px] border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-tt-elevated p-3">
+              <h5 className="text-xs font-semibold text-slate-700 dark:text-slate-200">Create student manually</h5>
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <input type="text" value={manualName} onChange={e => setManualName(e.target.value)} placeholder="Full name" className={fieldClass} />
+                <input type="email" value={manualEmail} onChange={e => setManualEmail(e.target.value)} placeholder="Email optional" className={fieldClass} />
+              </div>
+              <div className="mt-2 flex justify-end">
+                <button type="submit" disabled={saving || !manualName.trim()} className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+                  Create and enroll
+                </button>
+              </div>
+            </form>
+
+            <div className="max-h-64 overflow-auto rounded-[10px] bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/[0.06]">
               {searchLoading ? (
                 <p className="px-3 py-2 text-[11px] text-slate-500">Searching…</p>
               ) : searchResults.length === 0 ? (
@@ -362,12 +415,12 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
               ) : (
                 <ul className="divide-y divide-slate-200 dark:divide-white/[0.04] text-xs">
                   {searchResults.map(p => (
-                    <li key={p.id} className="flex cursor-pointer items-center justify-between px-3 py-2 hover:bg-white dark:bg-gw-surface transition-colors" onClick={() => handleEnrollStudent(p)}>
+                    <li key={p.id} className="flex cursor-pointer items-center justify-between px-3 py-2 hover:bg-white dark:bg-tt-surface transition-colors" onClick={() => handleEnrollStudent(p)}>
                       <div>
                         <p className="font-medium text-slate-700 dark:text-slate-200">{p.full_name ?? p.email}</p>
                         <p className="text-[11px] text-slate-500">{p.email}</p>
                       </div>
-                      <span className="text-[11px] text-gw-blue">Enroll</span>
+                      <span className="text-[11px] text-tt-blue">Enroll</span>
                     </li>
                   ))}
                 </ul>
@@ -381,7 +434,7 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
 
       {editingEnrollment && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md mx-2 bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
+          <div className="w-full max-w-md mx-2 bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] shadow-2xl p-4">
             <header className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Edit student</h4>
@@ -413,8 +466,8 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
                 </label>
               </div>
               <div className="md:col-span-3 flex justify-end items-end gap-2">
-                <button type="button" onClick={() => setEditingEnrollment(null)} className="rounded-md bg-white dark:bg-gw-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-gw-elevated transition-colors">Cancel</button>
-                <button type="submit" className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all">Save changes</button>
+                <button type="button" onClick={() => setEditingEnrollment(null)} className="rounded-md bg-white dark:bg-tt-surface text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-[11px] font-semibold hover:bg-slate-100 dark:bg-tt-elevated transition-colors">Cancel</button>
+                <button type="submit" className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-[11px] font-semibold hover:brightness-110 transition-all">Save changes</button>
               </div>
             </form>
           </div>
@@ -424,7 +477,7 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
       {loading ? (
         <SkeletonTable rows={3} cols={5} />
       ) : students.length === 0 ? (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px]">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px]">
           <EmptyState
             title="No students enrolled yet"
             description={`Enroll students in ${className} to start tracking their progress.`}
@@ -432,7 +485,7 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
           />
         </div>
       ) : (
-        <div className="bg-slate-100 dark:bg-gw-elevated rounded-[10px] overflow-hidden">
+        <div className="bg-slate-100 dark:bg-tt-elevated rounded-[10px] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -446,7 +499,7 @@ export function ClassStudentsSection({ classId, className, archived = false }: C
               </thead>
               <tbody>
                 {students.map(s => (
-                  <tr key={s.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-white dark:bg-gw-surface cursor-pointer transition-colors duration-100" onClick={() => openEditStudent(s)}>
+                  <tr key={s.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-white dark:bg-tt-surface cursor-pointer transition-colors duration-100" onClick={() => openEditStudent(s)}>
                     <td className="px-3 py-2 text-slate-700 dark:text-slate-200">{s.student_name}</td>
                     <td className="hidden sm:table-cell px-3 py-2 text-slate-500 dark:text-slate-400">{s.student_email}</td>
                     <td className="px-3 py-2">

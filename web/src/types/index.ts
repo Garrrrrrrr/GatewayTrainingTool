@@ -18,7 +18,7 @@
 /** The three roles a user can hold. Enforced by both the API and the UI. */
 export type UserRole = 'trainee' | 'trainer' | 'coordinator'
 
-/** Provinces where Gateway Casinos operates training programs. */
+/** Provinces where training teams operates training programs. */
 export type Province = 'BC' | 'AB' | 'ON'
 
 /** A user account in the system, stored in the `profiles` table. */
@@ -40,7 +40,7 @@ export interface Profile {
 export interface Class {
   id: string
   name: string          // Short identifier (e.g. "BJ-APR-01"), used as URL slug
-  site: string          // Casino site code (e.g. "GVE", "SLE")
+  site: string          // Training site code (e.g. "Site A", "Site B")
   province: Province
   game_type: string | null  // The casino game being trained (e.g. "Blackjack")
   start_date: string    // ISO date string (YYYY-MM-DD)
@@ -223,7 +223,7 @@ export type LoggedHoursPersonType = 'trainer' | 'student'
  * Either `trainer_id` or `enrollment_id` is set depending on `person_type`,
  * but never both.
  * `paid` distinguishes paid time from unpaid/volunteer hours.
- * `live_training` flags hours spent on the live casino floor (vs. classroom).
+ * `live_training` flags hours spent on the live training floor (vs. classroom).
  */
 export interface ClassLoggedHours {
   id: string

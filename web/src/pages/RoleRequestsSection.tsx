@@ -60,7 +60,7 @@ export function RoleRequestsSection() {
         </thead>
         <tbody>
           {requests.map(r => (
-            <tr key={r.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-gw-elevated transition-colors">
+            <tr key={r.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-tt-elevated transition-colors">
               <td className="px-4 py-2.5 text-slate-800 dark:text-slate-200">{r.user_name ?? '—'}</td>
               <td className="px-4 py-2.5 text-slate-500 dark:text-slate-400">{r.user_email ?? '—'}</td>
               <td className="px-4 py-2.5">

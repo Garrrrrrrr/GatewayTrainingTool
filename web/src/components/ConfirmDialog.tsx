@@ -22,7 +22,7 @@ export function ConfirmDialog({
   const confirmClass =
     confirmVariant === 'danger'
       ? 'bg-rose-500/15 text-rose-400 border border-rose-500/25 hover:bg-rose-500/20'
-      : 'bg-gradient-to-r from-gw-blue to-gw-teal text-white hover:brightness-110'
+      : 'bg-gradient-to-r from-tt-blue to-tt-teal text-white hover:brightness-110'
 
   return (
     <div
@@ -31,7 +31,7 @@ export function ConfirmDialog({
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
     >
-      <div className="w-full max-w-sm bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] p-6 shadow-2xl animate-modal-in">
+      <div className="w-full max-w-sm bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.08] rounded-[14px] p-6 shadow-2xl animate-modal-in">
         <div className="flex items-start justify-between gap-3 mb-3">
           <h2 id="confirm-dialog-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
             {title}
@@ -52,7 +52,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md bg-white dark:bg-gw-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-gw-elevated transition-colors duration-150"
+            className="rounded-md bg-white dark:bg-tt-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-4 py-2 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-tt-elevated transition-colors duration-150"
           >
             Cancel
           </button>

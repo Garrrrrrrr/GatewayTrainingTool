@@ -79,9 +79,9 @@ export function StudentProgressPage() {
 
   if (error || !data) {
     return (
-      <div className="bg-white dark:bg-gw-surface rounded-[10px] p-10 text-center">
+      <div className="bg-white dark:bg-tt-surface rounded-[10px] p-10 text-center">
         <p className="text-sm text-slate-700 dark:text-slate-300">{error ?? 'Student not found.'}</p>
-        <Link to="/students" className="mt-2 inline-block text-xs text-gw-blue hover:text-blue-300 transition-colors">Back to Students</Link>
+        <Link to="/students" className="mt-2 inline-block text-xs text-tt-blue hover:text-blue-300 transition-colors">Back to Students</Link>
       </div>
     )
   }
@@ -96,7 +96,7 @@ export function StudentProgressPage() {
   return (
     <div className="flex flex-col h-full min-h-0">
       <header className="flex-shrink-0">
-        <Link to="/students" className="text-xs text-gw-blue hover:text-blue-300 transition-colors">&larr; Back to Students</Link>
+        <Link to="/students" className="text-xs text-tt-blue hover:text-blue-300 transition-colors">&larr; Back to Students</Link>
         <h2 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">{data.student_name}</h2>
         <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{data.student_email}</p>
       </header>
@@ -107,7 +107,7 @@ export function StudentProgressPage() {
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Enrolled Classes</h3>
           <div className="flex flex-wrap gap-2">
             {data.classes.map(c => (
-              <div key={c.enrollment_id} className="rounded-[10px] bg-white dark:bg-gw-surface border border-slate-200 dark:border-white/[0.06] px-3 py-2 text-sm">
+              <div key={c.enrollment_id} className="rounded-[10px] bg-white dark:bg-tt-surface border border-slate-200 dark:border-white/[0.06] px-3 py-2 text-sm">
                 <span className="font-medium text-slate-800 dark:text-slate-200">{c.class_name}</span>
                 <span className={`ml-2 inline-block text-[10px] font-medium px-1.5 py-0.5 rounded ${
                   c.status === 'enrolled' ? 'bg-emerald-500/15 text-emerald-400' :
@@ -126,7 +126,7 @@ export function StudentProgressPage() {
         {sparklines && (
           <section>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Rating Trends</h3>
-            <div className="bg-white dark:bg-gw-surface rounded-[10px] p-4 space-y-3">
+            <div className="bg-white dark:bg-tt-surface rounded-[10px] p-4 space-y-3">
               <div className="flex items-center gap-3">
                 <span className="text-xs text-slate-500 dark:text-slate-400 w-10">GK</span>
                 <RatingSparkline ratings={sparklines.gk} />
@@ -165,7 +165,7 @@ export function StudentProgressPage() {
           {data.progress.length === 0 ? (
             <p className="text-xs text-slate-400 dark:text-slate-500">No progress data recorded yet.</p>
           ) : (
-            <div className="bg-white dark:bg-gw-surface rounded-[10px] overflow-hidden">
+            <div className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
@@ -183,7 +183,7 @@ export function StudentProgressPage() {
                   </thead>
                   <tbody>
                     {data.progress.map((p, i) => (
-                      <tr key={i} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-gw-elevated transition-colors">
+                      <tr key={i} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-tt-elevated transition-colors">
                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">{p.report_date}</td>
                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400 truncate hidden sm:table-cell">{p.class_name}</td>
                         <td className="px-4 py-3 text-slate-500 dark:text-slate-400 truncate hidden md:table-cell">{p.session_label ?? '—'}</td>
@@ -231,7 +231,7 @@ export function StudentProgressPage() {
                 const first = times[0]
                 const isDrill = first.drill_type === 'drill'
                 return (
-                  <div key={drillName} className="bg-white dark:bg-gw-surface rounded-[10px] p-4">
+                  <div key={drillName} className="bg-white dark:bg-tt-surface rounded-[10px] p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{drillName}</span>
                       <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isDrill ? 'bg-blue-500/15 text-blue-400' : 'bg-purple-500/15 text-purple-400'}`}>

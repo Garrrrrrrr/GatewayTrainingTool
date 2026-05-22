@@ -50,10 +50,10 @@ These class strings are currently duplicated inline in `ReportEditForm`. Extract
 
 ```ts
 export const fieldClass =
-  'mt-1 w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-base md:text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40 focus:ring-2 focus:ring-gw-blue/15'
+  'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-base md:text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
 
 export const inlineFieldClass =
-  'bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-1 py-0.5 text-base md:text-[11px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-gw-blue/40'
+  'bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-1 py-0.5 text-base md:text-[11px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40'
 ```
 
 Note: `text-base md:text-xs` (instead of the original `text-xs`) prevents iOS zoom-on-focus (iOS zooms when font-size < 16px).
@@ -319,7 +319,7 @@ export function TrainersSection({ trainers, selectedIds, onChange }: Props) {
               key={t.id}
               className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] cursor-pointer ${
                 checked
-                  ? 'border-gw-blue/40 bg-gw-blue/15 text-gw-blue'
+                  ? 'border-tt-blue/40 bg-tt-blue/15 text-tt-blue'
                   : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.04] text-slate-500 dark:text-slate-400'
               }`}
             >
@@ -329,7 +329,7 @@ export function TrainersSection({ trainers, selectedIds, onChange }: Props) {
                 onChange={e => {
                   onChange(e.target.checked ? [...selectedIds, t.id] : selectedIds.filter(id => id !== t.id))
                 }}
-                className="accent-gw-blue"
+                className="accent-tt-blue"
               />
               {t.trainer_name}
             </label>
@@ -381,7 +381,7 @@ export function HoursTotalsSection({
   function fmt(n: number) { return Number.isNaN(n) ? '—' : n.toFixed(2) }
 
   return (
-    <div className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
+    <div className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
       <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Hours totals</p>
       <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
         Calculated from logged hours up to this report date; override fields take precedence.
@@ -392,7 +392,7 @@ export function HoursTotalsSection({
           { label: 'Total paid hours',        display: display.paid,         calc: totals.paid,         val: overridePaidHours,    key: 'overridePaidHours' as const },
           { label: 'Total live training hours', display: display.live,       calc: totals.live,         val: overrideLiveHours,    key: 'overrideLiveHours' as const },
         ] as const).map(item => (
-          <div key={item.key} className="bg-slate-100 dark:bg-gw-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
+          <div key={item.key} className="bg-slate-100 dark:bg-tt-elevated rounded-md border border-slate-200 dark:border-white/[0.06] p-2">
             <div className="text-[10px] text-slate-400 dark:text-slate-500">{item.label}</div>
             <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{fmt(item.display)}</div>
             <div className="mt-1 text-[10px] text-slate-400 dark:text-slate-500">Calculated: {item.calc.toFixed(2)}</div>
@@ -522,7 +522,7 @@ export function TimelineSection({ items, reportId, onChange }: Props) {
 
       {/* Desktop table (unchanged layout, drag removed) */}
       {items.length > 0 && (
-        <div className="hidden md:block overflow-auto bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
+        <div className="hidden md:block overflow-auto bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
           <table className="min-w-full text-[11px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -536,7 +536,7 @@ export function TimelineSection({ items, reportId, onChange }: Props) {
             </thead>
             <tbody>
               {items.map((item, index) => (
-                <tr key={item.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-gw-elevated transition-colors">
+                <tr key={item.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-tt-elevated transition-colors">
                   <td className="px-2 py-1">
                     <div className="flex gap-1">
                       <button type="button" onClick={() => move(index, -1)} disabled={index === 0}
@@ -577,7 +577,7 @@ export function TimelineSection({ items, reportId, onChange }: Props) {
       {items.length > 0 && (
         <div className="md:hidden space-y-3">
           {items.map((item, index) => (
-            <div key={item.id} className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-2">
+            <div key={item.id} className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                   <button type="button" onClick={() => move(index, -1)} disabled={index === 0}
@@ -714,7 +714,7 @@ export function TraineeProgressDetailModal({
     return (
       <label className={`flex items-center gap-3 min-h-[44px] ${disabled ? 'opacity-40' : 'cursor-pointer'}`}>
         <span className="text-sm text-slate-600 dark:text-slate-300 flex-1">{label}</span>
-        <input type="checkbox" checked={checked} disabled={disabled} onChange={e => onChange(e.target.checked)} className="accent-gw-blue w-5 h-5" />
+        <input type="checkbox" checked={checked} disabled={disabled} onChange={e => onChange(e.target.checked)} className="accent-tt-blue w-5 h-5" />
       </label>
     )
   }
@@ -739,7 +739,7 @@ export function TraineeProgressDetailModal({
             value={row.progress_text ?? ''}
             onChange={e => patch({ progress_text: e.target.value })}
             rows={4}
-            className="w-full bg-slate-100 dark:bg-gw-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-base text-slate-800 dark:text-slate-200 outline-none focus:border-gw-blue/40 resize-none"
+            className="w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-3 py-2 text-base text-slate-800 dark:text-slate-200 outline-none focus:border-tt-blue/40 resize-none"
           />
         </div>
 
@@ -856,7 +856,7 @@ export function TraineeProgressSection({ rows, enrollments, onChange, reportId }
 
       {/* Desktop table */}
       {rows.length > 0 && (
-        <div className="hidden md:block overflow-auto bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
+        <div className="hidden md:block overflow-auto bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
           <table className="min-w-full text-[11px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
@@ -873,7 +873,7 @@ export function TraineeProgressSection({ rows, enrollments, onChange, reportId }
               {rows.map((row, index) => {
                 const enr = enrollments.find(e => e.id === row.enrollment_id)
                 return (
-                  <tr key={row.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-gw-elevated transition-colors">
+                  <tr key={row.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-tt-elevated transition-colors">
                     <td className="px-2 py-1 align-top">
                       <div className="text-slate-800 dark:text-slate-200">{enr?.student_name ?? 'Unknown'}</div>
                       <div className="text-[10px] text-slate-400">{enr?.student_email}</div>
@@ -896,7 +896,7 @@ export function TraineeProgressSection({ rows, enrollments, onChange, reportId }
                     </td>
                     <td className="px-2 py-1 align-top">
                       <label className="inline-flex items-center gap-1.5 text-slate-500 cursor-pointer">
-                        <input type="checkbox" checked={row.attendance ?? true} onChange={e => updateRow(index, { attendance: e.target.checked, ...(e.target.checked ? {} : { late: false }) })} className="accent-gw-blue" />
+                        <input type="checkbox" checked={row.attendance ?? true} onChange={e => updateRow(index, { attendance: e.target.checked, ...(e.target.checked ? {} : { late: false }) })} className="accent-tt-blue" />
                         <span>Yes</span>
                       </label>
                     </td>
@@ -908,13 +908,13 @@ export function TraineeProgressSection({ rows, enrollments, onChange, reportId }
                     </td>
                     <td className="px-2 py-1 align-top">
                       <label className="inline-flex items-center gap-1.5 text-slate-500 cursor-pointer">
-                        <input type="checkbox" checked={row.coming_back_next_day ?? true} onChange={e => updateRow(index, { coming_back_next_day: e.target.checked })} className="accent-gw-blue" />
+                        <input type="checkbox" checked={row.coming_back_next_day ?? true} onChange={e => updateRow(index, { coming_back_next_day: e.target.checked })} className="accent-tt-blue" />
                         <span>Yes</span>
                       </label>
                     </td>
                     <td className="px-2 py-1 align-top">
                       <label className="inline-flex items-center gap-1.5 text-slate-400 cursor-pointer">
-                        <input type="checkbox" checked={row.homework_completed ?? false} onChange={e => updateRow(index, { homework_completed: e.target.checked })} className="accent-gw-blue" />
+                        <input type="checkbox" checked={row.homework_completed ?? false} onChange={e => updateRow(index, { homework_completed: e.target.checked })} className="accent-tt-blue" />
                         <span>Yes</span>
                       </label>
                     </td>
@@ -937,7 +937,7 @@ export function TraineeProgressSection({ rows, enrollments, onChange, reportId }
                 key={row.id}
                 type="button"
                 onClick={() => setModalIndex(index)}
-                className="w-full text-left bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 min-h-[60px] hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors"
+                className="w-full text-left bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 min-h-[60px] hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <span className="font-medium text-sm text-slate-800 dark:text-slate-200">{enr?.student_name ?? 'Unknown'}</span>
@@ -1024,7 +1024,7 @@ function drillInputClass(drill: ClassDrill, row: ClassDailyReportDrillTime): str
       ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
       : 'border-amber-500/40 bg-amber-500/10 text-amber-300')
   }
-  return base + 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-gw-elevated text-slate-800 dark:text-slate-200'
+  return base + 'border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-tt-elevated text-slate-800 dark:text-slate-200'
 }
 
 export function DrillTimesSection({ rows, drills, enrollments, reportId, onChange }: Props) {
@@ -1073,11 +1073,11 @@ export function DrillTimesSection({ rows, drills, enrollments, reportId, onChang
 
       {/* Desktop table */}
       {rows.length > 0 && (
-        <div className="hidden md:block overflow-auto bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
+        <div className="hidden md:block overflow-auto bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06]">
           <table className="min-w-full text-[11px]">
             <thead>
               <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
-                <th className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500 sticky left-0 bg-white dark:bg-gw-surface">Trainee</th>
+                <th className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500 sticky left-0 bg-white dark:bg-tt-surface">Trainee</th>
                 {activeDrills.map(drill => (
                   <th key={drill.id} className="px-2 py-1 text-left font-semibold uppercase tracking-wide text-slate-500">
                     <div>{drill.name}</div>
@@ -1090,8 +1090,8 @@ export function DrillTimesSection({ rows, drills, enrollments, reportId, onChang
             </thead>
             <tbody>
               {enrollments.map(enr => (
-                <tr key={enr.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-gw-elevated transition-colors">
-                  <td className="px-2 py-1 text-slate-800 dark:text-slate-200 whitespace-nowrap sticky left-0 bg-white dark:bg-gw-surface">{enr.student_name}</td>
+                <tr key={enr.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.04] dark:bg-tt-elevated transition-colors">
+                  <td className="px-2 py-1 text-slate-800 dark:text-slate-200 whitespace-nowrap sticky left-0 bg-white dark:bg-tt-surface">{enr.student_name}</td>
                   {activeDrills.map(drill => {
                     const row = rows.find(r => r.enrollment_id === enr.id && r.drill_id === drill.id)
                     if (!row) return <td key={drill.id} className="px-2 py-1 text-slate-500">—</td>
@@ -1132,7 +1132,7 @@ export function DrillTimesSection({ rows, drills, enrollments, reportId, onChang
                 if (!row) return null
                 const value = drill.type === 'drill' ? row.time_seconds : row.score
                 return (
-                  <div key={enr.id} className="bg-white dark:bg-gw-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
+                  <div key={enr.id} className="bg-white dark:bg-tt-surface rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3">
                     <div className="text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">{enr.student_name}</div>
                     <label className="block text-xs text-slate-500 dark:text-slate-400">
                       {drill.type === 'drill' ? 'Time (sec)' : 'Score'}
@@ -1433,7 +1433,7 @@ export function ReportEditForm({
   }
 
   return (
-    <div className="mb-4 bg-slate-100 dark:bg-gw-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-4 text-xs">
+    <div className="mb-4 bg-slate-100 dark:bg-tt-elevated rounded-[10px] border border-slate-200 dark:border-white/[0.06] p-3 space-y-4 text-xs">
       {/* Draft restored banner */}
       {hasDraft && initialized && (
         <div role="status" className="flex items-center justify-between rounded-md bg-amber-500/10 border border-amber-500/20 px-3 py-2 text-xs text-amber-600 dark:text-amber-400">
@@ -1504,11 +1504,11 @@ export function ReportEditForm({
             </button>
           )}
           <button type="button" onClick={onCancel}
-            className="rounded-md bg-white dark:bg-gw-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 transition-colors">
+            className="rounded-md bg-white dark:bg-tt-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 transition-colors">
             Cancel
           </button>
           <button type="submit" disabled={saving}
-            className="rounded-md bg-gradient-to-r from-gw-blue to-gw-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-60">
+            className="rounded-md bg-gradient-to-r from-tt-blue to-tt-teal text-white px-3 py-1.5 text-xs font-semibold hover:brightness-110 transition-all disabled:opacity-60">
             {saving ? 'Saving…' : report ? 'Save changes' : 'Add report'}
           </button>
         </div>

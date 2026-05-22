@@ -97,7 +97,7 @@ export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPa
     <div className="flex h-full min-h-0 flex-col">
       {/* Breadcrumb */}
       <nav className="mb-2 text-xs text-slate-500" aria-label="Breadcrumb">
-        <Link to="/classes" className="hover:text-gw-blue transition-colors">Classes</Link>
+        <Link to="/classes" className="hover:text-tt-blue transition-colors">Classes</Link>
         <span className="mx-1.5">/</span>
         <span className="text-slate-700 dark:text-slate-300 font-medium">{classData.name}</span>
       </nav>
@@ -118,7 +118,7 @@ export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPa
           <button
             type="button"
             onClick={() => setEditOpen(true)}
-            className="rounded-md bg-white dark:bg-gw-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-gw-elevated transition-colors duration-150"
+            className="rounded-md bg-white dark:bg-tt-surface text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-tt-elevated transition-colors duration-150"
           >
             Edit class
           </button>
@@ -141,7 +141,7 @@ export function ClassDetailPage({ className, deepLinkedReportId }: ClassDetailPa
             >
               {tab.label}
               {activeTab === tab.id && (
-                <span className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-gradient-to-r from-gw-blue to-gw-teal rounded-t" />
+                <span className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-gradient-to-r from-tt-blue to-tt-teal rounded-t" />
               )}
             </button>
           ))}

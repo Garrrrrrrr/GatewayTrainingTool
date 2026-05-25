@@ -3,6 +3,7 @@
  *
  * Route structure:
  *   /login                  — Public login page
+ *   /privacy                — Public privacy policy
  *   /                       — Protected shell
  *     /dashboard            — Role-aware dashboard
  *     /classes              — Class management (coordinator only)
@@ -30,6 +31,7 @@ import { ConditionalTrainerProvider } from './contexts/TrainerContext'
 import { ProtectedLayout } from './layouts/ProtectedLayout'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoginView } from './pages/LoginView'
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage'
 import { DashboardView } from './pages/DashboardView'
 import { ClassesPage } from './pages/ClassesPage'
 import { ClassDetailView } from './pages/ClassDetailView'
@@ -66,6 +68,7 @@ function App() {
         <Routes>
           {/* Public — accessible without authentication */}
           <Route path="/login" element={<LoginView />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
           {/* Protected shell */}
           <Route path="/" element={<ClassesProvider><ConditionalTrainerProvider><ProtectedLayout /></ConditionalTrainerProvider></ClassesProvider>}>

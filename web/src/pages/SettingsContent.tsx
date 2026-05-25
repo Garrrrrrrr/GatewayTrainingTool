@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { useTheme } from '../contexts/ThemeContext'
@@ -359,6 +360,12 @@ export function SettingsContent() {
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
               Sign out of your {roleLabel(role).toLowerCase()} account.
             </p>
+            <Link
+              to="/privacy"
+              className="mb-4 block text-sm font-medium text-tt-blue hover:text-tt-blue-hover dark:text-sky-300 dark:hover:text-sky-200"
+            >
+              Privacy Policy
+            </Link>
             <button
               type="button"
               className="rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 dark:border-rose-500/25 px-3 py-1.5 text-sm font-semibold hover:bg-rose-500/20 transition-colors duration-150"

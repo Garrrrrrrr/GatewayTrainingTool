@@ -12,7 +12,7 @@
  * The actual authentication logic lives in LoginForm.tsx and GoogleLoginForm.tsx.
  */
 
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { LoginForm } from '../components/LoginForm'
 
@@ -52,7 +52,7 @@ export function LoginView() {
         </div>
 
         <p className="text-xs text-white/25">
-          © {new Date().getFullYear()} Training Tool
+          © {new Date().getFullYear()} Training Tool · <Link to="/privacy" className="hover:text-white/50">Privacy</Link>
         </p>
       </div>
 
@@ -65,6 +65,9 @@ export function LoginView() {
           </span>
         </div>
         <LoginForm />
+        <Link to="/privacy" className="mt-5 text-xs font-medium text-slate-500 hover:text-tt-blue lg:hidden">
+          Privacy Policy
+        </Link>
       </div>
     </div>
   )

@@ -34,6 +34,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { api, type LegacyImportBatch, type LegacyImportReviewResult, type ReportWithNested, type ReportBody } from '../../lib/apiClient'
 import type { ReportPdfArgs } from '../../lib/reportPdf'
 import { parseLegacyWorkbook, type ParsedLegacyReport, type ParsedPayrollRow } from '../../lib/legacyReportImport'
+import { buildCopiedReportDraft } from '../../lib/reportDrafts'
 import { ReportPreviewModal } from '../../components/ReportPreviewModal'
 import { ReportEditForm, type TimelineCopySource } from '../../components/ReportEditForm'
 import { useToast } from '../../contexts/ToastContext'
@@ -341,6 +342,22 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
     }
   }
 
+  async function openCopyReport(r: ClassDailyReport) {
+    try {
+      const full = reportCacheRef.current[r.id] ?? await api.reports.get(r.id)
+      reportCacheRef.current[r.id] = full
+      setEditingReportFull(null)
+      setReportDraft({
+        enrollmentIds: null,
+        sourceLabel: reportTimelineSourceLabel(r),
+        initialValues: buildCopiedReportDraft(full),
+      })
+      setReportFormOpen(true)
+    } catch (err) {
+      setError((err as Error).message)
+    }
+  }
+
   /** Called by ReportEditForm when the user submits; handles create and update. */
   async function handleSaveFromForm(body: ReportBody) {
     setError(null)
@@ -492,6 +509,12 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
       homework_handouts_tests: item.homework_handouts_tests,
       category: item.category,
     }))
+  }
+
+  async function handleCopyReportFromReport(reportId: string): Promise<ReportBody> {
+    const full = reportCacheRef.current[reportId] ?? await api.reports.get(reportId)
+    reportCacheRef.current[reportId] = full
+    return buildCopiedReportDraft(full)
   }
 
   useEffect(() => {
@@ -1425,7 +1448,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
             <>
             {reportDraft && (
               <p className="mb-2 rounded-md border border-tt-blue/25 bg-tt-blue/10 px-3 py-2 text-xs text-tt-blue">
-                Draft created from schedule: {reportDraft.sourceLabel}
+                Draft created from: {reportDraft.sourceLabel}
               </p>
             )}
             <ReportEditForm
@@ -1438,6 +1461,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
               initialValues={reportDraft?.initialValues}
               timelineCopySources={timelineCopySources}
               onCopyTimeline={handleCopyTimelineFromReport}
+              onCopyReport={handleCopyReportFromReport}
               autosaveKey={reportAutosaveKey}
               onSave={handleSaveFromForm}
               onCancel={() => { setReportFormOpen(false); setEditingReportFull(null); setReportDraft(null) }}
@@ -1479,6 +1503,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     <button type="button" onClick={() => openEditReport(r)} className="rounded-md bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">Edit</button>
+                    <button type="button" onClick={() => openCopyReport(r)} className="rounded-md bg-tt-teal/10 border border-tt-teal/30 px-2.5 py-1.5 text-xs text-tt-teal hover:bg-tt-teal/15 transition-colors">Copy</button>
                     <button type="button" onClick={() => handleViewPdf(r)} className="rounded-md bg-tt-blue/15 border border-tt-blue/35 px-2.5 py-1.5 text-xs text-tt-blue hover:bg-tt-blue/20 transition-colors">View PDF</button>
                     <button type="button" onClick={() => handleRemoveReport(r.id)} className="rounded-md bg-rose-500/10 border border-rose-500/25 px-2.5 py-1.5 text-xs text-rose-400 hover:bg-rose-500/15 transition-colors">Remove</button>
                   </div>
@@ -1523,6 +1548,7 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
                       <td className="px-3 py-2 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button type="button" onClick={() => openEditReport(r)} className="rounded-md bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">Edit</button>
+                          <button type="button" onClick={() => openCopyReport(r)} className="rounded-md bg-tt-teal/10 border border-tt-teal/30 px-2 py-1 text-tt-teal hover:bg-tt-teal/15 transition-colors">Copy</button>
                           <button type="button" onClick={() => handleViewPdf(r)} className="rounded-md bg-tt-blue/15 border border-tt-blue/35 px-2 py-1 text-tt-blue hover:bg-tt-blue/20 transition-colors">View PDF</button>
                           <button type="button" onClick={() => handleRemoveReport(r.id)} className="rounded-md bg-rose-500/10 border border-rose-500/25 px-2 py-1 text-rose-400 hover:bg-rose-500/15 transition-colors">Remove</button>
                         </div>

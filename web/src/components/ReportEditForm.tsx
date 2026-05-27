@@ -40,6 +40,7 @@ interface ReportEditFormProps {
   initialValues?: Partial<ReportBody>     // pre-fill create mode from schedule/import-derived drafts
   timelineCopySources?: TimelineCopySource[]
   onCopyTimeline?: (sourceId: string) => Promise<ReportBody['timeline']>
+  onCopyReport?: (sourceId: string) => Promise<Partial<ReportBody>>
   autosaveKey?: string                    // localStorage key for unsaved report edits
   onSave: (body: ReportBody) => Promise<void>
   onCancel: () => void
@@ -165,7 +166,7 @@ function formatElapsedTime(ms: number): string {
 
 export function ReportEditForm({
   report, trainers, enrollments, drills, hours, defaultGame = '', initialValues, autosaveKey,
-  timelineCopySources = [], onCopyTimeline,
+  timelineCopySources = [], onCopyTimeline, onCopyReport,
   onSave, onCancel, canDelete, onDelete, canEditCoordinatorNotes, showDrillTimer = false,
 }: ReportEditFormProps) {
   // Header fields — stored as strings; converted to numbers on save
@@ -199,6 +200,7 @@ export function ReportEditForm({
   const [timerScore, setTimerScore] = useState('')
   const [selectedTimelineSourceId, setSelectedTimelineSourceId] = useState('')
   const [timelineCopying, setTimelineCopying] = useState(false)
+  const [reportCopying, setReportCopying] = useState(false)
   const [timelineCopyError, setTimelineCopyError] = useState<string | null>(null)
   const dragIndexRef = useRef<number | null>(null)
 
@@ -263,8 +265,8 @@ export function ReportEditForm({
       setOverrideLiveHours(draft.override_live_hours_total != null ? String(draft.override_live_hours_total) : '')
       setSelectedTrainerIds(draft.trainer_ids ?? [])
       setTimelineItems(buildTimelineRows(draft.timeline, 'new'))
-      setProgressRows(buildProgressRows(enrollments, [], 'new'))
-      setDrillTimeRows([])
+      setProgressRows(buildProgressRows(enrollments, buildProgressRowsFromBody(draft.progress, 'new'), 'new'))
+      setDrillTimeRows(buildDrillRowsFromBody(draft.drill_times, 'new'))
       setCoordinatorNotes(draft.coordinator_notes ?? '')
     }
 
@@ -427,6 +429,20 @@ export function ReportEditForm({
       setTimelineCopyError((err as Error).message)
     } finally {
       setTimelineCopying(false)
+    }
+  }
+
+  async function handleCopyReport() {
+    if (!selectedTimelineSourceId || !onCopyReport) return
+    setReportCopying(true)
+    setTimelineCopyError(null)
+    try {
+      const body = await onCopyReport(selectedTimelineSourceId)
+      applyBodyToForm(body)
+    } catch (err) {
+      setTimelineCopyError((err as Error).message)
+    } finally {
+      setReportCopying(false)
     }
   }
 
@@ -650,11 +666,21 @@ export function ReportEditForm({
                   <button
                     type="button"
                     onClick={handleCopyTimeline}
-                    disabled={!selectedTimelineSourceId || timelineCopying}
+                    disabled={!selectedTimelineSourceId || timelineCopying || reportCopying}
                     className="rounded-md bg-tt-teal/10 border border-tt-teal/30 px-2 py-1 text-[11px] font-semibold text-tt-teal hover:bg-tt-teal/15 transition-colors disabled:opacity-60"
                   >
                     {timelineCopying ? 'Copying…' : 'Copy timeline'}
                   </button>
+                  {onCopyReport && (
+                    <button
+                      type="button"
+                      onClick={handleCopyReport}
+                      disabled={!selectedTimelineSourceId || timelineCopying || reportCopying}
+                      className="rounded-md bg-tt-blue/10 border border-tt-blue/30 px-2 py-1 text-[11px] font-semibold text-tt-blue hover:bg-tt-blue/15 transition-colors disabled:opacity-60"
+                    >
+                      {reportCopying ? 'Copying…' : 'Copy report'}
+                    </button>
+                  )}
                 </>
               )}
               <button type="button" onClick={() => setTimelineItems(prev => [...prev, { id: crypto.randomUUID(), report_id: report?.id ?? 'new', start_time: '', end_time: '', activity: '', homework_handouts_tests: '', category: '', position: prev.length, created_at: new Date().toISOString() }])} className="rounded-md bg-slate-100 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">

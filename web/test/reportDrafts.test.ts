@@ -58,7 +58,7 @@ const sourceReport: ReportWithNested = {
   }],
 }
 
-test('buildCopiedReportDraft copies reusable report structure only', () => {
+test('buildCopiedReportDraft copies complete report details into a new draft', () => {
   const draft = buildCopiedReportDraft(sourceReport, {
     reportDate: '2026-05-12',
     groupLabel: 'B',
@@ -72,6 +72,14 @@ test('buildCopiedReportDraft copies reusable report structure only', () => {
   assert.equal(draft.session_label, 'Day 2 AM')
   assert.equal(draft.class_start_time, '10:00')
   assert.equal(draft.class_end_time, '14:00')
+  assert.equal(draft.mg_confirmed, 12)
+  assert.equal(draft.mg_attended, 11)
+  assert.equal(draft.current_trainees, 10)
+  assert.equal(draft.licenses_received, 9)
+  assert.equal(draft.override_hours_to_date, 20)
+  assert.equal(draft.override_paid_hours_total, 18)
+  assert.equal(draft.override_live_hours_total, 2)
+  assert.equal(draft.coordinator_notes, 'Needs coordinator review')
   assert.deepEqual(draft.trainer_ids, ['trainer-1', 'trainer-2'])
   assert.deepEqual(draft.timeline, [{
     start_time: '09:00',
@@ -80,9 +88,21 @@ test('buildCopiedReportDraft copies reusable report structure only', () => {
     homework_handouts_tests: 'Handout A',
     category: 'Lecture',
   }])
-  assert.deepEqual(draft.progress, [])
-  assert.deepEqual(draft.drill_times, [])
-  assert.equal('coordinator_notes' in draft, false)
-  assert.equal('mg_confirmed' in draft, false)
+  assert.deepEqual(draft.progress, [{
+    enrollment_id: 'enrollment-1',
+    progress_text: 'Strong mechanics',
+    gk_rating: 'ME',
+    dex_rating: 'EE',
+    hom_rating: 'ME',
+    coming_back_next_day: true,
+    homework_completed: true,
+    attendance: true,
+    late: false,
+  }])
+  assert.deepEqual(draft.drill_times, [{
+    enrollment_id: 'enrollment-1',
+    drill_id: 'drill-1',
+    time_seconds: 42,
+    score: null,
+  }])
 })
-

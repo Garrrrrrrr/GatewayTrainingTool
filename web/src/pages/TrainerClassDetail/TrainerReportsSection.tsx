@@ -221,6 +221,12 @@ export function TrainerReportsSection() {
     }))
   }
 
+  async function handleCopyReportFromReport(reportId: string): Promise<ReportBody> {
+    const full = reportCacheRef.current[reportId] ?? await api.selfService.classReportDetail(classId, reportId)
+    reportCacheRef.current[reportId] = full
+    return buildCopiedReportDraft(full)
+  }
+
   if (mode === 'list') {
     return (
       <>
@@ -321,6 +327,7 @@ export function TrainerReportsSection() {
         initialValues={initialReportValues ?? undefined}
         timelineCopySources={timelineCopySources}
         onCopyTimeline={handleCopyTimelineFromReport}
+        onCopyReport={handleCopyReportFromReport}
         autosaveKey={reportAutosaveKey}
         onSave={handleSaveFromForm}
         onCancel={() => { setMode('list'); setEditingReport(null); setInitialReportValues(null) }}

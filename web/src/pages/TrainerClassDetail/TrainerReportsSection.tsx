@@ -6,10 +6,19 @@ import { useTrainerClassDetail } from '../../contexts/TrainerClassDetailContext'
 import { SkeletonTable } from '../../components/Skeleton'
 import { EmptyState } from '../../components/EmptyState'
 import { ReportPreviewModal } from '../../components/ReportPreviewModal'
-import { ReportEditForm } from '../../components/ReportEditForm'
+import { ReportEditForm, type TimelineCopySource } from '../../components/ReportEditForm'
 import { useToast } from '../../contexts/ToastContext'
 import type { ClassDailyReport } from '../../types'
 import type { ReportPdfArgs } from '../../lib/reportPdf'
+
+function reportTimelineSourceLabel(report: ClassDailyReport) {
+  return [
+    report.report_date,
+    report.group_label ? `Group ${report.group_label}` : null,
+    report.session_label,
+    report.class_start_time && report.class_end_time ? `${report.class_start_time.slice(0, 5)}-${report.class_end_time.slice(0, 5)}` : null,
+  ].filter(Boolean).join(' · ')
+}
 
 export function TrainerReportsSection() {
   const {
@@ -37,6 +46,12 @@ export function TrainerReportsSection() {
     const session = editingReport?.session_label ?? editingReport?.id ?? draft?.session_label ?? mode
     return `daily-report-draft:${classId}:${date}:${group}:${session}`
   }, [classId, editingReport, initialReportValues, mode])
+  const timelineCopySources = useMemo<TimelineCopySource[]>(
+    () => reports
+      .filter(report => report.id !== editingReport?.id)
+      .map(report => ({ id: report.id, label: reportTimelineSourceLabel(report) })),
+    [editingReport?.id, reports],
+  )
   const handledReportActionRef = useRef('')
 
   const openCreate = useCallback((initialValues: ReportBody | null = null) => {
@@ -194,6 +209,18 @@ export function TrainerReportsSection() {
     }
   }
 
+  async function handleCopyTimelineFromReport(reportId: string): Promise<ReportBody['timeline']> {
+    const full = reportCacheRef.current[reportId] ?? await api.selfService.classReportDetail(classId, reportId)
+    reportCacheRef.current[reportId] = full
+    return full.timeline.map(item => ({
+      start_time: item.start_time,
+      end_time: item.end_time,
+      activity: item.activity,
+      homework_handouts_tests: item.homework_handouts_tests,
+      category: item.category,
+    }))
+  }
+
   if (mode === 'list') {
     return (
       <>
@@ -292,6 +319,8 @@ export function TrainerReportsSection() {
         hours={[...trainerHours, ...studentHours]}
         defaultGame={classInfo?.game_type ?? ''}
         initialValues={initialReportValues ?? undefined}
+        timelineCopySources={timelineCopySources}
+        onCopyTimeline={handleCopyTimelineFromReport}
         autosaveKey={reportAutosaveKey}
         onSave={handleSaveFromForm}
         onCancel={() => { setMode('list'); setEditingReport(null); setInitialReportValues(null) }}

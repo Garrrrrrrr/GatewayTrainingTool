@@ -38,6 +38,8 @@ interface ReportEditFormProps {
   hours: ClassLoggedHours[]               // for computing auto-totals
   defaultGame?: string                    // pre-fill game field when creating new
   initialValues?: Partial<ReportBody>     // pre-fill create mode from schedule/import-derived drafts
+  timelineCopySources?: TimelineCopySource[]
+  onCopyTimeline?: (sourceId: string) => Promise<ReportBody['timeline']>
   autosaveKey?: string                    // localStorage key for unsaved report edits
   onSave: (body: ReportBody) => Promise<void>
   onCancel: () => void
@@ -45,6 +47,11 @@ interface ReportEditFormProps {
   onDelete?: () => void
   canEditCoordinatorNotes: boolean
   showDrillTimer?: boolean
+}
+
+export interface TimelineCopySource {
+  id: string
+  label: string
 }
 
 const fieldClass = 'mt-1 w-full bg-slate-100 dark:bg-tt-elevated border border-slate-200 dark:border-white/10 rounded-md px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15'
@@ -158,6 +165,7 @@ function formatElapsedTime(ms: number): string {
 
 export function ReportEditForm({
   report, trainers, enrollments, drills, hours, defaultGame = '', initialValues, autosaveKey,
+  timelineCopySources = [], onCopyTimeline,
   onSave, onCancel, canDelete, onDelete, canEditCoordinatorNotes, showDrillTimer = false,
 }: ReportEditFormProps) {
   // Header fields — stored as strings; converted to numbers on save
@@ -189,6 +197,9 @@ export function ReportEditForm({
   const [timerStartedAt, setTimerStartedAt] = useState<number | null>(null)
   const [timerElapsedMs, setTimerElapsedMs] = useState(0)
   const [timerScore, setTimerScore] = useState('')
+  const [selectedTimelineSourceId, setSelectedTimelineSourceId] = useState('')
+  const [timelineCopying, setTimelineCopying] = useState(false)
+  const [timelineCopyError, setTimelineCopyError] = useState<string | null>(null)
   const dragIndexRef = useRef<number | null>(null)
 
   function applyBodyToForm(body: Partial<ReportBody>) {
@@ -274,6 +285,13 @@ export function ReportEditForm({
   useEffect(() => {
     setProgressRows(prev => buildProgressRows(enrollments, prev, report?.id ?? 'new'))
   }, [enrollments, report?.id])
+
+  useEffect(() => {
+    setSelectedTimelineSourceId(prev => {
+      if (prev && timelineCopySources.some(source => source.id === prev)) return prev
+      return timelineCopySources[0]?.id ?? ''
+    })
+  }, [timelineCopySources])
 
   useEffect(() => {
     const timerEnrollmentExists = enrollments.some(enrollment => enrollment.id === timerEnrollmentId)
@@ -396,6 +414,20 @@ export function ReportEditForm({
     if (!timerEnrollmentId || !selectedDrill || selectedDrill.type !== 'drill') return
     const seconds = Math.round((timerElapsedMs / 1000) * 10) / 10
     upsertDrillTime(timerEnrollmentId, selectedDrill, seconds)
+  }
+
+  async function handleCopyTimeline() {
+    if (!selectedTimelineSourceId || !onCopyTimeline) return
+    setTimelineCopying(true)
+    setTimelineCopyError(null)
+    try {
+      const rows = await onCopyTimeline(selectedTimelineSourceId)
+      setTimelineItems(buildTimelineRows(rows, report?.id ?? 'new'))
+    } catch (err) {
+      setTimelineCopyError((err as Error).message)
+    } finally {
+      setTimelineCopying(false)
+    }
   }
 
   function applyScoreResult() {
@@ -600,12 +632,41 @@ export function ReportEditForm({
         {/* Timeline items */}
         <CollapsibleSection label="Timeline & Progress" defaultOpen>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <p className="text-[11px] font-semibold text-slate-400 hidden md:block">Daily training timeline / trainee progress</p>
-            <button type="button" onClick={() => setTimelineItems(prev => [...prev, { id: crypto.randomUUID(), report_id: report?.id ?? 'new', start_time: '', end_time: '', activity: '', homework_handouts_tests: '', category: '', position: prev.length, created_at: new Date().toISOString() }])} className="rounded-md bg-slate-100 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
-              + Add time block
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              {timelineCopySources.length > 0 && onCopyTimeline && (
+                <>
+                  <select
+                    value={selectedTimelineSourceId}
+                    onChange={e => setSelectedTimelineSourceId(e.target.value)}
+                    className="max-w-full rounded-md border border-slate-200 bg-slate-100 px-2 py-1 text-[11px] text-slate-700 outline-none focus:border-tt-blue/40 focus:ring-2 focus:ring-tt-blue/15 dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300"
+                    aria-label="Timeline source"
+                  >
+                    {timelineCopySources.map(source => (
+                      <option key={source.id} value={source.id}>{source.label}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleCopyTimeline}
+                    disabled={!selectedTimelineSourceId || timelineCopying}
+                    className="rounded-md bg-tt-teal/10 border border-tt-teal/30 px-2 py-1 text-[11px] font-semibold text-tt-teal hover:bg-tt-teal/15 transition-colors disabled:opacity-60"
+                  >
+                    {timelineCopying ? 'Copying…' : 'Copy timeline'}
+                  </button>
+                </>
+              )}
+              <button type="button" onClick={() => setTimelineItems(prev => [...prev, { id: crypto.randomUUID(), report_id: report?.id ?? 'new', start_time: '', end_time: '', activity: '', homework_handouts_tests: '', category: '', position: prev.length, created_at: new Date().toISOString() }])} className="rounded-md bg-slate-100 dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
+                + Add time block
+              </button>
+            </div>
           </div>
+          {timelineCopyError && (
+            <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-2 py-1 text-[11px] text-rose-500">
+              {timelineCopyError}
+            </p>
+          )}
 
           {timelineItems.length === 0 ? (
             <p className="text-[11px] text-slate-400 dark:text-slate-500">No timeline rows yet. Add blocks like in the spreadsheet.</p>

@@ -35,7 +35,7 @@ import { api, type LegacyImportBatch, type LegacyImportReviewResult, type Report
 import type { ReportPdfArgs } from '../../lib/reportPdf'
 import { parseLegacyWorkbook, type ParsedLegacyReport, type ParsedPayrollRow } from '../../lib/legacyReportImport'
 import { ReportPreviewModal } from '../../components/ReportPreviewModal'
-import { ReportEditForm } from '../../components/ReportEditForm'
+import { ReportEditForm, type TimelineCopySource } from '../../components/ReportEditForm'
 import { useToast } from '../../contexts/ToastContext'
 import { useClassDetail } from '../../contexts/ClassDetailContext'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
@@ -132,6 +132,15 @@ function formatBatchDate(value: string) {
   return new Date(value).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
+function reportTimelineSourceLabel(report: ClassDailyReport) {
+  return [
+    report.report_date,
+    report.group_label ? `Group ${report.group_label}` : null,
+    report.session_label,
+    report.class_start_time && report.class_end_time ? `${report.class_start_time.slice(0, 5)}-${report.class_end_time.slice(0, 5)}` : null,
+  ].filter(Boolean).join(' · ')
+}
+
 export function ClassReportsSection({ classId, className, mode, defaultGameType, classStartDate, deepLinkedReportId }: ClassReportsSectionProps) {
   const { toast } = useToast()
   const [confirmState, setConfirmState] = useState<{
@@ -224,6 +233,12 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
   const selectedParsedPayrollRows = useMemo(
     () => parsedPayrollRows.filter((row, index) => selectedPayrollRowKeys.has(payrollRowKey(row, index))),
     [parsedPayrollRows, selectedPayrollRowKeys],
+  )
+  const timelineCopySources = useMemo<TimelineCopySource[]>(
+    () => reports
+      .filter(report => report.id !== editingReportFull?.id)
+      .map(report => ({ id: report.id, label: reportTimelineSourceLabel(report) })),
+    [editingReportFull?.id, reports],
   )
   const importReviewReportBySheet = useMemo(
     () => new Map((importReview?.reports ?? []).map(row => [row.sheet_name, row])),
@@ -465,6 +480,18 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
     } catch (err) {
       setError((err as Error).message)
     }
+  }
+
+  async function handleCopyTimelineFromReport(reportId: string): Promise<ReportBody['timeline']> {
+    const full = reportCacheRef.current[reportId] ?? await api.reports.get(reportId)
+    reportCacheRef.current[reportId] = full
+    return full.timeline.map(item => ({
+      start_time: item.start_time,
+      end_time: item.end_time,
+      activity: item.activity,
+      homework_handouts_tests: item.homework_handouts_tests,
+      category: item.category,
+    }))
   }
 
   useEffect(() => {
@@ -1409,6 +1436,8 @@ export function ClassReportsSection({ classId, className, mode, defaultGameType,
               hours={hours}
               defaultGame={editingReportFull?.game ?? reportDraft?.initialValues.game ?? defaultGameType ?? ''}
               initialValues={reportDraft?.initialValues}
+              timelineCopySources={timelineCopySources}
+              onCopyTimeline={handleCopyTimelineFromReport}
               autosaveKey={reportAutosaveKey}
               onSave={handleSaveFromForm}
               onCancel={() => { setReportFormOpen(false); setEditingReportFull(null); setReportDraft(null) }}

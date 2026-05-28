@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useClasses } from '../contexts/ClassesContext'
 import { api } from '../lib/apiClient'
-import type { ScheduleRow } from '../lib/apiClient'
+import type { OperationsTodayResponse, ScheduleRow } from '../lib/apiClient'
 import { formatTime, classSlug } from '../lib/utils'
 import { SkeletonText, SkeletonTable } from '../components/Skeleton'
 import { CreateClassModal } from '../components/CreateClassModal'
@@ -52,6 +52,7 @@ type AttendanceRate = { rate: number | null }
 type UnreportedSession = { class_id: string; class_name: string }
 type ActivityItem = { type: string; description: string; timestamp: string; link_to: string }
 type DashboardSnapshot = {
+  operationsToday: OperationsTodayResponse | null
   upcomingSessions: ScheduleRow[]
   recentReportsTotal: number
   hoursSummary: HoursSummary | null
@@ -72,6 +73,7 @@ export function DashboardContent() {
   const tomorrow = toISODate(new Date(Date.now() + 86400000))
   const initialDashboard = dashboardCache.get(today)
 
+  const [operationsToday, setOperationsToday] = useState<OperationsTodayResponse | null>(() => initialDashboard?.operationsToday ?? null)
   const [upcomingSessions, setUpcomingSessions] = useState<ScheduleRow[]>(() => initialDashboard?.upcomingSessions ?? [])
   const [sessionsLoading, setSessionsLoading] = useState(() => !initialDashboard)
   const [recentReportsTotal, setRecentReportsTotal] = useState(() => initialDashboard?.recentReportsTotal ?? 0)
@@ -90,6 +92,7 @@ export function DashboardContent() {
     let cancelled = false
     const cached = dashboardCache.get(today)
     if (cached) {
+      setOperationsToday(cached.operationsToday)
       setUpcomingSessions(cached.upcomingSessions)
       setRecentReportsTotal(cached.recentReportsTotal)
       setHoursSummary(cached.hoursSummary)
@@ -109,6 +112,7 @@ export function DashboardContent() {
     const sevenDaysAgo = toISODate(new Date(Date.now() - 7 * 86400000))
 
     Promise.all([
+      api.dashboard.operationsToday().catch(() => null),
       api.schedule.listAll({ date_from: today, date_to: fiveDaysOut, limit: 200 }).then(res => res.data).catch(() => []),
       api.reports.listAll({ date_from: sevenDaysAgo, limit: 1 }).then(res => res.total).catch(() => 0),
       api.dashboard.hoursSummary().catch(() => null),
@@ -117,6 +121,7 @@ export function DashboardContent() {
       api.dashboard.unreportedSessions().then(res => res.classes).catch(() => []),
       api.dashboard.activity(10).then(res => res.items).catch(() => []),
     ]).then(([
+      nextOperationsToday,
       nextUpcomingSessions,
       nextRecentReportsTotal,
       nextHoursSummary,
@@ -127,6 +132,7 @@ export function DashboardContent() {
     ]) => {
       if (cancelled) return
       const snapshot: DashboardSnapshot = {
+        operationsToday: nextOperationsToday,
         upcomingSessions: nextUpcomingSessions,
         recentReportsTotal: nextRecentReportsTotal,
         hoursSummary: nextHoursSummary,
@@ -136,6 +142,7 @@ export function DashboardContent() {
         activityItems: nextActivityItems,
       }
       dashboardCache.set(today, snapshot)
+      setOperationsToday(snapshot.operationsToday)
       setUpcomingSessions(snapshot.upcomingSessions)
       setRecentReportsTotal(snapshot.recentReportsTotal)
       setHoursSummary(snapshot.hoursSummary)
@@ -224,6 +231,15 @@ export function DashboardContent() {
           </button>
         </div>
       </header>
+
+      <OperationsTodaySection
+        operations={operationsToday}
+        loading={sessionsLoading}
+        onOpenSchedule={() => navigate('/schedule')}
+        onOpenReports={() => navigate('/reports')}
+        onOpenRoleRequests={() => navigate('/settings')}
+        onOpenClass={(className) => navigate(`/classes/${classSlug(className)}`)}
+      />
 
       {/* Stat cards — 2x3 grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -489,5 +505,125 @@ export function DashboardContent() {
         />
       )}
     </>
+  )
+}
+
+function OperationsTodaySection({
+  operations,
+  loading,
+  onOpenSchedule,
+  onOpenReports,
+  onOpenRoleRequests,
+  onOpenClass,
+}: {
+  operations: OperationsTodayResponse | null
+  loading: boolean
+  onOpenSchedule: () => void
+  onOpenReports: () => void
+  onOpenRoleRequests: () => void
+  onOpenClass: (className: string) => void
+}) {
+  const sessions = operations?.sessions ?? []
+  const needsAttention = operations
+    ? operations.summary.missing_reports + operations.summary.coverage_gaps + operations.summary.pending_role_requests
+    : 0
+
+  return (
+    <section className="bg-white dark:bg-tt-surface rounded-[10px] overflow-hidden border border-slate-200 dark:border-white/[0.06]">
+      <div className="flex flex-col gap-3 border-b border-slate-200 dark:border-white/[0.06] px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Today's operations</h3>
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+            {operations?.date ?? new Date().toISOString().slice(0, 10)}
+            {needsAttention > 0 ? ` · ${needsAttention} item${needsAttention !== 1 ? 's' : ''} need attention` : ' · All clear'}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={onOpenSchedule} className="rounded-md border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors">
+            Schedule
+          </button>
+          <button type="button" onClick={onOpenReports} className="rounded-md border border-slate-200 dark:border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors">
+            Reports
+          </button>
+          {(operations?.summary.pending_role_requests ?? 0) > 0 && (
+            <button type="button" onClick={onOpenRoleRequests} className="rounded-md border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-600 dark:text-amber-300 hover:bg-amber-500/15 transition-colors">
+              Role requests
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 border-b border-slate-200 dark:border-white/[0.06]">
+        <OperationMetric label="Sessions" value={loading ? '...' : String(operations?.summary.total_sessions ?? 0)} />
+        <OperationMetric label="Missing reports" value={loading ? '...' : String(operations?.summary.missing_reports ?? 0)} attention={(operations?.summary.missing_reports ?? 0) > 0} />
+        <OperationMetric label="Coverage gaps" value={loading ? '...' : String(operations?.summary.coverage_gaps ?? 0)} attention={(operations?.summary.coverage_gaps ?? 0) > 0} />
+        <OperationMetric label="Role requests" value={loading ? '...' : String(operations?.summary.pending_role_requests ?? 0)} attention={(operations?.summary.pending_role_requests ?? 0) > 0} />
+      </div>
+
+      {loading ? (
+        <div className="p-4"><SkeletonTable rows={3} cols={4} /></div>
+      ) : sessions.length === 0 ? (
+        <p className="px-4 py-5 text-sm text-slate-500 dark:text-slate-400">No scheduled sessions today.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-xs">
+            <thead>
+              <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/[0.06]">
+                <th className="px-4 py-2 text-left font-semibold uppercase tracking-wide text-slate-500">Session</th>
+                <th className="px-4 py-2 text-left font-semibold uppercase tracking-wide text-slate-500">Trainer</th>
+                <th className="px-4 py-2 text-left font-semibold uppercase tracking-wide text-slate-500">Report</th>
+                <th className="px-4 py-2 text-right font-semibold uppercase tracking-wide text-slate-500">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sessions.slice(0, 6).map(session => (
+                <tr key={session.id} className="border-b border-slate-100 dark:border-white/[0.03] hover:bg-slate-50 dark:hover:bg-tt-elevated transition-colors">
+                  <td className="px-4 py-2.5">
+                    <p className="font-medium text-slate-800 dark:text-slate-200">{session.class_name}</p>
+                    <p className="mt-0.5 text-slate-500 dark:text-slate-400">
+                      {formatTime(session.start_time)}-{formatTime(session.end_time)}
+                      {session.group_label ? ` · Group ${session.group_label}` : ''}
+                    </p>
+                  </td>
+                  <td className="px-4 py-2.5 text-slate-600 dark:text-slate-300">
+                    {session.coverage_status === 'unassigned' ? (
+                      <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-500 dark:text-amber-400">Unassigned</span>
+                    ) : (
+                      <span>{session.trainer_names.join(', ') || `${session.trainer_count} assigned`}</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    {session.report_status === 'missing' ? (
+                      <span className="rounded bg-rose-500/15 px-1.5 py-0.5 text-[10px] font-medium text-rose-500 dark:text-rose-400">Missing</span>
+                    ) : (
+                      <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-500 dark:text-emerald-400">Ready</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    <button type="button" onClick={() => onOpenClass(session.class_name)} className="rounded-md bg-slate-100 dark:bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
+                      Open class
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {sessions.length > 6 && (
+            <button type="button" onClick={onOpenSchedule} className="block w-full px-4 py-2.5 text-center text-xs font-medium text-tt-blue hover:text-blue-300 transition-colors">
+              View {sessions.length - 6} more session{sessions.length - 6 !== 1 ? 's' : ''}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function OperationMetric({ label, value, attention = false }: { label: string; value: string; attention?: boolean }) {
+  return (
+    <div className="border-r border-b border-slate-100 px-4 py-3 last:border-r-0 dark:border-white/[0.03] md:border-b-0">
+      <p className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</p>
+      <p className={`mt-1 text-xl font-bold ${attention ? 'text-amber-500 dark:text-amber-300' : 'text-slate-900 dark:text-slate-100'}`}>{value}</p>
+    </div>
   )
 }

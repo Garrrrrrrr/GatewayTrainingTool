@@ -3,6 +3,147 @@ import { supabase } from '../lib/supabase'
 
 export const dashboardRouter = Router()
 
+type TodaySlotRow = {
+  id: string
+  class_id: string
+  slot_date: string
+  start_time: string
+  end_time: string
+  group_label: string | null
+  trainer_id: string | null
+  trainer_ids: string[] | null
+  classes: {
+    id: string
+    name: string
+    site: string
+    province: string
+    game_type: string | null
+    archived: boolean
+  }
+}
+
+type TodayReportRow = {
+  id: string
+  class_id: string
+  report_date: string
+  group_label: string | null
+}
+
+type TrainerRow = {
+  id: string
+  trainer_name: string
+}
+
+function normalizedGroup(value: string | null | undefined): string {
+  return value?.trim().toLowerCase() ?? ''
+}
+
+function reportMatchesSlot(report: TodayReportRow, slot: TodaySlotRow): boolean {
+  if (report.class_id !== slot.class_id || report.report_date !== slot.slot_date) return false
+  if (!slot.group_label) return true
+  return normalizedGroup(report.group_label) === normalizedGroup(slot.group_label)
+}
+
+// GET /api/dashboard/operations-today
+dashboardRouter.get('/dashboard/operations-today', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+
+    const [
+      { data: slots, error: slotsError },
+      { data: reports, error: reportsError },
+      { count: pendingRoleRequests, error: roleRequestsError },
+    ] = await Promise.all([
+      supabase
+        .from('class_schedule_slots')
+        .select('id, class_id, slot_date, start_time, end_time, group_label, trainer_id, trainer_ids, classes!inner(id, name, site, province, game_type, archived)')
+        .eq('slot_date', today)
+        .eq('classes.archived', false)
+        .order('start_time', { ascending: true }),
+      supabase
+        .from('class_daily_reports')
+        .select('id, class_id, report_date, group_label')
+        .eq('report_date', today),
+      supabase
+        .from('role_requests')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending'),
+    ])
+
+    if (slotsError) throw slotsError
+    if (reportsError) throw reportsError
+    if (roleRequestsError) throw roleRequestsError
+
+    const slotRows = (slots ?? []) as unknown as TodaySlotRow[]
+    const reportRows = (reports ?? []) as TodayReportRow[]
+    const trainerIds = [
+      ...new Set(
+        slotRows.flatMap(slot => {
+          const ids = slot.trainer_ids && slot.trainer_ids.length > 0
+            ? slot.trainer_ids
+            : slot.trainer_id
+              ? [slot.trainer_id]
+              : []
+          return ids.filter(Boolean)
+        }),
+      ),
+    ]
+
+    const trainerNames = new Map<string, string>()
+    if (trainerIds.length > 0) {
+      const { data: trainers, error: trainersError } = await supabase
+        .from('class_trainers')
+        .select('id, trainer_name')
+        .in('id', trainerIds)
+      if (trainersError) throw trainersError
+      for (const trainer of (trainers ?? []) as TrainerRow[]) {
+        trainerNames.set(trainer.id, trainer.trainer_name)
+      }
+    }
+
+    const sessions = slotRows.map(slot => {
+      const assignedTrainerIds = slot.trainer_ids && slot.trainer_ids.length > 0
+        ? slot.trainer_ids
+        : slot.trainer_id
+          ? [slot.trainer_id]
+          : []
+      const matchingReport = reportRows.find(report => reportMatchesSlot(report, slot)) ?? null
+
+      return {
+        id: slot.id,
+        class_id: slot.class_id,
+        class_name: slot.classes.name,
+        site: slot.classes.site,
+        province: slot.classes.province,
+        game_type: slot.classes.game_type,
+        slot_date: slot.slot_date,
+        start_time: slot.start_time,
+        end_time: slot.end_time,
+        group_label: slot.group_label,
+        trainer_count: assignedTrainerIds.length,
+        trainer_names: assignedTrainerIds.map(id => trainerNames.get(id)).filter(Boolean),
+        coverage_status: assignedTrainerIds.length > 0 ? 'covered' : 'unassigned',
+        report_status: matchingReport ? 'ready' : 'missing',
+        report_id: matchingReport?.id ?? null,
+      }
+    })
+
+    res.json({
+      date: today,
+      generated_at: new Date().toISOString(),
+      summary: {
+        total_sessions: sessions.length,
+        missing_reports: sessions.filter(session => session.report_status === 'missing').length,
+        coverage_gaps: sessions.filter(session => session.coverage_status === 'unassigned').length,
+        pending_role_requests: pendingRoleRequests ?? 0,
+      },
+      sessions,
+    })
+  } catch (err) {
+    next(err)
+  }
+})
+
 // GET /api/dashboard/hours-summary
 dashboardRouter.get('/dashboard/hours-summary', async (req: Request, res: Response, next: NextFunction) => {
   try {

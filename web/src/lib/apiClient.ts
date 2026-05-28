@@ -653,6 +653,34 @@ export interface SystemHealthResponse {
   }>
 }
 
+export interface OperationsTodayResponse {
+  date: string
+  generated_at: string
+  summary: {
+    total_sessions: number
+    missing_reports: number
+    coverage_gaps: number
+    pending_role_requests: number
+  }
+  sessions: Array<{
+    id: string
+    class_id: string
+    class_name: string
+    site: string
+    province: Province
+    game_type: string | null
+    slot_date: string
+    start_time: string
+    end_time: string
+    group_label: string | null
+    trainer_count: number
+    trainer_names: string[]
+    coverage_status: 'covered' | 'unassigned'
+    report_status: 'ready' | 'missing'
+    report_id: string | null
+  }>
+}
+
 function paramsQs(params?: object): string {
   if (!params) return ''
   const entries: Record<string, string> = {}
@@ -1126,6 +1154,7 @@ export const api = {
   },
 
   dashboard: {
+    operationsToday: () => req<OperationsTodayResponse>('/dashboard/operations-today'),
     hoursSummary: () => req<{ total_hours: number; trainer_count: number }>('/dashboard/hours-summary'),
     enrollmentSummary: () => req<{ enrolled: number; failed: number; dropped: number }>('/dashboard/enrollment-summary'),
     attendanceRate: () => req<{ rate: number | null }>('/dashboard/attendance-rate'),

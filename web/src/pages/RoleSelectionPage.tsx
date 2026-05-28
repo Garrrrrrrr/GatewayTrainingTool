@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { api } from '../lib/apiClient'
 import { useAuth } from '../contexts/AuthContext'
+import { STUDENT_SELF_SERVICE_ENABLED } from '../lib/features'
 
 type SelectedRole = 'trainee' | 'trainer' | 'coordinator'
 
 const ROLES: { value: SelectedRole; label: string; description: string; requiresApproval: boolean }[] = [
   { value: 'trainee', label: 'Student', description: 'View your classes, track progress, and submit drill times.', requiresApproval: false },
-  { value: 'trainer', label: 'Trainer', description: 'Manage classes you teach, enter daily reports, and track student progress.', requiresApproval: true },
-  { value: 'coordinator', label: 'Coordinator', description: 'Full access to manage all classes, trainers, students, and reports.', requiresApproval: true },
+  { value: 'trainer', label: 'Trainer', description: 'Access assigned classes, daily work queues, reports, schedule, and training records.', requiresApproval: true },
+  { value: 'coordinator', label: 'Coordinator', description: 'Manage internal training operations, classes, trainers, students, reports, and approvals.', requiresApproval: true },
 ]
 
 const roleIcons: Record<SelectedRole, string> = {
@@ -35,6 +36,7 @@ export function RoleSelectionPage() {
   const [error, setError] = useState<string | null>(null)
 
   const canSubmit = selected && firstName.trim() && lastName.trim() && !submitting
+  const visibleRoles = STUDENT_SELF_SERVICE_ENABLED ? ROLES : ROLES.filter(r => r.value !== 'trainee')
 
   const handleSubmit = async () => {
     if (!selected || !firstName.trim() || !lastName.trim()) return
@@ -92,7 +94,7 @@ export function RoleSelectionPage() {
             <span className="text-white font-bold text-lg leading-none select-none">G</span>
           </div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-1">Welcome to Training Tool</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Complete your profile to get started.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Complete your internal training profile to get started.</p>
         </div>
 
         {/* Profile fields */}
@@ -143,7 +145,7 @@ export function RoleSelectionPage() {
         {/* Role selection */}
         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Select your role</p>
         <div className="flex flex-col gap-3 mb-6">
-          {ROLES.map(r => (
+          {visibleRoles.map(r => (
             <button
               key={r.value}
               type="button"
